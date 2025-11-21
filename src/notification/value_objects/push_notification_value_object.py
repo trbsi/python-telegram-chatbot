@@ -1,4 +1,4 @@
-from app import settings
+from protectapp import settings
 
 
 class PushNotificationValueObject():

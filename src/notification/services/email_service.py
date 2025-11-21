@@ -2,7 +2,7 @@ from django.core.mail import EmailMultiAlternatives
 from django.template.defaultfilters import striptags
 from django.template.loader import render_to_string
 
-from app import settings
+from protectapp import settings
 from src.notification.value_objects.email_value_object import EmailValueObject
 
 

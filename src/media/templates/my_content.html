@@ -1,0 +1,99 @@
+{% extends "core/layout.html" %}
+{% load static %}
+
+{% block content %}
+<div id="my-content-view" class="p-4">
+
+    <div class="flex-1 overflow-y-auto space-y-4">
+        <form method="post" action="{% url 'media.update_my_media' %}" id="my_content_form">
+            {% csrf_token %}
+            {% for media in media_list %}
+            <div class="media-block bg-gray-900 p-4 rounded-lg space-y-2 mb-5">
+                <input type="hidden" name="media_ids" value="{{media.id}}">
+                <div class="flex items-center ps-4">
+                    <input name="delete" value="{{media.id}}" id="delete{{media.id}}" type="checkbox"
+                           class="w-4 h-4 bg-gray-500 border-gray-700 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
+                    <label for="delete{{media.id}}"
+                           class="w-full py-2 ms-2 text-sm font-medium">Mark for
+                        deletion</label>
+                </div>
+                <!-- Preview -->
+                <div class="w-full rounded overflow-hidden bg-gray-900 flex items-center justify-center">
+                    {% if media.is_image %}
+                    <img src="{{ media.get_file_url }}" class="object-contain w-full h-full" alt="Image Preview">
+                    {% elif media.is_video %}
+                    <video src="{{ media.get_file_url }}" preload="none" poster="{{media.get_thumbnail_url}}"
+                           class="object-contain w-full h-full"
+                           controls></video>
+                    {% endif %}
+                </div>
+
+                <div x-data="myContentComponent('{{user_suggestion_api}}')" x-init="init()">
+                    <div data-suggestion-root>
+                        <!-- Textarea for file description -->
+                        <textarea
+                                id="description_field_{{media.id}}"
+                                name="descriptions"
+                                rows="5"
+                                data-file-id="{{media.id}}"
+                                placeholder="Add a description and hashtags. Tag another creator here."
+                                @input="userSuggestionComponent.fetchSuggestions($event)"
+                                class="w-full p-2 rounded bg-gray-700 text-white text-sm"
+                        >{{ media.get_description }}</textarea>
+                        {% include "components/user_suggestion_list.html" %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+
+            {% if not media_list.object_list %}
+            <div class="flex flex-col items-center justify-center min-h-screen bg-black text-white px-4">
+                <!-- Icon -->
+                <i class="ri-video-off-line ri-5x"></i>
+                <!-- Heading -->
+                <h1 class="text-2xl md:text-3xl font-semibold mb-2">No content yet</h1>
+
+                <!-- Description -->
+                <p class="text-gray-400 text-center max-w-md mb-6">
+                    It looks like there’s nothing here. Once you start posting content, it will appear here.
+                </p>
+            </div>
+            {% endif %}
+
+            {% include "components/my_content_buttons.html" %}
+        </form>
+    </div>
+</div>
+
+{% include "components/elements/pagination.html" with page_obj=media_list %}
+
+{% endblock content %}
+
+
+{% block javascript %}
+<script src="{% static 'js/user/user_suggestion.js' %}"></script>
+<script src="{% static 'js/media/my_content.js' %}"></script>
+
+<script>
+    $(document).ready(function() {
+        $('.media-block input[type="checkbox"]').change(function() {
+            var parentDiv = $(this).closest('.media-block');
+            if ($(this).is(':checked')) {
+                parentDiv.removeClass('bg-gray-900').addClass('bg-red-900');
+            } else {
+                parentDiv.removeClass('bg-red-900').addClass('bg-gray-900');
+            }
+        });
+    });
+
+    $(document).ready(function() {
+        $('#delete_button').click(function(e) {
+            e.preventDefault(); // prevent default behavior
+            if (confirm("Are you sure you want to delete?")) {
+                $('#my_content_form').submit();
+            }
+        });
+    });
+</script>
+{% endblock javascript %}
+

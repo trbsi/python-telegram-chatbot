@@ -1,8 +1,9 @@
 from pathlib import Path
 
+from src.media.models import Media
 from src.storage.services.compression.compress_file_service import CompressFileService
 from src.storage.services.remote_storage_service import RemoteStorageService
-from src.storage.utils import remote_file_path_for_conversation, remote_file_path_for_media
+from src.storage.utils import remote_file_path_for_media
 
 
 class CompressMediaService:
@@ -16,7 +17,7 @@ class CompressMediaService:
 
     def handle_compression(
             self,
-            media: Media | Message,
+            media: Media,
             local_file_type: str,
             local_file_path: str,
             local_file_path_directory: str
@@ -26,9 +27,7 @@ class CompressMediaService:
         extension = Path(original_file_info.get('file_path')).suffix  # example: .jpg or .mp4
         new_file_name = remote_file_path_for_media(media, extension, media.file_type)
 
-        if isinstance(media, Message):
-            new_file_path = remote_file_path_for_conversation(media.conversation, new_file_name)
-        elif isinstance(media, Media):
+        if isinstance(media, Media):
             new_file_path = remote_file_path_for_media(media, new_file_name)
 
         # compress file

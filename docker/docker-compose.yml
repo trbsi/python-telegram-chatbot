@@ -1,0 +1,111 @@
+version: "3.8"
+
+services:
+  nginx-proxy:
+    image: jwilder/nginx-proxy
+    container_name: protectapp-nginx-proxy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./nginx/certs:/etc/nginx/certs
+      - ./nginx/vhost:/etc/nginx/vhost.d
+      - ./nginx/html:/usr/share/nginx/html
+    networks: [ protectapp-net ]
+
+  django:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: protectapp-django
+    restart: unless-stopped
+    environment:
+      VIRTUAL_HOST: ${DJANGO_HOST}
+      LETSENCRYPT_HOST: ${LETSENCRYPT_HOST}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
+      DATABASE_HOST: mysql
+      REDIS_URL: redis://redis:6379/0
+      DJANGO_SETTINGS_MODULE: protectapp.settings
+    volumes:
+      - ../:/app
+      - protectapp_media:/app/media
+    depends_on: [ mysql, redis ]
+    command: poetry run gunicorn protectapp.wsgi:application -b 0.0.0.0:8000
+    expose: [ "8000" ]
+    networks: [ protectapp-net ]
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: protectapp-phpmyadmin
+    restart: unless-stopped
+    environment:
+      PMA_HOST: mysql
+      VIRTUAL_HOST: ${PMA_HOST_DOMAIN}
+      LETSENCRYPT_HOST: ${LETSENCRYPT_HOST_PMA}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
+    depends_on: [ mysql ]
+    networks: [ protectapp-net ]
+
+  mysql:
+    image: mysql:8
+    container_name: protectapp-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - protectapp_mysql_data:/var/lib/mysql
+    networks: [ protectapp-net ]
+
+  redis:
+    image: redis:7-alpine
+    container_name: protectapp-redis
+    restart: unless-stopped
+    volumes:
+      - protectapp_redis_data:/data
+    networks: [ protectapp-net ]
+
+  celery-worker:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: protectapp-celery-worker
+    restart: unless-stopped
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      DJANGO_SETTINGS_MODULE: protectapp.settings
+    volumes:
+      - ../:/app
+      - protectapp_media:/app/media
+    depends_on: [ redis, django ]
+    command: poetry run celery -A protectapp worker --loglevel=info
+    networks: [ protectapp-net ]
+
+  celery-beat:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    container_name: protectapp-celery-beat
+    restart: unless-stopped
+    environment:
+      CELERY_BROKER_URL: redis://redis:6379/0
+      DJANGO_SETTINGS_MODULE: protectapp.settings
+    volumes:
+      - ../:/app
+      - protectapp_media:/app/media
+    depends_on: [ redis, django ]
+    command: poetry run celery -A protectapp beat --loglevel=info
+    networks: [ protectapp-net ]
+
+networks:
+  protectapp-net:
+    driver: bridge
+
+volumes:
+  protectapp_mysql_data:
+  protectapp_redis_data:
+  protectapp_media:

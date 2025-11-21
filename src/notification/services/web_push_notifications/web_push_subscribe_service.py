@@ -1,5 +1,4 @@
-from src.notification.models import WebPushSubscription
-from src.user.models import User
+from django.contrib.auth.models import User
 
 
 class WebPushSubscribeService:

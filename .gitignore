@@ -4,9 +4,10 @@
 *.pyc
 __pycache__
 db.sqlite3
-media
+./media
 .env
 .idea
+docker/.env
 
 # Backup files #
 *.bak

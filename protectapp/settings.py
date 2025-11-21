@@ -34,7 +34,7 @@ SECRET_KEY = env('DJANGO_SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool('DEBUG')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = env('ALLOWED_HOSTS').split(',')
 
 # Application definition
 
@@ -47,8 +47,12 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'src.storage.apps.StorageConfig',
+    'src.core.apps.CoreConfig',
     'src.notification.apps.NotificationConfig',
     'src.user.apps.UserConfig',
+    'src.media.apps.MediaConfig',
+
+    'django_celery_beat',
 
     'allauth',
     'allauth.account',
@@ -130,6 +134,8 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
 ROOT_ENCRYPT_KEY = env('ROOT_ENCRYPT_KEY')
+APP_URL = env('APP_URL')
+APP_ENV = env('APP_ENV')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
