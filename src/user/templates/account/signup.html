@@ -1,0 +1,23 @@
+<!-- signup.html -->
+{% extends "core/layout.html" %}
+{% block title %}Sign up{% endblock %}
+{% block content %}
+<div>
+    <h1 class="text-2xl font-semibold mb-6 text-center">Create Account</h1>
+    <form method="post" class="space-y-4">
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        {% for field in form %}
+        <div>
+            {{ field.label_tag }}
+            {{ field }}
+            {{ field.errors }}
+        </div>
+        {% endfor %}
+        <button class="w-full py-2 bg-blue-600 text-white rounded-md">Sign up</button>
+    </form>
+    <div class="text-sm mt-4 text-center">
+        <a href="{% url 'account_login' %}" class="text-blue-600">Already have an account?</a>
+    </div>
+</div>
+{% endblock %}

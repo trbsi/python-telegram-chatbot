@@ -1,0 +1,161 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>Responsive Tailwind CSS Template</title>
+    <meta name="description" content="Simple responsive website template built with Tailwind CSS (single-file)."/>
+    <!-- Tailwind via CDN (good for prototyping). For production, compile with PostCSS or Tailwind CLI. -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script>
+        // Optional: Tailwind config override (colors, container, etc.)
+        tailwind.config = {
+          theme: {
+            extend: {
+              colors: {
+                primary: '#0ea5a4',
+                accent: '#7c3aed'
+              }
+            }
+          }
+        }
+    </script>
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
+</head>
+<body class="antialiased text-gray-800 bg-gray-50">
+
+<!-- NAV -->
+<header class="bg-white shadow-sm sticky top-0 z-50">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <a href="#" class="flex items-center gap-3">
+                <span class="inline-block w-10 h-10 bg-gradient-to-tr from-primary to-accent rounded-lg"></span>
+                <span class="font-semibold text-lg">BrandName</span>
+            </a>
+
+            <!-- Desktop links -->
+            <nav class="hidden md:flex items-center gap-8">
+                {% if user.is_authenticated %}
+                <a href="{% url 'account_logout' %}" class="hover:text-blue-600">Logout</a>
+                {% else %}
+                <a href="{% url 'account_login' %}" class="hover:text-blue-600">Login</a>
+                <a href="{% url 'account_signup' %}" class="hover:text-blue-600">Sign up</a>
+                {% endif %}
+            </nav>
+
+            <!-- Mobile menu button -->
+            <div class="md:hidden">
+                <button id="nav-toggle" aria-controls="mobile-menu" aria-expanded="false"
+                        class="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                    <svg id="icon-open" class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                    <svg id="icon-close" class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="md:hidden hidden" aria-hidden="true">
+        <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white">
+            <a href="#features" class="block px-3 py-2 rounded-md">Features</a>
+            <a href="#pricing" class="block px-3 py-2 rounded-md">Pricing</a>
+            <a href="#contact" class="block px-3 py-2 rounded-md">Contact</a>
+            <a href="#" class="block px-3 py-2 rounded-md bg-primary text-white">Get started</a>
+        </div>
+    </div>
+</header>
+
+<!-- HERO -->
+<main class="mt-8">
+    <section class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow-sm">
+            {% block content %}
+            {% endblock content %}
+        </div>
+    </section>
+
+
+    <!-- CONTACT -->
+    <section id="contact" class="mt-16">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow-sm">
+                <h3 class="text-xl font-semibold">Get in touch</h3>
+                <p class="mt-2 text-gray-600">Questions? We're happy to help — send a message and we'll respond
+                    shortly.</p>
+
+                <form class="mt-6 grid grid-cols-1 gap-4">
+                    <div>
+                        <label class="sr-only" for="name">Name</label>
+                        <input id="name" name="name" type="text" required placeholder="Your name"
+                               class="w-full rounded-md border-gray-200 shadow-sm focus:ring-2 focus:ring-primary p-3"/>
+                    </div>
+
+                    <div>
+                        <label class="sr-only" for="email">Email</label>
+                        <input id="email" name="email" type="email" required placeholder="you@example.com"
+                               class="w-full rounded-md border-gray-200 shadow-sm focus:ring-2 focus:ring-primary p-3"/>
+                    </div>
+
+                    <div>
+                        <label class="sr-only" for="message">Message</label>
+                        <textarea id="message" name="message" rows="4" placeholder="How can we help?"
+                                  class="w-full rounded-md border-gray-200 shadow-sm focus:ring-2 focus:ring-primary p-3"></textarea>
+                    </div>
+
+                    <div class="text-right">
+                        <button type="submit"
+                                class="inline-flex items-center px-4 py-2 rounded-md bg-primary text-white">Send message
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="mt-16 bg-white border-t">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="text-sm text-gray-600">© <span id="year"></span> BrandName. All rights reserved.</div>
+                <div class="flex gap-4 text-sm">
+                    <a href="#" class="hover:text-primary">Privacy</a>
+                    <a href="#" class="hover:text-primary">Terms</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+</main>
+
+<!-- Minimal JS for interactions (menu toggle + year) -->
+<script>
+    // Mobile nav toggle
+    const navToggle = document.getElementById('nav-toggle');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const iconOpen = document.getElementById('icon-open');
+    const iconClose = document.getElementById('icon-close');
+
+    navToggle?.addEventListener('click', () => {
+      const expanded = navToggle.getAttribute('aria-expanded') === 'true';
+      navToggle.setAttribute('aria-expanded', String(!expanded));
+      mobileMenu.classList.toggle('hidden');
+      iconOpen.classList.toggle('hidden');
+      iconClose.classList.toggle('hidden');
+    });
+
+    // Set current year
+    document.getElementById('year').textContent = new Date().getFullYear();
+
+    // Progressive enhancement note: add focus management and trapping if building a larger app.
+</script>
+
+</body>
+</html>
