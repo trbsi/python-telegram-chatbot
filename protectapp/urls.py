@@ -17,33 +17,13 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib import admin
-from django.contrib.auth import views as auth_views
 from django.urls import path, include
 
 urlpatterns = (
         [
             path('', include('src.core.urls')),
+            path('notification/', include('src.notification.urls')),
             path('admin/', admin.site.urls),
-            path('auth/login/', auth_views.LoginView.as_view(), name='login'),
-            path('auth/logout/', auth_views.LogoutView.as_view(), name='logout'),
-
-            # Change password
-            path('authpassword_change/', auth_views.PasswordChangeView.as_view(), name='password_change'),
-            path('authpassword_change/done/', auth_views.PasswordChangeDoneView.as_view(),
-                 name='password_change_done'),
-
-            # Reset password
-            path('authpassword_reset/', auth_views.PasswordResetView.as_view(), name='password_reset'),
-            path('authpassword_reset/done/', auth_views.PasswordResetDoneView.as_view(),
-                 name='password_reset_done'),
-            path('authreset/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(),
-                 name='password_reset_confirm'),
-            path('authreset/done/', auth_views.PasswordResetCompleteView.as_view(),
-                 name='password_reset_complete'),
-
-            path("auth/", include("django.contrib.auth.urls")),
-            path('social-auth/', include('allauth.urls')),
-
-        ]
-        + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+            path('accounts/', include('allauth.urls')),
+        ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 )

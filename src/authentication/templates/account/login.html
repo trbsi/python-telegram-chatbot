@@ -7,14 +7,7 @@
     <form method="post" class="space-y-4">
         {% csrf_token %}
         {{ form.non_field_errors }}
-        <div>
-            {{ form.username.label_tag }}
-            {{ form.username }}
-        </div>
-        <div>
-            {{ form.password.label_tag }}
-            {{ form.password }}
-        </div>
+        {{ form.as_p }}
         <button class="w-full py-2 bg-blue-600 text-white rounded-md">Sign in</button>
     </form>
     <div class="text-sm mt-4 text-center">

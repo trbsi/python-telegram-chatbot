@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'src.notification.apps.NotificationConfig',
     'src.user.apps.UserConfig',
     'src.media.apps.MediaConfig',
+    'src.authentication.apps.AuthenticationConfig',
 
     'django_celery_beat',
 
@@ -69,6 +70,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "allauth.account.middleware.AccountMiddleware",
+    'bugsnag.django.middleware.BugsnagMiddleware',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -103,8 +105,15 @@ WSGI_APPLICATION = 'protectapp.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': env('MYSQL_DATABASE'),
+        'USER': env('MYSQL_USER'),
+        'PASSWORD': env('MYSQL_PASSWORD'),
+        'HOST': env('MYSQL_HOST'),
+        'PORT': '3306',
+        'OPTIONS': {
+            'init_command': "SET sql_mode='STRICT_TRANS_TABLES'",
+        }
     }
 }
 
@@ -136,6 +145,7 @@ USE_TZ = True
 ROOT_ENCRYPT_KEY = env('ROOT_ENCRYPT_KEY')
 APP_URL = env('APP_URL')
 APP_ENV = env('APP_ENV')
+APP_NAME = env('APP_NAME')
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
@@ -159,4 +169,25 @@ STORAGE_CONFIG = {
         'application_key': env('BACKBLAZE_APPLICATION_KEY'),
         'bucket_name': env('BACKBLAZE_DEFAULT_BUCKET_NAME'),
     },
+}
+
+# Auth
+ACCOUNT_EMAIL_VERIFICATION = 'none'
+LOGIN_REDIRECT_URL = '/'
+ACCOUNT_LOGOUT_REDIRECT_URL = '/'
+
+# Email
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST = env('EMAIL_HOST')
+EMAIL_PORT = env('EMAIL_PORT')
+EMAIL_USE_TLS = env.bool('EMAIL_USE_TLS')
+EMAIL_HOST_USER = env('EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
+DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
+ADMIN_EMAILS = env('ADMIN_EMAILS').split(',')
+
+# Bugsnag
+BUGSNAG = {
+    'api_key': env('BUGSNAG_API_KEY'),
+    'project_root': BASE_DIR,
 }

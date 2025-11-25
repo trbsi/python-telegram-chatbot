@@ -43,3 +43,7 @@ button:hover,
 input[type="submit"]:hover {
   background-color: #08999a; /* slightly darker teal */
 }
+
+a {
+    text-decoration: underline;
+}
