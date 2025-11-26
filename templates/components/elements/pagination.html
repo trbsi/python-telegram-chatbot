@@ -1,0 +1,81 @@
+<div class="border-t border-gray-700 bg-black px-4 py-3 sm:px-6">
+    <!-- Showing results -->
+    <div class="text-center mb-4">
+        <p class="text-sm text-gray-400">
+            Showing
+            <span class="font-medium text-gray-200">{{ page_obj.start_index }}</span>
+            to
+            <span class="font-medium text-gray-200">{{ page_obj.end_index }}</span>
+            of
+            <span class="font-medium text-gray-200">{{ page_obj.paginator.count }}</span>
+            results
+        </p>
+    </div>
+
+    <!-- Pagination -->
+    <div class="flex items-center justify-center space-x-2">
+        <!-- Previous arrow -->
+        {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}"
+           class="inline-flex items-center rounded-md border border-gray-700 bg-gray-900 px-3 py-2 text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-white">
+            &laquo;
+        </a>
+        {% else %}
+        <span class="inline-flex items-center rounded-md border border-gray-800 bg-gray-800 px-3 py-2 text-sm text-gray-500 cursor-not-allowed">&laquo;</span>
+        {% endif %}
+
+        <!-- Page input -->
+        <div class="flex items-center space-x-2">
+            <input
+                    type="number"
+                    id="pageInput"
+                    value="{{ page_obj.number }}"
+                    min="1"
+                    max="{{ page_obj.paginator.num_pages }}"
+                    class="w-16 rounded-md border border-gray-700 bg-gray-900 px-2 py-1 text-center text-sm text-gray-200 focus:border-indigo-500 focus:ring focus:ring-indigo-500 focus:ring-opacity-50"
+                    placeholder="Page"
+            >
+            <span class="text-gray-400 text-sm">of {{ page_obj.paginator.num_pages }}</span>
+        </div>
+
+        <!-- Next arrow -->
+        {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}"
+           class="inline-flex items-center rounded-md border border-gray-700 bg-gray-900 px-3 py-2 text-sm font-medium text-gray-400 hover:bg-gray-800 hover:text-white">
+            &raquo;
+        </a>
+        {% else %}
+        <span class="inline-flex items-center rounded-md border border-gray-800 bg-gray-800 px-3 py-2 text-sm text-gray-500 cursor-not-allowed">&raquo;</span>
+        {% endif %}
+    </div>
+</div>
+{% block javascript %}
+<script>
+    $(document).ready(function() {
+    function goToPage() {
+        let pageNumber = $("#pageInput").val().trim();
+        let maxPage = parseInt($("#pageInput").attr("max")) || 1;
+        let minPage = parseInt($("#pageInput").attr("min")) || 1;
+
+        if (pageNumber) {
+            pageNumber = Math.max(minPage, Math.min(maxPage, parseInt(pageNumber, 10))); // clamp value
+            window.location.search = "?page=" + pageNumber;
+        }
+    }
+
+    // Trigger on Enter
+    $("#pageInput").on("keypress", function(e) {
+        if (e.which === 13) { // Enter key
+            e.preventDefault();
+            goToPage();
+        }
+    });
+
+    // Trigger on blur
+    $("#pageInput").on('blur', function() {
+        console.log('blur');
+        goToPage();
+    });
+});
+</script>
+{% endblock javascript %}

@@ -1,19 +1,19 @@
-<div class="fixed max-w-xl mx-auto mt-4 flex justify-between items-center bottom-0 left-0 right-0 pb-20 px-4" x-show="!isUploading">
+<div class="flex justify-between items-center mt-3 " x-show="!isUploading">
     <!-- Select / Capture Button -->
-    <div class="w-full">
+    <div class="flex-1">
         <button
                 @click="$refs.fileInput.click()"
                 class="w-full px-4 py-2 bg-gradient-to-r from-primary to-secondary rounded-lg "
         >
             <i class="ri-video-on-line ri-lg"></i>
             <br>
-            <span class="text-xs">Record/Choose</span>
+            <span class="text-xs">Record or Choose</span>
         </button>
         <input
                 id="upload_media"
                 type="file"
                 multiple
-                accept="image/*;capture=camera"
+                accept="video/*;capture=camera"
                 class="hidden"
                 x-ref="fileInput"
                 @change="handleFiles"
@@ -21,7 +21,7 @@
     </div>
 
     <!-- Upload All Button -->
-    <div class="w-full pl-2">
+    <div class="flex-1 pl-2">
         <button
                 @click="uploadAllFiles('post_now')"
                 class="w-full px-4 py-2 bg-gradient-to-r from-primary to-secondary rounded-lg"
@@ -31,17 +31,4 @@
             <span class="text-xs">Post Now</span>
         </button>
     </div>
-
-    <div class="w-full pl-2">
-        <button
-                @click="uploadAllFiles('schedule')"
-                class="w-full px-4 py-2 bg-gradient-to-r from-primary to-secondary rounded-lg"
-        >
-            <i class="ri-calendar-line ri-lg"></i>
-            <br>
-            <span class="text-xs">Schedule</span>
-        </button>
-    </div>
-
-
 </div>

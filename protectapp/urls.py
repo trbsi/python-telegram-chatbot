@@ -25,5 +25,6 @@ urlpatterns = (
             path('notification/', include('src.notification.urls')),
             path('admin/', admin.site.urls),
             path('accounts/', include('allauth.urls')),
+            path('media/', include('src.media.urls')),
         ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 )

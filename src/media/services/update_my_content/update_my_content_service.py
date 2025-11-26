@@ -1,11 +1,10 @@
-from django.contrib.auth.models import User
 from django.db import transaction
 
 from src.media.enums import MediaEnum
 from src.media.models import Media
 from src.media.services.hashtag.hashtag_service import HashtagService
 from src.media.utils import replace_tags
-from src.user.models import UserProfile
+from src.user.models import UserProfile, User
 from src.user.tasks import task_delete_user_media
 
 

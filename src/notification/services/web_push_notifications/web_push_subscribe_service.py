@@ -1,4 +1,4 @@
-from django.contrib.auth.models import User
+from src.user.models import User
 
 
 class WebPushSubscribeService:

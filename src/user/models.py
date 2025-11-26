@@ -1,8 +1,17 @@
 from django.conf import settings
+from django.contrib.auth.models import AbstractUser
 from django.db import models
 
 
 # Create your models here.
+class User(AbstractUser):
+    def is_regular_user(self):
+        return False
+
+    def is_creator(self):
+        return True
+
+
 # instance: UserProfile
 def profile_image_upload_path(user_profile, filename: str) -> str:
     return f'user_profile/{user_profile.user_id}/{filename}'

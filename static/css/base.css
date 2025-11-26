@@ -2,7 +2,6 @@
 input,
 textarea,
 select {
-  display: block;
   width: 100%;
   padding: 0.5rem 0.75rem; /* py-2 px-3 */
   font-size: 1rem; /* text-base */

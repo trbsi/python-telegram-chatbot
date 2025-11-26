@@ -1,4 +1,3 @@
-from django.contrib.auth.models import User
 from django.core.files.uploadedfile import UploadedFile
 from django.db import transaction
 
@@ -11,7 +10,7 @@ from src.storage.services.local_storage_service import LocalStorageService
 from src.storage.services.remote_storage_service import RemoteStorageService
 from src.storage.tasks import task_process_media
 from src.storage.utils import remote_file_path_for_media
-from src.user.models import UserProfile
+from src.user.models import UserProfile, User
 
 
 class UploadMediaService:

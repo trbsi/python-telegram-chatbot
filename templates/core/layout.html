@@ -4,24 +4,17 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
-    <title>Responsive Tailwind CSS Template</title>
+    <title>{{TEMPLATE_APP_NAME}} | {% block title %}{% endblock title %}</title>
     <meta name="description" content="Simple responsive website template built with Tailwind CSS (single-file)."/>
     <!-- Tailwind via CDN (good for prototyping). For production, compile with PostCSS or Tailwind CLI. -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script>
-        // Optional: Tailwind config override (colors, container, etc.)
-        tailwind.config = {
-          theme: {
-            extend: {
-              colors: {
-                primary: '#0ea5a4',
-                accent: '#7c3aed'
-              }
-            }
-          }
-        }
-    </script>
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
+    <link
+            href="https://cdn.jsdelivr.net/npm/remixicon@4.7.0/fonts/remixicon.css"
+            rel="stylesheet"
+    />
+    <script src="https://unpkg.com/alpinejs" defer></script>
+
 </head>
 <body class="antialiased text-gray-800 bg-gray-50">
 
@@ -29,7 +22,7 @@
 <header class="bg-white shadow-sm sticky top-0 z-50">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
-            <a href="#" class="flex items-center gap-3">
+            <a href="/" class="flex items-center gap-3">
                 <span class="inline-block w-10 h-10 bg-gradient-to-tr from-primary to-accent rounded-lg"></span>
                 <span class="font-semibold text-lg">BrandName</span>
             </a>
@@ -37,6 +30,7 @@
             <!-- Desktop links -->
             <nav class="hidden md:flex items-center gap-8">
                 {% if user.is_authenticated %}
+                <a href="{% url 'media.upload' %}" class="hover:text-blue-600">Upload</a>
                 <a href="{% url 'account_logout' %}" class="hover:text-blue-600">Logout</a>
                 {% else %}
                 <a href="{% url 'account_login' %}" class="hover:text-blue-600">Login</a>
@@ -66,10 +60,13 @@
     <!-- Mobile menu -->
     <div id="mobile-menu" class="md:hidden hidden" aria-hidden="true">
         <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3 bg-white">
-            <a href="#features" class="block px-3 py-2 rounded-md">Features</a>
-            <a href="#pricing" class="block px-3 py-2 rounded-md">Pricing</a>
-            <a href="#contact" class="block px-3 py-2 rounded-md">Contact</a>
-            <a href="#" class="block px-3 py-2 rounded-md bg-primary text-white">Get started</a>
+            {% if user.is_authenticated %}
+            <a href="{% url 'media.upload' %}" class="block px-3 py-2 rounded-md">Upload</a>
+            <a href="{% url 'account_logout' %}" class="block px-3 py-2 rounded-md">Logout</a>
+            {% else %}
+            <a href="{% url 'account_login' %}" class="block px-3 py-2 rounded-md">Login</a>
+            <a href="{% url 'account_signup' %}" class="block px-3 py-2 rounded-md">Sign up</a>
+            {% endif %}
         </div>
     </div>
 </header>
@@ -77,50 +74,11 @@
 <!-- HERO -->
 <main class="mt-8">
     <section class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow-sm">
+        <div class="max-w-3xl mx-auto bg-white p-4 rounded-2xl shadow-sm">
             {% block content %}
             {% endblock content %}
         </div>
     </section>
-
-
-    <!-- CONTACT -->
-    <section id="contact" class="mt-16">
-        <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="max-w-3xl mx-auto bg-white p-8 rounded-2xl shadow-sm">
-                <h3 class="text-xl font-semibold">Get in touch</h3>
-                <p class="mt-2 text-gray-600">Questions? We're happy to help — send a message and we'll respond
-                    shortly.</p>
-
-                <form class="mt-6 grid grid-cols-1 gap-4">
-                    <div>
-                        <label class="sr-only" for="name">Name</label>
-                        <input id="name" name="name" type="text" required placeholder="Your name"
-                               class="w-full rounded-md border-gray-200 shadow-sm focus:ring-2 focus:ring-primary p-3"/>
-                    </div>
-
-                    <div>
-                        <label class="sr-only" for="email">Email</label>
-                        <input id="email" name="email" type="email" required placeholder="you@example.com"
-                               class="w-full rounded-md border-gray-200 shadow-sm focus:ring-2 focus:ring-primary p-3"/>
-                    </div>
-
-                    <div>
-                        <label class="sr-only" for="message">Message</label>
-                        <textarea id="message" name="message" rows="4" placeholder="How can we help?"
-                                  class="w-full rounded-md border-gray-200 shadow-sm focus:ring-2 focus:ring-primary p-3"></textarea>
-                    </div>
-
-                    <div class="text-right">
-                        <button type="submit"
-                                class="inline-flex items-center px-4 py-2 rounded-md bg-primary text-white">Send message
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </section>
-
     <!-- FOOTER -->
     <footer class="mt-16 bg-white border-t">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -157,5 +115,9 @@
     // Progressive enhancement note: add focus management and trapping if building a larger app.
 </script>
 
+
+<script src="{% static 'js/core/core.js' %}"></script>
+{% block javascript %}
+{% endblock javascript %}
 </body>
 </html>

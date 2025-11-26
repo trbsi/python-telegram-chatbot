@@ -1,8 +1,8 @@
-from django.contrib.auth.models import User
 from django.core.paginator import Paginator, Page
 
 from src.media.enums import MediaEnum
 from src.media.models import Media
+from src.user.models import User
 
 
 class MyContentService:

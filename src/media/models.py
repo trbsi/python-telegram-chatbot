@@ -1,8 +1,8 @@
-from django.contrib.auth.models import User
 from django.db import models
 
 from protectapp import settings
 from src.media.enums import MediaEnum
+from src.user.models import User
 
 
 class Hashtag(models.Model):
