@@ -6,14 +6,17 @@
     <meta name="viewport" content="width=device-width,initial-scale=1"/>
     <title>{{TEMPLATE_APP_NAME}} | {% block title %}{% endblock title %}</title>
     <meta name="description" content="Simple responsive website template built with Tailwind CSS (single-file)."/>
-    <!-- Tailwind via CDN (good for prototyping). For production, compile with PostCSS or Tailwind CLI. -->
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
     <link
             href="https://cdn.jsdelivr.net/npm/remixicon@4.7.0/fonts/remixicon.css"
             rel="stylesheet"
     />
     <script src="https://unpkg.com/alpinejs" defer></script>
+
+    <!-- Video js -->
+    <link href="https://vjs.zencdn.net/8.23.4/video-js.css" rel="stylesheet"/>
+    <script src="https://vjs.zencdn.net/8.23.4/video.min.js"></script>
 
 </head>
 <body class="antialiased text-gray-800 bg-gray-50">
@@ -23,7 +26,6 @@
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
             <a href="/" class="flex items-center gap-3">
-                <span class="inline-block w-10 h-10 bg-gradient-to-tr from-primary to-accent rounded-lg"></span>
                 <span class="font-semibold text-lg">BrandName</span>
             </a>
 
@@ -72,9 +74,9 @@
 </header>
 
 <!-- HERO -->
-<main class="mt-8">
-    <section class="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="max-w-3xl mx-auto bg-white p-4 rounded-2xl shadow-sm">
+<main>
+    <section class="container mx-auto  sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto bg-white p-4  shadow-sm">
             {% block content %}
             {% endblock content %}
         </div>

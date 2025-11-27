@@ -9,6 +9,7 @@ from django.urls import reverse_lazy
 from django.views.decorators.http import require_GET, require_POST
 
 from src.media.enums import MediaEnum
+from src.media.models import Media
 from src.media.services.my_content.my_content_service import MyContentService
 from src.media.services.update_my_content.update_my_content_service import UpdateMyContentService
 from src.media.services.upload_media.upload_media_service import UploadMediaService
@@ -118,6 +119,12 @@ def api_unlock(request: HttpRequest) -> JsonResponse:
         return JsonResponse({'error': str(e)}, status=402)
 
     return JsonResponse(result)
+
+
+@require_GET
+def view_single_media(request: HttpRequest, id: int) -> HttpResponse:
+    media = Media.objects.get(pk=id)
+    return render(request, 'single_media.html', {'media': media})
 
 
 # no need for login_required

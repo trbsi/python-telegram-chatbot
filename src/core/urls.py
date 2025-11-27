@@ -1,5 +1,6 @@
 from django.urls import path
 
+from src.media import views as media_views
 from . import views
 
 urlpatterns = [
@@ -9,4 +10,6 @@ urlpatterns = [
     path('privacy-policy', views.privacy_policy, name='privacy_policy'),
     path('legal-documents', views.legal_documents, name='legal_documents'),
     path('contact', views.contact, name='contact'),
+    path('v/<int:id>', media_views.view_single_media, name='media.view_single_media'),
+
 ]

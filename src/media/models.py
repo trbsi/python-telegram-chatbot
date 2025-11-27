@@ -2,6 +2,7 @@ from django.db import models
 
 from protectapp import settings
 from src.media.enums import MediaEnum
+from src.media.utils import load_tags
 from src.user.models import User
 
 

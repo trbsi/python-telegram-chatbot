@@ -33,7 +33,7 @@ services:
       - protectapp_media:/app/media
     working_dir: /app
     depends_on: [ mysql, redis ]
-    #    command: poetry run gunicorn protectapp.wsgi:application -b 0.0.0.0:8000 --reload
+    #    command: poetry run gunicorn protectapp.wsgi:application -b 0.0.0.0:8000 --workers 5 --reload
     command: python manage.py runserver 0.0.0.0:8000
     expose: [ "8000" ]
     networks: [ protectapp-net ]
@@ -96,11 +96,12 @@ services:
     environment:
       CELERY_BROKER_URL: redis://redis:6379/0
       DJANGO_SETTINGS_MODULE: protectapp.settings
+      CELERY_BEAT_SCHEDULER: django_celery_beat.schedulers:DatabaseScheduler
     volumes:
       - ../:/app
       - protectapp_media:/app/media
     depends_on: [ redis, django ]
-    command: poetry run celery -A protectapp beat --loglevel=info --scheduler django_celery_beat.schedulers:DatabaseScheduler
+    command: poetry run celery -A protectapp beat --loglevel=debug
     networks: [ protectapp-net ]
 
 networks:

@@ -1,0 +1,60 @@
+{% extends "core/layout.html" %}
+{% load static %}
+
+
+{% block javascript %}
+<script src="{% static 'js/media/single_media.js'%}"></script>
+{% endblock javascript %}
+
+{% block content %}
+<div id="media-view" class="max-w-md mx-auto  "
+     x-data="mediaActions()">
+    <!-- Video.js player -->
+    <video
+            id="my-video"
+            class="video-js vjs-default-skin "
+            controls
+            preload="metadata"
+            poster="{{media.get_thumbnail_url}}"
+            data-setup='{"fluid": true}'>
+        <source src="{{media.get_file_url}}" type="video/mp4"/>
+        <p class="vjs-no-js">
+            To view this video please enable JavaScript, and consider upgrading to a
+            web browser that
+            <a href="https://videojs.com/html5-video-support/" target="_blank" class="text-blue-500 underline">
+                supports HTML5 video
+            </a>
+        </p>
+    </video>
+
+    <!-- Action anchors -->
+    <div class="flex justify-around mt-4 pb-4">
+        <!-- Like -->
+        <a href="#"
+           @click.prevent="like()"
+           :class="liked ? 'text-blue-600' : 'text-blue-500'"
+           class="no-underline flex flex-col items-center transform transition-transform duration-150">
+            <i class="ri-thumb-up-line text-3xl" x-show="!liked"></i>
+            <i class="ri-thumb-up-fill text-3xl" x-show="liked"></i>
+            <span class="mt-1 text-sm" x-text="likes"></span>
+        </a>
+
+        <!-- Comment -->
+        <a href="#"
+           @click.prevent="comment()"
+           class="no-underline flex flex-col items-center text-gray-500 transform transition-transform duration-150">
+            <i class="ri-chat-3-line text-3xl"></i>
+            <span class="mt-1 text-sm" x-text="comments"></span>
+        </a>
+
+        <!-- Report -->
+        <a href="#"
+           @click.prevent="report()"
+           class="no-underline flex flex-col items-center text-red-500 hover:text-red-600 transform transition-transform duration-150">
+            <i class="ri-error-warning-line text-3xl"></i>
+            <span class="mt-1 text-sm">Report</span>
+        </a>
+    </div>
+</div>
+
+{% endblock content %}

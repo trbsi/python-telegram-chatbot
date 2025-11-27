@@ -1,8 +1,7 @@
 from django.contrib.auth.models import Group
-from django.contrib.auth.models import User as User
 from faker import Faker
 
-from src.user.models import UserProfile
+from src.user.models import UserProfile, User
 
 
 class UserSeeder:

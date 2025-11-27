@@ -3,6 +3,9 @@ import os
 import bugsnag
 
 from protectapp import settings
+from src.core.utils import reverse_lazy_admin
+from src.media.enums import MediaEnum
+from src.media.models import Media
 from src.notification.services.notification_service import NotificationService
 from src.notification.value_objects.push_notification_value_object import PushNotificationValueObject
 from src.storage.services.compression.compress_media_service import CompressMediaService
@@ -38,9 +41,7 @@ class ProcessMediaTask:
             download_from_remote: bool,
     ) -> None:
         media = None
-        if media_type == self.MEDIA_TYPE_INBOX:
-            media = Message.objects.get(id=media_id)
-        elif media_type == self.MEDIA_TYPE_MEDIA:
+        if media_type == self.MEDIA_TYPE_MEDIA:
             media = Media.objects.get(id=media_id)
 
         if media is None or media.file_info is None:
@@ -124,6 +125,3 @@ class ProcessMediaTask:
             url = reverse_lazy_admin(object=media, action='changelist', is_full_url=True)
             push_notification = PushNotificationValueObject(body=f'[CONTENT UPLOADED] {url}')
             NotificationService.send_notification(push_notification)
-        elif isinstance(media, Message):
-            media.is_ready = True
-            media.save()

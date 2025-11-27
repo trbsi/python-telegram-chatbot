@@ -178,6 +178,7 @@ STORAGE_CONFIG = {
         'bucket_name': env('BACKBLAZE_DEFAULT_BUCKET_NAME'),
     },
 }
+STORAGE_CDN_URL = env('STORAGE_CDN_URL')
 
 # Auth
 ACCOUNT_EMAIL_VERIFICATION = 'none'
