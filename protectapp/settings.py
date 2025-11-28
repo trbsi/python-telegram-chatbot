@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 import os
 from pathlib import Path
 
+import bugsnag
 import environ
 
 env = environ.Env(
@@ -197,7 +198,13 @@ DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 ADMIN_EMAILS = env('ADMIN_EMAILS').split(',')
 
 # Bugsnag
-BUGSNAG = {
-    'api_key': env('BUGSNAG_API_KEY'),
-    'project_root': BASE_DIR,
-}
+
+# BugSnag
+bugsnag.configure(
+    api_key=env("BUGSNAG_API_KEY"),
+    project_root=BASE_DIR,
+)
+
+# Slack
+SLACK_BOT_TOKEN = env('SLACK_BOT_TOKEN')
+SLACK_CHANNEL_ID = env('SLACK_CHANNEL_ID')

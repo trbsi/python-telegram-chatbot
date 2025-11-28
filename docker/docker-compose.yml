@@ -29,6 +29,7 @@ services:
       DATABASE_HOST: mysql
       REDIS_URL: redis://redis:6379/0
       DJANGO_SETTINGS_MODULE: protectapp.settings
+      CELERY_BROKER_URL: redis://redis:6379/0
     volumes:
       - ../:/app
       - protectapp_media:/app/media
