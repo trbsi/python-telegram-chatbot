@@ -3,6 +3,7 @@ from unittest.mock import patch, call, ANY
 
 from src.storage.services.sharding.shard_metadata_value_object import ShardMetadataValueObject
 from src.storage.services.sharding.sharding_service import ShardingService
+from src.storage.services.sharding.video_metadata_value_object import VideoMetadataValueObject
 
 
 class TestSharding(TestCase):
@@ -33,8 +34,8 @@ class TestSharding(TestCase):
         # for: shard_value_object.file.read_bytes()
         mock_path.side_effect = [b'xxx', b'yyy', b'aaa', b'bbb']
         # for: self.split_video_service.split_video_by_seconds()
-        mock_split_video_service.split_video_by_seconds.return_value = (
-            [
+        mock_split_video_service.split_video_by_seconds.return_value = VideoMetadataValueObject(
+            shards_metadata=[
                 ShardMetadataValueObject(
                     file=mock_path,
                     start_time=0 * seconds_per_video,
@@ -56,7 +57,7 @@ class TestSharding(TestCase):
                     duration=seconds_per_video,
                 )
             ],
-            142
+            video_duration_in_seconds=142
         )
         # for: AESGCM.generate_key(bit_length=256)
         mock_aesgcm_generate_key.return_value = b'masterkeymasterkeymasterkey12345'

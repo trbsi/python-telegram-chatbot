@@ -9,6 +9,7 @@ from src.media.models import Media
 from src.storage.services.local_storage_service import LocalStorageService
 from src.storage.services.remote_storage_service import RemoteStorageService
 from src.storage.services.sharding.split_video_service import SplitVideoService
+from src.storage.services.sharding.video_metadata_value_object import VideoMetadataValueObject
 from src.storage.utils import remote_shard_file_path_for_media
 
 
@@ -30,12 +31,13 @@ class ShardingService:
 
     def shard_media(self, media: Media, local_file_path: str) -> None:
         # Split file by seconds
-        shard_metadata, total_time_in_seconds = (
+        video_metadata_value_object: VideoMetadataValueObject = (
             self.split_video_service.split_video_by_seconds(
                 media=media,
                 local_file_path=local_file_path
             )
         )
+        shard_metadata = video_metadata_value_object.shards_metadata
 
         # Split file
         shards_bytes = []
@@ -74,7 +76,7 @@ class ShardingService:
 
         # Now store both wrapped_master_key and wrap_nonce in your database
         file_metadata = media.file_metadata
-        file_metadata['total_time_in_seconds'] = total_time_in_seconds
+        file_metadata['total_time_in_seconds'] = video_metadata_value_object.video_duration_in_seconds
 
         media.shards_metadata = shard_metadata_to_save
         media.master_key = wrapped_master_key

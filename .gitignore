@@ -11,6 +11,7 @@ docker/.env
 celerybeat-schedule
 celerybeat-schedule-shm
 celerybeat-schedule-wal
+test/
 
 # Backup files #
 *.bak
