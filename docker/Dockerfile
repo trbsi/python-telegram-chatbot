@@ -33,6 +33,7 @@ RUN curl -sSL https://install.python-poetry.org | python3 -
 # 4. Install global npm packages if needed (optional, separate layer)
  RUN npm install -g \
      javascript-obfuscator \
+     terser \
      npm cache clean --force
 
 WORKDIR /app

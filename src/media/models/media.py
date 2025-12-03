@@ -34,8 +34,6 @@ class Media(models.Model):
 
     objects = models.Manager()
 
-    # objects_active = MediaManager()
-
     class Meta:
         indexes = [
             models.Index(fields=['status', 'is_approved', 'user_id'], name='idx_load_media_feed'),
@@ -70,5 +68,22 @@ class Media(models.Model):
     def get_description(self) -> str:
         return load_tags(self.description)
 
-    def codec_string(self) -> str:
+    # File metadata getters
+    def get_codec_string(self) -> str:
         return self.file_metadata.get('codec_string')
+
+    def get_total_time_in_seconds(self):
+        return self.file_metadata.get('total_time_in_seconds')
+
+    def get_seconds_per_shard(self):
+        return self.file_metadata.get('seconds_per_shard')
+
+    # Shard metadata getter
+    def get_shard_file_path(self, index: int) -> str:
+        return self.shards_metadata[index]['storage_metadata']['file_path']
+
+    def get_shard_name(self, index: int) -> str:
+        return self.shards_metadata[index]['shard']
+
+    def get_shard_nonce(self, index: int) -> str:
+        return self.shards_metadata[index]['nonce']

@@ -2,6 +2,13 @@
 {% load static %}
 
 
+{% block javascript_global %}
+const videoMetadata = JSON.parse('{{media_value_object.get_video_metadata_as_json}}');
+const sessionKey = '{{media_value_object.get_session_key}}'
+const videoKey = '{{media_value_object.get_wrapped_master_key}}'
+const videoNonce = '{{media_value_object.get_wrap_nonce}}'
+{% endblock javascript_global %}
+
 {% block javascript_include %}
 <script src="{% static 'js/media/single_media.js' %}"></script>
 {% endblock javascript_include %}

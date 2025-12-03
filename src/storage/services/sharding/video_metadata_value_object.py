@@ -6,8 +6,10 @@ class VideoMetadataValueObject:
             self,
             shards_metadata: list[ShardMetadataValueObject],
             video_duration_in_seconds: int,
+            seconds_per_shard: int,
             codec_string: str
     ):
         self.shards_metadata = shards_metadata
         self.video_duration_in_seconds = video_duration_in_seconds
+        self.seconds_per_shard = seconds_per_shard
         self.codec_string = codec_string

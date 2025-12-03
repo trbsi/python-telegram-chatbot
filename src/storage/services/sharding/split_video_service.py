@@ -4,6 +4,7 @@ import subprocess
 from pathlib import Path
 
 from protectapp import settings
+from src.media.enums import MediaEnum
 from src.media.models import Media
 from src.storage.services.sharding.shard_metadata_value_object import ShardMetadataValueObject
 from src.storage.services.sharding.video_metadata_value_object import VideoMetadataValueObject
@@ -14,7 +15,7 @@ class SplitVideoService:
             self,
             media: Media,
             local_file_path: str,
-            seconds_per_video: int = 10
+            seconds_per_video: int = MediaEnum.SECONDS_PER_SHARD.value
     ) -> VideoMetadataValueObject:
         output_dir = os.path.join(settings.MEDIA_ROOT, 'temp', str(media.id))
         input_path = Path(local_file_path)
@@ -53,6 +54,7 @@ class SplitVideoService:
         return VideoMetadataValueObject(
             shards_metadata=meta,
             video_duration_in_seconds=video_duration,
+            seconds_per_shard=seconds_per_video,
             codec_string=codec_string
         )
 

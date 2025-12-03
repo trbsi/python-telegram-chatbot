@@ -3,6 +3,8 @@ from typing import Tuple
 
 
 class MediaEnum(Enum):
+    SECONDS_PER_SHARD = 10
+
     STATUS_PAID = 'paid'
     STATUS_SCHEDULE = 'schedule'
     STATUS_DELETED = 'deleted'

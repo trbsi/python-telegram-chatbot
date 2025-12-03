@@ -1,4 +1,5 @@
 import os
+import subprocess
 import time
 from pathlib import Path
 
@@ -7,7 +8,12 @@ from src.core.management.commands.base_command import BaseCommand
 
 
 class Command(BaseCommand):
+    def add_arguments(self, parser):
+        parser.add_argument("--minify_and_obfuscate", type=int, default=1)
+
     def handle(self, *args, **options):
+        minify_and_obfuscate = options['minify_and_obfuscate']
+
         directory = settings.STATICFILES_DIRS[0]
         exclude_files = [
             'push_notifications.js',
@@ -39,6 +45,29 @@ class Command(BaseCommand):
         with open(file_min_js, 'w') as f:
             f.write('\n\n'.join(js_content))
 
-        # @TODO obfuscate
+        # obfuscate
+        if (minify_and_obfuscate):
+            self._minify_and_obfuscate(file_min_js)
 
         self.success('File written')
+
+    def _minify_and_obfuscate(self, file_path: str) -> None:
+        # Minify step
+        subprocess.run([
+            "terser",
+            file_path,
+            "--compress",
+            "--mangle",
+            "--output",
+            file_path
+        ], check=True)
+
+        # Obfuscation step
+        subprocess.run([
+            "javascript-obfuscator",
+            file_path,
+            "--output",
+            file_path,
+            "--compact",
+            "--control-flow-flattening"
+        ], check=True)

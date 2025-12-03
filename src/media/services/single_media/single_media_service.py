@@ -21,15 +21,19 @@ class SingleMediaService:
         master_key = self._decrypt_wrapped_master_key(media)
         # Random 32 bytes
         session_key = os.urandom(32)
-        wrapped_master_key_for_client = AESGCM(master_key).encrypt(
-            nonce=session_key,
+        # standard 12-byte AES-GCM nonce
+        wrap_nonce = os.urandom(12)
+        wrapped_master_key_for_client = AESGCM(session_key).encrypt(
+            nonce=wrap_nonce,
             data=master_key,
             associated_data=None
         )
 
         return MediaValueObject(
             media=media,
-            wrapped_master_key_for_client=wrapped_master_key_for_client,
+            wrapped_master_key=wrapped_master_key_for_client,
+            wrap_nonce=wrap_nonce,
+            session_key=session_key,
             is_unlocked=is_unlocked
         )
 
