@@ -65,12 +65,16 @@ class SplitVideoService:
         cmd = [
             "ffmpeg",
             "-i", str(input_path),
-            "-c", "copy",
+            "-c", "copy",  # Fast, no quality loss
             "-map", "0",
             "-f", "segment",
             "-segment_time", str(seconds_per_video),
+            "-segment_format", "mp4",
+            "-segment_list_type", "flat",  # Optional: creates segment list
             "-reset_timestamps", "1",
-            "-force_key_frames", f"expr:gte(t,n_forced*{seconds_per_video})",
+            "-movflags", "+frag_keyframe+empty_moov+default_base_moof",  # MSE compatibility
+            "-avoid_negative_ts", "make_zero",
+            "-flags", "+global_header",  # Ensures proper headers
             output_pattern
         ]
 
@@ -87,69 +91,98 @@ class SplitVideoService:
 
         result = subprocess.run(cmd, capture_output=True, text=True, check=True)
         info = json.loads(result.stdout)
-        return int(float(info["format"]["duration"]))
+        return int(info["format"]["duration"])
 
-    def _get_mp4_codec_string(self, video_path: str) -> str:
+    def _get_mp4_codec_string(self, video_path) -> str:
         """
-        Return something like: video/mp4; codecs="avc1.4d401f, mp4a.40.2"
+        Get MSE-compatible codec string from video file
+        Returns: 'video/mp4; codecs="avc1.640028, mp4a.40.2"'
         """
-        # Probe video stream
+        # Get video codec details
         cmd_video = [
-            "ffprobe",
-            "-v", "error",
-            "-select_streams", "v:0",
-            "-show_entries", "stream=codec_name,profile,level",
-            "-of", "json",
-            video_path
+            'ffprobe',
+            '-v', 'quiet',
+            '-print_format', 'json',
+            '-show_streams',
+            '-select_streams', 'v:0',
+            str(video_path)
         ]
-        video_info = json.loads(subprocess.check_output(cmd_video))["streams"][0]
 
-        v_codec = video_info["codec_name"]
+        result = subprocess.run(cmd_video, capture_output=True, text=True)
+        data = json.loads(result.stdout)
 
-        # Convert profile + level into MSE-friendly avc1.xxxxxx
-        #
-        # H.264 format: avc1.{profile_idc}{constraint_set}{level_idc}
-        # FFprobe gives level as integer like 31 -> hex 1f
-        #
-        # Good defaults if profile missing:
-        profile_hex_map = {
-            "Baseline": "42",
-            "Main": "4D",
-            "High": "64"
-        }
+        video_stream = data['streams'][0] if data.get('streams') else {}
 
-        if v_codec == "h264":
-            profile = video_info.get("profile", "Main")
-            level = video_info.get("level", 31)
-
-            profile_hex = profile_hex_map.get(profile, "4D")
-            level_hex = f"{level:02x}"  # convert to 2-char hex
-            video_codec = f"avc1.{profile_hex}00{level_hex}"
-        else:
-            video_codec = v_codec
-
-        # Probe audio stream
+        # Get audio codec details if exists
         cmd_audio = [
-            "ffprobe",
-            "-v", "error",
-            "-select_streams", "a:0",
-            "-show_entries", "stream=codec_name",
-            "-of", "json",
-            video_path
+            'ffprobe',
+            '-v', 'quiet',
+            '-print_format', 'json',
+            '-show_streams',
+            '-select_streams', 'a:0',
+            str(video_path)
         ]
 
-        try:
-            audio_info = json.loads(subprocess.check_output(cmd_audio))["streams"][0]
-            a_codec = audio_info["codec_name"]
+        audio_result = subprocess.run(cmd_audio, capture_output=True, text=True)
+        audio_data = json.loads(audio_result.stdout)
+        audio_stream = audio_data['streams'][0] if audio_data.get('streams') else None
 
-            if a_codec == "aac":
-                audio_codec = "mp4a.40.2"  # AAC LC (most common)
+        # Build codec string based on codec
+        video_codec = video_stream.get('codec_name', '')
+        profile = video_stream.get('profile', '')
+        level = video_stream.get('level', 0)
+
+        mime_codec = ''
+
+        # For H.264/AVC
+        if video_codec == 'h264':
+            # Convert profile to avc1 format
+            profile_map = {
+                'baseline': '42E0',
+                'main': '4D40',
+                'high': '6400'
+            }
+
+            profile_hex = profile_map.get(profile.lower(), '42E0')  # Default to baseline
+
+            # Convert level to hex (e.g., 31 -> 0x1F -> 1F)
+            if level:
+                level_hex = f"{int(float(level)):02X}"
             else:
-                audio_codec = a_codec
-        except Exception:
-            audio_codec = None
+                level_hex = "1F"  # Default level 3.1
 
-        if audio_codec:
-            return f'video/mp4; codecs="{video_codec}, {audio_codec}"'
+            video_codec_str = f"avc1.{profile_hex}{level_hex}"
+
+        # For H.265/HEVC
+        elif video_codec == 'hevc':
+            video_codec_str = 'hev1.1.6.L93.B0'
+
+        # For VP9
+        elif video_codec == 'vp9':
+            video_codec_str = 'vp09.00.10.08'
+
+        # For AV1
+        elif video_codec == 'av1':
+            video_codec_str = 'av01.0.04M.08'
+
         else:
-            return f'video/mp4; codecs="{video_codec}"'
+            video_codec_str = video_codec
+
+        # Add audio codec if exists
+        if audio_stream:
+            audio_codec = audio_stream.get('codec_name', '')
+
+            if audio_codec == 'aac':
+                audio_codec_str = 'mp4a.40.2'  # AAC-LC
+            elif audio_codec == 'opus':
+                audio_codec_str = 'opus'
+            elif audio_codec == 'mp3':
+                audio_codec_str = 'mp4a.6B'
+            else:
+                audio_codec_str = audio_codec
+
+            mime_codec = f'video/mp4; codecs="{video_codec_str}, {audio_codec_str}"'
+        else:
+            mime_codec = f'video/mp4; codecs="{video_codec_str}"'
+
+        return mime_codec

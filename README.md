@@ -2,8 +2,9 @@
 
 ## Set up https certs
 
-Certificates already exist in `docker/nginx/local_certs`. This step is just in case.
 You need this to be able to run crypto in javascript
+
+1. Install mkcert and generate certificates
 
 ``` 
 sudo apt install mkcert
@@ -11,15 +12,33 @@ mkcert -install
 mkcert protectapp.loc
 ```
 
+This creates:
+
+- protectapp.loc.pem
+- protectapp.loc-key.pem
+
+2. Move to the folder
+
+```
+mv protectapp.loc.pem docker/nginx/local_certs/protectapp.crt
+mv protectapp.loc-key.pem docker/nginx/local_certs/protectapp.key
+```
+
+3. Rebuild/start docker
+
 ## Start docker
 
 1. Copy env files in root directory and ./docker directory
-2.
+2. Build docker
 
 ``` 
 cd docker
 docker compose up -d --build
 ```
+
+# Deployment
+
+Run `./deploy.sh --build` to build docker or `./deploy.sh` to deplo without building docker
 
 # Shards explanation
 
@@ -48,17 +67,4 @@ docker compose up -d --build
 - storage_metadata - is just metadata from Backblaze
 
 Expose only **nonce**, **shard**, **storage_metadata.file_path**.
-
-# Deployment
-
-```
-# 1. Clean previous builds
-docker exec -it protectapp-django poetry run python manage.py collect_javascript_command
-
-# 2. Collect static files
-python manage.py collectstatic --noinput --clear
-
-```
-
-
 

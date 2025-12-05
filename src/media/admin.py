@@ -14,18 +14,18 @@ class AdminMedia(admin.ModelAdmin):
     list_display = ('id', 'is_approved', 'user', 'file_preview', 'status', 'created_at')
     fields = (
         'user',
+        'is_processed',
+        'is_approved',
         'file_type',
         'status',
         'description',
-        'is_processed',
         'file_preview',
         'trailer',
         'thumbnail',
     )
     readonly_fields = ('created_at', 'file_preview', 'trailer', 'thumbnail')
     search_fields = ('user__username',)
-    actions = ['mark_as_approved_multiple', 'mark_as_deleted_multiple']
-    actions_submit_line = ['mark_as_deleted_single']
+    actions = ['mark_as_approved_multiple', 'mark_as_deleted_multiple', ]
 
     def has_delete_permission(self, request, obj=None):
         return False

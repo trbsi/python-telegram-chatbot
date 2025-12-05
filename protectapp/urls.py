@@ -23,8 +23,9 @@ urlpatterns = (
         [
             path('', include('src.core.urls')),
             path('notification/', include('src.notification.urls')),
-            path('admin/', admin.site.urls),
             path('accounts/', include('allauth.urls')),
             path('media/', include('src.media.urls')),
+            path('user/', include('src.user.urls')),
+            path('.privatnomjesto/', admin.site.urls),
         ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 )

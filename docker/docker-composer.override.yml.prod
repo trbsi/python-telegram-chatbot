@@ -5,7 +5,6 @@ acme-companion:
   depends_on: [ nginx-proxy ]
   volumes:
     - /var/run/docker.sock:/var/run/docker.sock:ro
-    - ./nginx/certs:/etc/nginx/certs
+    - protectapp_certificates:/etc/nginx/certs
     - ./nginx/vhost:/etc/nginx/vhost.d
-    - ./nginx/html:/usr/share/nginx/html
   networks: [ protectapp-net ]

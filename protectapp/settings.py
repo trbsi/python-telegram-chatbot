@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'src.user.apps.UserConfig',
     'src.media.apps.MediaConfig',
     'src.authentication.apps.AuthenticationConfig',
+    'src.report.apps.ReportConfig',
 
     'django_celery_beat',
 
@@ -60,6 +61,7 @@ INSTALLED_APPS = [
     'allauth.account',
     # Optional -- requires install using `django-allauth[socialaccount]`.
     'allauth.socialaccount',
+    'allauth.socialaccount.providers.twitter_oauth2',
 ]
 
 MIDDLEWARE = [
