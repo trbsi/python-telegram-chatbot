@@ -1,6 +1,7 @@
 import json
 
 import bugsnag
+from app.log import log
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import AnonymousUser
@@ -10,7 +11,6 @@ from django.urls.base import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_GET, require_POST
 
-from app.log import log
 from src.payment.models import Balance, Package
 from src.payment.services.buy_package.buy_package_service import BuyPackageService
 from src.payment.services.my_payments.my_payments_service import MyPaymentsService
@@ -60,7 +60,7 @@ def list_packages(request: HttpRequest) -> HttpResponse:
 @login_required
 def buy_single_package(request: HttpRequest, package_id: int) -> HttpResponse:
     service = BuyPackageService()
-    redirect_url = service.buy_package(request.user, package_id)
+    redirect_url = service.buy_package(request.user, package_id).redirect_url
     return redirect(redirect_url)
 
 
@@ -72,8 +72,7 @@ def payment_webhook(request: HttpRequest) -> JsonResponse:
     else:
         data = request.POST.dict()
 
-    log.info(data)  # @TODO remove log
-    bugsnag.notify(Exception(data))
+    bugsnag.notify(Exception(data))  # @TODO remove log
 
     webhook_service = PaymentWebhookService()
     webhook_service.handle_webook(data)

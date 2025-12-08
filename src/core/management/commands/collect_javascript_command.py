@@ -64,10 +64,19 @@ class Command(BaseCommand):
 
         # Obfuscation step
         subprocess.run([
-            "javascript-obfuscator",
-            file_path,
-            "--output",
-            file_path,
+            "javascript-obfuscator", file_path,
+            "--output", file_path,
             "--compact",
-            "--control-flow-flattening"
+            "--control-flow-flattening",
+            "--control-flow-flattening-threshold", "0.75",
+            "--dead-code-injection",
+            "--dead-code-injection-threshold", "0.4",
+            "--string-array",
+            "--string-array-threshold", "1",
+            "--string-array-encoding", "base64",
+            "--string-array-shuffle",
+            "--split-strings",
+            "--split-strings-chunk-length", "5",
+            "--numbers-to-expressions",
+            "--simplify"
         ], check=True)

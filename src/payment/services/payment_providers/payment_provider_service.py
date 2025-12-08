@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from app import settings
+from protectapp import settings
 from src.payment.enums import PaymentEnum
 from src.payment.models import PaymentHistory
 from src.payment.services.payment_providers.ccbill.ccbill_create_checkout_service import CCBillCreateCheckoutService

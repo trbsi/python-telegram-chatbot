@@ -18,7 +18,17 @@
 
 {% block content %}
 <div id="media-view" class="max-w-md mx-auto  "
-     x-data="singleMediaComponent()">
+     x-data="singleMediaComponent(
+        {{media_value_object.media.id}},
+        {{media_value_object.total_likes}},
+        {{media_value_object.total_comments}},
+          {% if media_value_object.is_liked %}true{% else %}false{% endif %},
+        '{{like_media_api}}',
+        '{{create_comment_media_api}}',
+        '{{list_comments_media_api}}',
+        '{{report_media_api}}'
+     )"
+     x-init="init()">
     {% if media_value_object.is_unlocked %}
     <video
             id="my-video"
@@ -32,6 +42,29 @@
         </p>
     </video>
     {% else %}
+    {% if media_value_object.is_unlock_pending %}
+    <div class="bg-blue-100 border-t-4 border-teal-500 rounded-b text-blue-900 px-4 py-3 shadow-md text-center"
+         role="alert">
+        <div class="flex flex-col items-center justify-center">
+            <div class="mb-3">Processing media...</div>
+            <div>
+                {% include 'components/elements/loader.html' %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    <form method="POST" action="{% url 'media.unlock' %}">
+        <input type="hidden" name="media_id" value="{{media_value_object.media.id}}">
+        <button type="submit"
+                class="tw w-full mb-5 justify-center inline-flex items-center gap-2 px-5 py-2.5 rounded-xl
+          font-semibold text-yellow-900
+          bg-gradient-to-b from-amber-200 via-amber-300 to-amber-400
+          hover:from-amber-300 hover:via-amber-400 hover:to-amber-500
+          transition-all">
+            <i class="ri-lock-unlock-line text-lg"></i>
+            Unlock for ${{ media_value_object.media.unlock_price }}
+        </button>
+    </form>
     <video
             id="my-video"
             class="video-js vjs-default-skin "
@@ -45,10 +78,6 @@
             web browser that supports HTML5 video
         </p>
     </video>
-    <a href="#"
-       class="text-white bg-success box-border border border-transparent hover:bg-success-strong focus:ring-4 focus:ring-success-medium shadow-xs font-medium leading-5 rounded-base text-sm px-4 py-2.5 focus:outline-none">
-        <i class="ri-lock-unlock-line"></i> Unlock for ${{media.unlock_price}}
-    </a>
     {% endif %}
 
     <!-- Action anchors -->
@@ -60,25 +89,22 @@
            class="no-underline flex flex-col items-center transform transition-transform duration-150">
             <i class="ri-thumb-up-line text-3xl" x-show="!liked"></i>
             <i class="ri-thumb-up-fill text-3xl" x-show="liked"></i>
-            <span class="mt-1 text-sm" x-text="likes"></span>
+            <span class="mt-1 text-sm" x-text="likeCount"></span>
         </a>
 
-        <!-- Comment -->
-        <a href="#"
-           @click.prevent="comment()"
-           class="no-underline flex flex-col items-center text-gray-500 transform transition-transform duration-150">
-            <i class="ri-chat-3-line text-3xl"></i>
-            <span class="mt-1 text-sm" x-text="comments"></span>
-        </a>
 
         <!-- Report -->
         <a href="#"
-           @click.prevent="report()"
+           @click.prevent="openReportForm()"
            class="no-underline flex flex-col items-center text-red-500 hover:text-red-600 transform transition-transform duration-150">
             <i class="ri-error-warning-line text-3xl"></i>
             <span class="mt-1 text-sm">Report</span>
         </a>
     </div>
+
+    {% include "single_media/comments.html"%}
+
+    {% include "report_form.html" %}
 </div>
 
 {% endblock content %}

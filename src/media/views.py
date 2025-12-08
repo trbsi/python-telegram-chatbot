@@ -10,9 +10,11 @@ from django.views.decorators.http import require_GET, require_POST
 
 from src.media.services.my_content.my_content_service import MyContentService
 from src.media.services.single_media.single_media_service import SingleMediaService
+from src.media.services.unlock.unlock_service import UnlockService
 from src.media.services.update_my_content.update_my_content_service import UpdateMyContentService
 from src.media.services.upload_media.upload_media_service import UploadMediaService
 from src.media.services.views.views_service import ViewsService
+from src.payment.exceptions import BalanceTooLowException
 from src.user.models import User
 
 
@@ -23,7 +25,14 @@ def view_single_media(request: HttpRequest, id: int) -> HttpResponse:
     return render(
         request,
         'single_media.html',
-        {'media_value_object': media_value_object}
+        {
+            'media_value_object': media_value_object,
+            'like_media_api': reverse_lazy('engagement.api.like_media', kwargs={'media_id': '__MEDIA_ID__'}),
+            'create_comment_media_api': reverse_lazy('engagement.api.create_comment'),
+            'list_comments_media_api': reverse_lazy('engagement.api.list_comments',
+                                                    kwargs={'media_id': '__MEDIA_ID__'}),
+            'report_media_api': reverse_lazy('report.api.report_content'),
+        }
     )
 
 
@@ -115,22 +124,19 @@ def update_my_media(request: HttpRequest) -> HttpResponse:
 
 @require_POST
 @login_required
-def api_unlock(request: HttpRequest) -> JsonResponse:
-    post = json.loads(request.body)
+def unlock(request: HttpRequest) -> HttpResponse:
+    post = request.POST
+    media_id = int(post.get('media_id'))
+    service = UnlockService()
     try:
-        service = UnlockService()
-        result = service.unlock(user=request.user, media_id=int(post.get('media_id')))
+        service.unlock_by_balance(user=request.user, media_id=media_id)
     except BalanceTooLowException as e:
-        return JsonResponse(
-            {
-                'error': f'Your balance is too low. <a href="{reverse_lazy('payment.list_packages')}" class="underline">Click here to buy more coins.</a>'
-            },
-            status=402
-        )
+        url = service.unlock_by_payment(user=request.user, media_id=media_id)
+        return redirect(url)
     except Exception as e:
-        return JsonResponse({'error': str(e)}, status=402)
+        messages.error(request, str(e))
 
-    return JsonResponse(result)
+    return redirect(reverse_lazy('media.view_single_media', kwargs={'id': media_id}))
 
 
 # no need for login_required

@@ -17,18 +17,23 @@
     />
     <script src="https://unpkg.com/alpinejs" defer></script>
 
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.js"
+            integrity="sha256-UgvvN8vBkgO0luPSUl2s8TIlOSYRoGFAX4jlCIm9Adc=" crossorigin="anonymous"></script>
+
     <!-- Video js -->
     <link href="https://vjs.zencdn.net/8.23.4/video-js.css" rel="stylesheet"/>
     <script src="https://vjs.zencdn.net/8.23.4/video.min.js"></script>
 
-    <script src="https://code.jquery.com/jquery-3.7.1.slim.js"
-            integrity="sha256-UgvvN8vBkgO0luPSUl2s8TIlOSYRoGFAX4jlCIm9Adc=" crossorigin="anonymous"></script>
+
+    <!-- Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css" rel="stylesheet">
 
 </head>
 <body class="antialiased text-gray-800 bg-gray-50">
 
 <!-- NAV -->
-<header class="bg-white shadow-sm sticky top-0 z-50">
+<header class="bg-white shadow-md sticky top-0 z-50">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex items-center justify-between h-16">
             <a href="/" class="flex items-center gap-3">
@@ -54,10 +59,12 @@
 
                     <div id="accountDropdownMenu"
                          class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg hidden">
-                        <a href="/accounts/password/reset/" class="tw flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+                        <a href="{% url 'account_reset_password' %}"
+                           class="tw flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
                             <i class="ri-key-line"></i> Reset Password
                         </a>
-                        <a href="/accounts/email/" class="tw flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+                        <a href="{% url 'account_email' %}"
+                           class="tw flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
                             <i class="ri-mail-line"></i> Update Email
                         </a>
                         <hr class="my-1">
@@ -111,11 +118,11 @@
                 <i class="ri-folder-line mr-2 text-xl"></i> My Content
             </a>
             <hr class="border-gray-200">
-            <a href="/accounts/password/reset/"
+            <a href="{% url 'account_reset_password' %}"
                class="tw flex items-center px-4 py-2 rounded-lg text-gray-800 hover:text-indigo-600 transition">
                 <i class="ri-lock-line mr-2 text-xl"></i> Reset Password
             </a>
-            <a href="/accounts/email/"
+            <a href="{% url 'account_email' %}"
                class="tw flex items-center px-4 py-2 rounded-lg text-gray-800 hover:text-indigo-600 transition">
                 <i class="ri-mail-line mr-2 text-xl"></i> Update Email
             </a>
@@ -150,18 +157,30 @@
         </div>
     </section>
     <!-- FOOTER -->
-    <footer class="mt-8 bg-white border-t">
+    <footer class="mt-8 bg-teal-900 text-white border-t">
         <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-                <div class="text-sm text-gray-600">© <span id="year"></span> {{TEMPLATE_APP_NAME}}. All rights reserved.</div>
+                <div class="text-sm">© <span id="year"></span> {{TEMPLATE_APP_NAME}}. All rights reserved.</div>
                 <div class="flex gap-4 text-sm">
-                    <a href="#" class="hover:text-primary">Privacy</a>
-                    <a href="#" class="hover:text-primary">Terms</a>
+                    <a href="#" class="tw underline hover:text-primary">Privacy</a>
+                    <a href="#" class="tw underline hover:text-primary">Terms</a>
                 </div>
             </div>
         </div>
     </footer>
 </main>
+
+
+<script src="{% static 'js/core/core.js' %}"></script>
+{% block javascript_global %}
+{% endblock javascript_global %}
+
+{% if TEMPLATE_APP_ENV == 'production' %}
+    <script src="{% static 'js/all.min.js' %}"></script>
+{% else %}
+    {% block javascript_include %}
+    {% endblock javascript_include %}
+{% endif %}
 
 <!-- Minimal JS for interactions (menu toggle + year) -->
 <script>
@@ -185,17 +204,6 @@
     // Progressive enhancement note: add focus management and trapping if building a larger app.
 </script>
 
-<script src="{% static 'js/core/core.js' %}"></script>
-{% block javascript_global %}
-{% endblock javascript_global %}
-
-{% if TEMPLATE_APP_ENV == 'production' %}
-    <script src="{% static 'js/all.min.js' %}"></script>
-{% else %}
-    {% block javascript_include %}
-    {% endblock javascript_include %}
-{% endif %}
-
 <script>
     const btn = document.getElementById('accountDropdownBtn');
     const menu = document.getElementById('accountDropdownMenu');
@@ -210,6 +218,26 @@
             menu.classList.add('hidden');
         }
     });
+</script>
+
+<script>
+    toastr.options.closeDuration = 10000;
+    toastr.options.progressBar = true;
+    toastr.options.escapeHtml = false;
+
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'success' %}
+            toastr.success('{{message}}');
+            {% elif message.tags == 'error' %}
+            toastr.error('{{message}}');
+            {% elif message.tags == 'warning' %}
+            toastr.warning('{{message}}');
+            {% elif message.tags == 'info' %}
+            toastr.info('{{message}}');
+            {% endif %}
+        {% endfor %}
+    {% endif %}
 </script>
 </body>
 </html>

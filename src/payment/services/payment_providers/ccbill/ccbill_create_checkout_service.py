@@ -1,7 +1,7 @@
 import hashlib
 import uuid
 
-from app import settings
+from protectapp import settings
 from src.payment.models import PaymentHistory
 from src.payment.value_objects.checkout_value_object import CheckoutValueObject
 
@@ -37,7 +37,7 @@ class CCBillCreateCheckoutService:
             base_url = 'https://sandbox-api.ccbill.com'
         else:
             base_url = 'https://api.ccbill.com'
-            
+
         redirect_url = (
             f"{base_url}/wap-frontflex/flexforms/{flex_form_id}?"
             f"clientAccnum={client_account_number}&clientSubacc={client_subaccount_number}&"

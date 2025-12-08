@@ -55,6 +55,8 @@ INSTALLED_APPS = [
     'src.media.apps.MediaConfig',
     'src.authentication.apps.AuthenticationConfig',
     'src.report.apps.ReportConfig',
+    'src.engagement.apps.EngagementConfig',
+    'src.payment.apps.PaymentConfig',
 
     'django_celery_beat',
 

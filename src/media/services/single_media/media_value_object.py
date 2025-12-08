@@ -1,4 +1,5 @@
 from protectapp import settings
+from src.media.enums import MediaEnum
 from src.media.models import Media
 
 
@@ -9,13 +10,19 @@ class MediaValueObject:
             wrapped_master_key: bytes,
             wrap_nonce: bytes,
             session_key: bytes,
-            is_unlocked: bool,
+            unlock_type: str,
+            is_liked: bool,
+            total_likes: int,
+            total_comments: int,
     ):
         self.media = media
         self.wrapped_master_key = wrapped_master_key
         self.wrap_nonce = wrap_nonce
         self.session_key = session_key
-        self.is_unlocked = is_unlocked
+        self.unlock_type = unlock_type
+        self.is_liked = is_liked
+        self.total_likes = total_likes
+        self.total_comments = total_comments
 
     def get_wrapped_master_key(self) -> str:
         return self.wrapped_master_key.hex()
@@ -25,6 +32,12 @@ class MediaValueObject:
 
     def get_session_key(self) -> str:
         return self.session_key.hex()
+
+    def is_unlocked(self) -> bool:
+        return self.unlock_type == MediaEnum.UNLOCK_PERMANENT.value
+
+    def is_unlock_pending(self) -> bool:
+        return self.unlock_type == MediaEnum.UNLOCK_PENDING.value
 
     def get_video_metadata_as_json(self) -> dict:
         shards = self.media.shards_metadata

@@ -1,11 +1,10 @@
 from django.contrib import admin
-from unfold.admin import ModelAdmin
 
 from src.payment.models import PaymentHistory, Balance, Spending
 
 
 @admin.register(Balance)
-class BalanceAdmin(ModelAdmin):
+class BalanceAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'balance_in_coins', 'balance_in_fiat')
     list_filter = ('created_at',)
     readonly_fields = ('balance_in_fiat',)
@@ -20,12 +19,12 @@ class BalanceAdmin(ModelAdmin):
 
 
 @admin.register(PaymentHistory)
-class PaymentHistoryAdmin(ModelAdmin):
+class PaymentHistoryAdmin(admin.ModelAdmin):
     list_display = ('id', 'user', 'amount', 'provider', 'status')
 
 
 @admin.register(Spending)
-class SpendingAdmin(ModelAdmin):
+class SpendingAdmin(admin.ModelAdmin):
     list_display = ('id', 'by_user', 'on_user', 'amount_in_coins', 'amount_in_fiat', 'content_object')
     readonly_fields = ('amount_in_fiat', 'content_object')
 

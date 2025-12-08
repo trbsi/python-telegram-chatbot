@@ -1,31 +1,168 @@
-function singleMediaComponent() {
+function singleMediaComponent(
+    mediaId,
+    totalLikes,
+    totalComments,
+    isLiked,
+    likeMediaApi,
+    createCommentApi,
+    listCommentsApi,
+    reportContentApi
+) {
     return {
-        liked: false,
-        likes: 1200,
-        comments: 345,
+        liked: isLiked,
+        likeCount: totalLikes,
+        commentsCount: totalComments,
+        commentsOpen: false,
+        comments: [],
+        commentsLoading: false,
+        commentInput: '',
+        showReportForm: false,
+        reportDescription: '',
 
-        like() {
-            this.liked = true;
-            this.likes += 1;
+        init() {
+            this.openComments();
+        },
 
+        async like() {
             // Animate the icon
             const icon = event.currentTarget.querySelector('i');
             icon.classList.add('scale-125');
             setTimeout(() => icon.classList.remove('scale-125'), 150);
+
+            // Optimistic UI
+            const previousLiked = this.liked;
+            const previousLikes = this.likeCount;
+            this.liked = !this.liked;
+            this.likeCount += this.liked ? 1 : -1;
+
+            try {
+                tempLikeMediaApi = likeMediaApi.replace('__MEDIA_ID__', mediaId)
+                const res = await fetch(tempLikeMediaApi, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken(),
+                    },
+                    credentials: 'include'
+                });
+                if (!res.ok) throw new Error('Like failed');
+                // optionally update counts from server response
+                const data = await res.json();
+                if (data.like_count != null) this.likeCount = data.like_count;
+            } catch (e) {
+                // rollback
+                this.liked = previousLiked;
+                this.likeCount = previousLikes;
+                console.error(e);
+                alert('Failed to update like. Try again.');
+            }
         },
 
-        comment() {
-            this.comments += 1;
+        async submitComment() {
+            const text = this.commentInput.trim();
+            if (!text) return;
 
-            // Animate the icon
-            const icon = event.currentTarget.querySelector('i');
-            icon.classList.add('scale-125');
-            setTimeout(() => icon.classList.remove('scale-125'), 150);
+            // optimistic add
+            const temp = {
+                id: 'temp-' + Date.now(),
+                text,
+                user: {
+                    username: 'You',
+                    avatar: '/path/to/avatar.png'
+                },
+                created_at: 'just now'
+            };
+            this.comments.unshift(temp);
+            this.commentInput = '';
+            // increment comments_count in UI
+            this.commentsCount = (this.commentsCount || 0) + 1;
+
+            var body = {
+                'media_id': mediaId,
+                'comment': text
+            }
+
+            try {
+                const res = await fetch(createCommentApi, {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken()
+                    },
+                    body: JSON.stringify(body)
+                });
+                if (!res.ok) throw new Error('Failed to post comment');
+                const saved = await res.json();
+                // replace temp comment with saved comment (if server returns it)
+                // naive approach: replace first temp id
+                const idx = this.comments.findIndex(comment => comment.id === temp.id);
+                if (idx !== -1 && saved) {
+                    this.comments.splice(idx, 1, saved);
+                }
+            } catch (e) {
+                // rollback UI changes
+                this.comments = this.comments.filter(comment => comment.id !== temp.id);
+                this.commentsCount = Math.max(0, (this.commentsCount || 1) - 1);
+                console.error(e);
+            }
         },
 
-        report() {
-            alert("Reported!");
-        }
+        async openComments() {
+            this.commentsOpen = true;
+            this.comments = [];
+            this.commentInput = '';
+            this.commentsLoading = true;
+
+            try {
+                tempListCommentsApi = listCommentsApi.replace('__MEDIA_ID__', mediaId)
+                const res = await fetch(tempListCommentsApi);
+                if (!res.ok) throw new Error('Failed to fetch comments');
+                const data = await res.json();
+                this.comments = data.results || data;
+            } catch (e) {
+                console.error(e);
+                alert('Failed to load comments.');
+            } finally {
+                this.commentsLoading = false;
+            }
+        },
+
+        openReportForm() {
+            this.showReportForm = true;
+        },
+
+        closeReportForm() {
+            this.showReportForm = false;
+            this.reportDescription = '';
+        },
+
+        async submitReport() {
+            try {
+                const res = await fetch(reportContentApi, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': getCsrfToken(),
+                    },
+                    body: JSON.stringify({
+                        type: 'media',
+                        content_id: mediaId,
+                        description: this.reportDescription
+                    }),
+                    credentials: 'include'
+                });
+
+                if (!res.ok) throw new Error('Report failed');
+                await res.json();
+
+                alert('Thanks for your feedback. We’ll review this content shortly.');
+                this.showReportForm = false;
+                this.reportDescription = "";
+            } catch (e) {
+                console.error(e);
+            }
+        },
     }
 }
 
@@ -73,8 +210,10 @@ async function decryptKeys() {
     );
 
     // Decrypt the wrapped master key
-    const masterKeyBytes = await crypto.subtle.decrypt(
-        {name: "AES-GCM", iv: wrapNonceBytes},
+    const masterKeyBytes = await crypto.subtle.decrypt({
+            name: "AES-GCM",
+            iv: wrapNonceBytes
+        },
         cryptoKey,
         wrappedMasterKeyBytes
     );
@@ -103,8 +242,10 @@ async function fetchAndDecryptShard(shardMeta, videoMasterKey) {
     const nonceBytes = hexToBytes(shardMeta.nonce);
 
     // 3. Decrypt shard with master key
-    const decryptedBytesBuffer = await crypto.subtle.decrypt(
-        {name: "AES-GCM", iv: nonceBytes},
+    const decryptedBytesBuffer = await crypto.subtle.decrypt({
+            name: "AES-GCM",
+            iv: nonceBytes
+        },
         videoMasterKey,
         encryptedBytes
     );
@@ -123,13 +264,15 @@ async function fetchAndDecryptShard(shardMeta, videoMasterKey) {
         return result;
     });
 
-//     saveUnscrambledShard(unscrambled, shardMeta.name + '.mp4')
+    //     saveUnscrambledShard(unscrambled, shardMeta.name + '.mp4')
     return unscrambled;
 }
 
 function saveUnscrambledShard(arrayBuffer, fileName = "shard.mp4") {
     // Convert ArrayBuffer to Blob
-    const blob = new Blob([arrayBuffer], {type: "video/mp4"});
+    const blob = new Blob([arrayBuffer], {
+        type: "video/mp4"
+    });
 
     // Create a temporary link
     const link = document.createElement("a");
@@ -166,8 +309,8 @@ function maskAndOrder() {
 const player = videojs('my-video');
 
 // Resize player to fit viewable screen
-player.ready(function () {
-    player.on('loadedmetadata', function () {
+player.ready(function() {
+    player.on('loadedmetadata', function() {
         resizeVideo();
     });
 });
@@ -182,11 +325,76 @@ const videoUrl = URL.createObjectURL(mediaSource);
 // Set up VideoJS with MediaSource
 player.src({
     src: videoUrl,
-    type: 'video/webm; codecs="vp8, vorbis"'  // Important for MSE
+    type: videoMetadata.codec // Important for MSE
 });
 
 
-async function initializeSimplePlayer(videoMetadata) {
+mediaSource.addEventListener("sourceopen", async () => {
+    const sourceBuffer = mediaSource.addSourceBuffer(videoMetadata.codec);
+
+    const queue = [];
+    let ended = false;
+    let appending = false; // tracks if appendNext is currently processing
+
+    async function fetchShards() {
+        const videoMasterKey = await decryptKeys();
+        const shards = maskAndOrder();
+
+        for (const shard of shards) {
+            const shardBytes = await fetchAndDecryptShard(shard, videoMasterKey);
+            queue.push(shardBytes);
+            // Try appending immediately if SourceBuffer is free
+            appendNext();
+        }
+
+        ended = true; // signal all shards have been queued
+        appendNext(); // in case queue is empty but ended
+    }
+
+    function appendNext() {
+        // Prevent re-entrant calls
+        if (appending) return;
+        appending = true;
+
+        while (!sourceBuffer.updating && queue.length > 0) {
+            const shard = queue.shift();
+            try {
+                sourceBuffer.appendBuffer(shard);
+                console.log("Appending shard, queue length:", queue.length);
+                // Wait for 'updateend' before next append
+                break;
+            } catch (err) {
+                console.error("Failed to append shard:", err);
+                // Push back the shard and retry later
+                queue.unshift(shard);
+                break;
+            }
+        }
+
+        // End MediaSource if all shards appended
+        if (!sourceBuffer.updating && queue.length === 0 && ended) {
+            try {
+                mediaSource.endOfStream();
+                console.log("All shards appended, MediaSource ended");
+            } catch (err) {
+                console.error("Failed to end MediaSource:", err);
+            }
+        }
+
+        appending = false;
+    }
+
+    // Listen for 'updateend' to append the next shard
+    sourceBuffer.addEventListener("updateend", appendNext);
+
+    // Start fetching and queuing shards
+    fetchShards();
+});
+
+
+
+// ------------------------------ TESTING ---------------------------------
+async function initializeSimplePlayerAndTest(videoMetadata) {
     const video = videojs('my-video');
 
     try {
@@ -234,68 +442,4 @@ async function initializeSimplePlayer(videoMetadata) {
         video.src = "";
     }
 }
-
-//initializeSimplePlayer(videoMetadata);
-
-mediaSource.addEventListener("sourceopen", async () => {
-    const sourceBuffer = mediaSource.addSourceBuffer(videoMetadata.codec);
-
-    const queue = [];
-    let ended = false;
-    let appending = false; // tracks if appendNext is currently processing
-
-    async function fetchShards() {
-        const videoMasterKey = await decryptKeys();
-        const shards = maskAndOrder();
-
-         for (const shard of shards) {
-         console.log('xxx')
-             const shardBytes = await fetchAndDecryptShard(shard, videoMasterKey);
-             queue.push(shardBytes);
-             // Try appending immediately if SourceBuffer is free
-             appendNext();
-         }
-
-        ended = true; // signal all shards have been queued
-        appendNext();  // in case queue is empty but ended
-    }
-
-    function appendNext() {
-        // Prevent re-entrant calls
-        if (appending) return;
-        appending = true;
-
-        while (!sourceBuffer.updating && queue.length > 0) {
-            const shard = queue.shift();
-            try {
-                sourceBuffer.appendBuffer(shard);
-                console.log("Appending shard, queue length:", queue.length);
-                // Wait for 'updateend' before next append
-                break;
-            } catch (err) {
-                console.error("Failed to append shard:", err);
-                // Push back the shard and retry later
-                queue.unshift(shard);
-                break;
-            }
-        }
-
-        // End MediaSource if all shards appended
-        if (!sourceBuffer.updating && queue.length === 0 && ended) {
-            try {
-                mediaSource.endOfStream();
-                console.log("All shards appended, MediaSource ended");
-            } catch (err) {
-                console.error("Failed to end MediaSource:", err);
-            }
-        }
-
-        appending = false;
-    }
-
-    // Listen for 'updateend' to append the next shard
-    sourceBuffer.addEventListener("updateend", appendNext);
-
-    // Start fetching and queuing shards
-    fetchShards();
-});
+//initializeSimplePlayerAndTest(videoMetadata);
