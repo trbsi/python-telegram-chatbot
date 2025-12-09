@@ -28,6 +28,7 @@ urlpatterns = (
             path('user/', include('src.user.urls')),
             path('engagement/', include('src.engagement.urls')),
             path('report/', include('src.report.urls')),
+            path('payment/', include('src.payment.urls')),
             path('.privatnomjesto/', admin.site.urls),
         ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 )

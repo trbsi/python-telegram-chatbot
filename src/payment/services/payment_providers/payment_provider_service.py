@@ -2,6 +2,7 @@ import random
 from decimal import Decimal
 
 from protectapp import settings
+from src.core.utils import full_url_for_path
 from src.payment.enums import PaymentEnum
 from src.payment.models import PaymentHistory
 from src.payment.services.payment_providers.ccbill.ccbill_create_checkout_service import CCBillCreateCheckoutService
@@ -26,13 +27,13 @@ class PaymentProviderService():
 
     def create_checkout(self, payment_history: PaymentHistory) -> CheckoutValueObject:
         if self.default_payment_provider == PaymentEnum.PROVIDER_DUMMY.value:
-            return CheckoutValueObject(settings.APP_URL, str(random.randint(100000,1000000)))
+            return CheckoutValueObject(full_url_for_path(''), str(random.randint(100000, 1000000)))
         elif self.default_payment_provider == PaymentEnum.PROVIDER_CCBILL.value:
             return self.ccbill_create_checkout_service.create_checkout(payment_history)
 
         raise Exception('Payment provider is not supported for checkout.')
 
-    def handle_webook(self,query_params:dict, body: dict) -> PaymentWebhookValueObject:
+    def handle_webook(self, query_params: dict, body: dict) -> PaymentWebhookValueObject:
         if self.default_payment_provider == PaymentEnum.PROVIDER_DUMMY.value:
             return PaymentWebhookValueObject(query_params.get('payment_id'), PaymentEnum.STATUS_SUCCESS.value)
         elif self.default_payment_provider == PaymentEnum.PROVIDER_CCBILL.value:

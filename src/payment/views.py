@@ -1,7 +1,6 @@
 import json
 
 import bugsnag
-from app.log import log
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import AnonymousUser

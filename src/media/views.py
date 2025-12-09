@@ -136,7 +136,7 @@ def unlock(request: HttpRequest) -> HttpResponse:
     except BalanceTooLowException as e:
         url, user = service.unlock_by_payment(user=user, media_id=media_id)
         if is_anonymouse_user:
-            login(request, user)
+            login(request, user, backend='django.contrib.auth.backends.ModelBackend')
         return redirect(url)
     except Exception as e:
         messages.error(request, str(e))

@@ -77,6 +77,10 @@ a.no-underline {
   color: transparent;
 }
 
+.primary-gradient {
+    background-image: linear-gradient(to right, #14b8a6, #06b6d4);
+}
+
 /* LOGIN */
 #id_remember {
     width: auto;

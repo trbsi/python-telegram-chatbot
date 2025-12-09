@@ -1,141 +1,4 @@
 
-// ----------- VIDEO DECRYPTING ---------------
-function resizeVideo() {
-    const video = document.getElementById('my-video');
-    const windowWidth = window.innerWidth - 40;
-    const windowHeight = window.innerHeight;
-
-    // Get video original aspect ratio
-    const videoAspect = video.videoWidth / video.videoHeight;
-    const windowAspect = windowWidth / windowHeight;
-
-    if (videoAspect > windowAspect) {
-        // Video is wider than viewport → fit width
-        video.style.width = windowWidth + 'px';
-        video.style.height = (windowWidth / videoAspect) + 'px';
-    } else {
-        // Video is taller than viewport → fit height
-        video.style.height = windowHeight + 'px';
-        video.style.width = (windowHeight * videoAspect) + 'px';
-    }
-}
-
-function hexToBytes(hex) {
-    const bytes = new Uint8Array(hex.length / 2);
-    for (let i = 0; i < hex.length; i += 2) {
-        bytes[i / 2] = parseInt(hex.substr(i, 2), 16);
-    }
-    return bytes;
-}
-
-async function decryptKeys() {
-    const sessionKeyBytes = hexToBytes(sessionKey);
-    const wrappedMasterKeyBytes = hexToBytes(videoKey);
-    const wrapNonceBytes = hexToBytes(videoNonce);
-
-    // Import session key as AES-GCM key
-    const cryptoKey = await crypto.subtle.importKey(
-        "raw",
-        sessionKeyBytes,
-        "AES-GCM",
-        false,
-        ["decrypt"]
-    );
-
-    // Decrypt the wrapped master key
-    const masterKeyBytes = await crypto.subtle.decrypt({
-            name: "AES-GCM",
-            iv: wrapNonceBytes
-        },
-        cryptoKey,
-        wrappedMasterKeyBytes
-    );
-
-    // Import master key to decrypt shards
-    const masterKey = await crypto.subtle.importKey(
-        "raw",
-        masterKeyBytes,
-        "AES-GCM",
-        false,
-        ["decrypt"]
-    );
-
-    return masterKey;
-}
-
-
-async function fetchAndDecryptShard(shardMeta, videoMasterKey) {
-    // 1. Fetch encrypted shard
-    const response = await fetch(shardMeta.url);
-    const encryptedBytes = new Uint8Array(await response.arrayBuffer());
-
-    // 2. Convert nonce
-    const nonceBytes = hexToBytes(shardMeta.nonce);
-
-    // 3. Decrypt shard with master key
-    const decryptedBytesBuffer = await crypto.subtle.decrypt({
-            name: "AES-GCM",
-            iv: nonceBytes
-        },
-        videoMasterKey,
-        encryptedBytes
-    );
-
-    const decryptedBytes = new Uint8Array(decryptedBytesBuffer);
-
-    // 4. Reverse scramble / XOR
-    const unscrambled = decryptedBytes.map(byte => {
-        // Step 1: Rotate bits left
-        const rotated = ((byte >> 3) | (byte << 5)) & 0xFF;
-
-        // Step 2: XOR with the mask from shardMeta
-        const result = rotated ^ shardMeta.mask;
-
-        // Step 3: Return the result
-        return result;
-    });
-
-    //     saveUnscrambledShard(unscrambled, shardMeta.name + '.mp4')
-    return unscrambled;
-}
-
-function saveUnscrambledShard(arrayBuffer, fileName = "shard.mp4") {
-    // Convert ArrayBuffer to Blob
-    const blob = new Blob([arrayBuffer], {
-        type: "video/mp4"
-    });
-
-    // Create a temporary link
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = fileName;
-
-    // Trigger download
-    document.body.appendChild(link); // required for Firefox
-    link.click();
-
-    // Cleanup
-    document.body.removeChild(link);
-    URL.revokeObjectURL(link.href);
-}
-
-function maskAndOrder() {
-    shards = []
-    videoMetadata.shards.forEach((shard) => {
-        name = shard['name'];
-        split_name = name.split('_')
-
-        index = split_name[1].slice(4)
-        mask = split_name[2].slice(4)
-
-        shard['mask'] = mask // mask is integer number
-        shards[index] = shard
-    });
-
-    return shards;
-}
-
-
 // -------------------- VIDEO PLAYER -----------------------
 const player = videojs('my-video');
 
@@ -221,6 +84,157 @@ mediaSource.addEventListener("sourceopen", async () => {
     // Start fetching and queuing shards
     fetchShards();
 });
+
+
+/**
+ * Resize the Video.js player to fit the viewport height while
+ * maintaining the video's original aspect ratio.
+ * If the resulting width exceeds the viewport width, scale down
+ * proportionally to fit within the screen width.
+ */
+function resizeVideo() {
+    const header = $('header');
+    const windowWidth = window.innerWidth - 30; // optional padding
+    const windowHeight = window.innerHeight - header.height() - 20; // minus header
+
+    // Get intrinsic video dimensions
+    const videoWidth = player.videoWidth();
+    const videoHeight = player.videoHeight();
+
+    if (!videoWidth || !videoHeight) return; // metadata not loaded yet
+
+    const videoAspect = videoWidth / videoHeight;
+
+    let newHeight = windowHeight;           // fit height to screen
+    let newWidth = newHeight * videoAspect; // adjust width to keep aspect ratio
+
+    // If width exceeds screen, scale down
+    if (newWidth > windowWidth) {
+        newWidth = windowWidth;
+        newHeight = newWidth / videoAspect; // adjust height to keep aspect ratio
+    }
+
+    // Apply new size to Video.js player
+    player.width(newWidth);
+    player.height(newHeight);
+
+    // Center horizontally
+    player.el().style.margin = '0 auto';
+}
+
+function hexToBytes(hex) {
+    const bytes = new Uint8Array(hex.length / 2);
+    for (let i = 0; i < hex.length; i += 2) {
+        bytes[i / 2] = parseInt(hex.substr(i, 2), 16);
+    }
+    return bytes;
+}
+
+async function decryptKeys() {
+    const sessionKeyBytes = hexToBytes(sessionKey);
+    const wrappedMasterKeyBytes = hexToBytes(videoKey);
+    const wrapNonceBytes = hexToBytes(videoNonce);
+
+    // Import session key as AES-GCM key
+    const cryptoKey = await crypto.subtle.importKey(
+        "raw",
+        sessionKeyBytes,
+        "AES-GCM",
+        false,
+        ["decrypt"]
+    );
+
+    // Decrypt the wrapped master key
+    const masterKeyBytes = await crypto.subtle.decrypt({
+            name: "AES-GCM",
+            iv: wrapNonceBytes
+        },
+        cryptoKey,
+        wrappedMasterKeyBytes
+    );
+
+    // Import master key to decrypt shards
+    const masterKey = await crypto.subtle.importKey(
+        "raw",
+        masterKeyBytes,
+        "AES-GCM",
+        false,
+        ["decrypt"]
+    );
+
+    return masterKey;
+}
+
+async function fetchAndDecryptShard(shardMeta, videoMasterKey) {
+    // 1. Fetch encrypted shard
+    const response = await fetch(shardMeta.url);
+    const encryptedBytes = new Uint8Array(await response.arrayBuffer());
+
+    // 2. Convert nonce
+    const nonceBytes = hexToBytes(shardMeta.nonce);
+
+    // 3. Decrypt shard with master key
+    const decryptedBytesBuffer = await crypto.subtle.decrypt({
+            name: "AES-GCM",
+            iv: nonceBytes
+        },
+        videoMasterKey,
+        encryptedBytes
+    );
+
+    const decryptedBytes = new Uint8Array(decryptedBytesBuffer);
+
+    // 4. Reverse scramble / XOR
+    const unscrambled = decryptedBytes.map(byte => {
+        // Step 1: Rotate bits left
+        const rotated = ((byte >> 3) | (byte << 5)) & 0xFF;
+
+        // Step 2: XOR with the mask from shardMeta
+        const result = rotated ^ shardMeta.mask;
+
+        // Step 3: Return the result
+        return result;
+    });
+
+    //     saveUnscrambledShard(unscrambled, shardMeta.name + '.mp4')
+    return unscrambled;
+}
+
+function saveUnscrambledShard(arrayBuffer, fileName = "shard.mp4") {
+    // Convert ArrayBuffer to Blob
+    const blob = new Blob([arrayBuffer], {
+        type: "video/mp4"
+    });
+
+    // Create a temporary link
+    const link = document.createElement("a");
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName;
+
+    // Trigger download
+    document.body.appendChild(link); // required for Firefox
+    link.click();
+
+    // Cleanup
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+}
+
+function maskAndOrder() {
+    shards = []
+    videoMetadata.shards.forEach((shard) => {
+        name = shard['name'];
+        split_name = name.split('_')
+
+        index = split_name[1].slice(4)
+        mask = split_name[2].slice(4)
+
+        shard['mask'] = mask // mask is integer number
+        shards[index] = shard
+    });
+
+    return shards;
+}
 
 
 

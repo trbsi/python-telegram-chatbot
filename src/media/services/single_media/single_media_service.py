@@ -26,7 +26,7 @@ class SingleMediaService:
             unlock_type = MediaUnlockEnum.UNLOCK_LOCKED
             is_liked = False
 
-        unlock_type = MediaUnlockEnum.UNLOCK_PERMANENT  # @TODO remove this
+        # unlock_type = MediaUnlockEnum.UNLOCK_PERMANENT  # @TODO remove this
         
         if unlock_type.is_locked():
             wrapped_master_key_for_client = b'x'
