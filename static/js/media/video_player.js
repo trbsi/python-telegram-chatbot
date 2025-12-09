@@ -1,6 +1,11 @@
 
 // -------------------- VIDEO PLAYER -----------------------
-const player = videojs('my-video');
+const player = videojs('my-video', {
+    controlBar: {
+        fullscreenToggle: false,
+        pictureInPictureToggle: false
+    }
+});
 
 // Resize player to fit viewable screen
 player.ready(function() {

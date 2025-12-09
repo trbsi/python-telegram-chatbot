@@ -9,22 +9,34 @@
             {% block title %}
             {% endblock title %}
         </title>
+
         <link href="{% static 'css/base.css' %}" rel="stylesheet">
+        
+        <!-- Tailwidncss -->
         <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+        <!-- Remixicon -->
         <link href="https://cdn.jsdelivr.net/npm/remixicon@4.7.0/fonts/remixicon.css"
               rel="stylesheet" />
+
+        <!-- JS libs -->
         <script src="https://unpkg.com/alpinejs" defer></script>
         <script src="https://code.jquery.com/jquery-3.7.1.slim.js"
                 integrity="sha256-UgvvN8vBkgO0luPSUl2s8TIlOSYRoGFAX4jlCIm9Adc="
                 crossorigin="anonymous"></script>
+
         <!-- Video js -->
         <link href="https://vjs.zencdn.net/8.23.4/video-js.css" rel="stylesheet" />
         <script src="https://vjs.zencdn.net/8.23.4/video.min.js"></script>
+
         <!-- Toastr -->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
         <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"
               rel="stylesheet">
-    </head>
+
+        <!-- Video js theme -->
+        <link href="https://unpkg.com/@videojs/themes@1/dist/city/index.css" rel="stylesheet">
+  </head>
     <body class="antialiased text-gray-800 bg-gray-50">
         <!-- NAV -->
         <header class="bg-white shadow-md sticky top-0 z-50">
