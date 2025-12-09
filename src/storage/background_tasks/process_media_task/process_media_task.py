@@ -3,10 +3,11 @@ import os
 import bugsnag
 
 from protectapp import settings
-from src.core.utils import reverse_lazy_admin
-from src.media.enums import MediaEnum
+from src.core.utils import reverse_lazy_admin, full_url_for_route
+from src.media.enums.media_status_enum import MediaStatusEnum
 from src.media.models import Media
 from src.notification.services.notification_service import NotificationService
+from src.notification.value_objects.email_value_object import EmailValueObject
 from src.notification.value_objects.push_notification_value_object import PushNotificationValueObject
 from src.storage.services.compression.compress_media_service import CompressMediaService
 from src.storage.services.media_creation.thumbnail_service import ThumbnailService
@@ -132,15 +133,34 @@ class ProcessMediaTask:
         if isinstance(media, Media):
             self._save_media(media)
 
+        # notify people
+        self._send_notifications(media)
+
     def _print(self, msg: str):
         print('-' * 100, f' {msg} ', '-' * 100)
 
     def _save_media(self, media: Media) -> None:
         media.is_processed = True
-        if media.status != MediaEnum.STATUS_SCHEDULE.value:
-            media.status = MediaEnum.STATUS_PAID.value
+        if media.status != MediaStatusEnum.STATUS_SCHEDULE.value:
+            media.status = MediaStatusEnum.STATUS_PAID.value
+
+        if settings.APP_ENV != 'production':
+            media.is_approved = True
+            media.status = MediaStatusEnum.STATUS_PAID.value
+            
         media.save()
 
+    def _send_notifications(self, media: Media) -> None:
         url = reverse_lazy_admin(object=media, action='changelist', is_full_url=True)
         push_notification = PushNotificationValueObject(body=f'[CONTENT UPLOADED] {url}')
-        NotificationService.send_notification(push_notification)
+        template_vars = {
+            'creator_name': media.user.username,
+            'video_url': full_url_for_route('media.view_single_media', {'id': media.id}),
+        }
+        email = EmailValueObject(
+            subject=f'{settings.APP_NAME} - Your video is ready!',
+            template_path='emails/media/video_ready.html',
+            template_variables=template_vars,
+            to=[media.user.email],
+        )
+        NotificationService.send_notification(push_notification, email)

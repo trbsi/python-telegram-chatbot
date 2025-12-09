@@ -1,7 +1,8 @@
 from django.db import models
 
 from protectapp import settings
-from src.media.enums import MediaEnum
+from src.media.enums.media_file_type_enum import MediaFileTypeEnum
+from src.media.enums.media_status_enum import MediaStatusEnum
 from src.media.models import Hashtag
 from src.media.utils import load_tags
 from src.user.models import User
@@ -17,8 +18,8 @@ class Media(models.Model):
     shards_metadata = models.JSONField()
     file_thumbnail = models.JSONField(null=True, blank=True)
     file_trailer = models.JSONField(null=True, blank=True)
-    file_type = models.CharField(max_length=20, choices=MediaEnum.file_types())
-    status = models.CharField(max_length=20, choices=MediaEnum.statuses())
+    file_type = models.CharField(max_length=20, choices=MediaFileTypeEnum.file_types())
+    status = models.CharField(max_length=20, choices=MediaStatusEnum.statuses())
     description = models.TextField(null=True, blank=True)
     like_count = models.PositiveIntegerField(default=0)
     comment_count = models.PositiveIntegerField(default=0)
@@ -60,10 +61,10 @@ class Media(models.Model):
         return f'{settings.STORAGE_CDN_URL}/{self.file_thumbnail.get('file_path')}'
 
     def is_image(self):
-        return self.file_type == MediaEnum.FILE_TYPE_IMAGE.value
+        return self.file_type == MediaFileTypeEnum.FILE_TYPE_IMAGE.value
 
     def is_video(self):
-        return self.file_type == MediaEnum.FILE_TYPE_VIDEO.value
+        return self.file_type == MediaFileTypeEnum.FILE_TYPE_VIDEO.value
 
     def get_description(self) -> str:
         return load_tags(self.description)

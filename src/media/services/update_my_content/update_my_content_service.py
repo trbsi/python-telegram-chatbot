@@ -1,6 +1,6 @@
 from django.db import transaction
 
-from src.media.enums import MediaEnum
+from src.media.enums.media_status_enum import MediaStatusEnum
 from src.media.models import Media
 from src.media.services.hashtag.hashtag_service import HashtagService
 from src.media.utils import replace_tags
@@ -21,7 +21,8 @@ class UpdateMyContentService:
             unlockPrices: list,
     ):
         if delete_list:
-            Media.objects.filter(user=user).filter(id__in=delete_list).update(status=MediaEnum.STATUS_DELETED.value)
+            Media.objects.filter(user=user).filter(id__in=delete_list).update(
+                status=MediaStatusEnum.STATUS_DELETED.value)
             profile: UserProfile = user.profile
             profile.media_count = profile.media_count - len(delete_list)
             profile.save()

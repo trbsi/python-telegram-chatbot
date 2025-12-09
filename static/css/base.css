@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Barriecito:wght@400;600;700&display=swap');
+
 [x-cloak] { display: none !important; }
 
 /* TailwindCSS-like default input styles */
@@ -63,6 +65,16 @@ a.no-underline {
     background-color: #fee2e2;
     border-color: #fecaca;
     color: #b91c1c;
+}
+
+
+.logo {
+  font-family: 'Barriecito', sans-serif;
+   background: linear-gradient(to right, #14b8a6, #13cded);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  color: transparent;
 }
 
 /* LOGIN */

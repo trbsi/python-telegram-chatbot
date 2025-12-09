@@ -1,6 +1,6 @@
 import bugsnag
 
-from src.media.enums import MediaEnum
+from src.media.enums.media_status_enum import MediaStatusEnum
 from src.media.models import Media
 from src.storage.services.remote_storage_service import RemoteStorageService
 
@@ -8,7 +8,7 @@ from src.storage.services.remote_storage_service import RemoteStorageService
 class DeleteUserMediaTask:
     def delete_user_media(self, user_id: int):
         remote_storage_service = RemoteStorageService()
-        media = Media.objects.filter(user_id=user_id).filter(status=MediaEnum.STATUS_DELETED.value)
+        media = Media.objects.filter(user_id=user_id).filter(status=MediaStatusEnum.STATUS_DELETED.value)
 
         for item in media:
             media_item: Media = item

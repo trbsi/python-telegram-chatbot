@@ -1,110 +1,89 @@
 {% extends "core/layout.html" %}
 {% load static %}
 
-
-{% block javascript_global %}
-{{ media_value_object.get_video_metadata_as_json|json_script:"video-meta" }}
-<script>
+{% if media_value_object.is_unlocked %}
+    {% block javascript_global %}
+        {{ media_value_object.get_video_metadata_as_json|json_script:"video-meta" }}
+        <script>
     const videoMetadata = JSON.parse(document.getElementById("video-meta").textContent);
     const sessionKey = '{{media_value_object.get_session_key}}'
     const videoKey = '{{media_value_object.get_wrapped_master_key}}'
     const videoNonce = '{{media_value_object.get_wrap_nonce}}'
-</script>
-{% endblock javascript_global %}
+        </script>
+    {% endblock javascript_global %}
+{% endif %}
 
 {% block javascript_include %}
-<script src="{% static 'js/media/single_media.js' %}"></script>
+    {% if media_value_object.is_unlocked %}
+        <script src="{% static 'js/media/video_player.js' %}"></script>
+    {% endif %}
+    <script src="{% static 'js/media/single_media.js' %}"></script>
 {% endblock javascript_include %}
 
 {% block content %}
-<div id="media-view" class="max-w-md mx-auto  "
-     x-data="singleMediaComponent(
-        {{media_value_object.media.id}},
-        {{media_value_object.total_likes}},
-        {{media_value_object.total_comments}},
-          {% if media_value_object.is_liked %}true{% else %}false{% endif %},
-        '{{like_media_api}}',
-        '{{create_comment_media_api}}',
-        '{{list_comments_media_api}}',
-        '{{report_media_api}}'
-     )"
-     x-init="init()">
-    {% if media_value_object.is_unlocked %}
-    <video
-            id="my-video"
-            class="video-js vjs-default-skin "
-            controls
-            poster="{{media_value_object.media.get_thumbnail_url}}"
-            data-setup='{"fluid": true}'>
-        <p class="vjs-no-js">
-            To view this video please enable JavaScript, and consider upgrading to a
-            web browser that supports HTML5 video
-        </p>
-    </video>
-    {% else %}
-    {% if media_value_object.is_unlock_pending %}
-    <div class="bg-blue-100 border-t-4 border-teal-500 rounded-b text-blue-900 px-4 py-3 shadow-md text-center"
-         role="alert">
-        <div class="flex flex-col items-center justify-center">
-            <div class="mb-3">Processing media...</div>
-            <div>
-                {% include 'components/elements/loader.html' %}
-            </div>
+    <div id="media-view"
+         class="max-w-md mx-auto  "
+         x-data="singleMediaComponent( {{ media_value_object.media.id }}, {{ media_value_object.total_likes }}, {{ media_value_object.total_comments }}, {% if media_value_object.is_liked %}true{% else %}false{% endif %}, '{{ like_media_api }}', '{{ create_comment_media_api }}', '{{ list_comments_media_api }}', '{{ report_media_api }}' )"
+         x-init="init()">
+        {% if media_value_object.is_unlocked %}
+            <video id="my-video"
+                   class="video-js vjs-default-skin "
+                   controls
+                   poster="{{ media_value_object.media.get_thumbnail_url }}"
+                   data-setup='{"fluid": true}'>
+                <p class="vjs-no-js">
+                    To view this video please enable JavaScript, and consider upgrading to a
+                    web browser that supports HTML5 video
+                </p>
+            </video>
+        {% else %}
+            {% if media_value_object.is_unlock_pending %}
+                {% include "components/elements/info_alert.html" with message="Waiting for payment confirmation. Try again in a few seconds." %}
+            {% else %}
+                <form method="POST" action="{% url 'media.unlock' %}">
+                    <input type="hidden"
+                           name="media_id"
+                           value="{{ media_value_object.media.id }}">
+                    <button type="submit"
+                            class="tw w-full mb-5 justify-center inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-semibold text-yellow-900 bg-gradient-to-b from-amber-200 via-amber-300 to-amber-400 hover:from-amber-300 hover:via-amber-400 hover:to-amber-500 transition-all">
+                        <i class="ri-lock-unlock-line text-lg"></i>
+                        Unlock for ${{ media_value_object.media.unlock_price }}
+                    </button>
+                </form>
+            {% endif %}
+            <video id="my-video"
+                   class="video-js vjs-default-skin "
+                   controls
+                   preload="metadata"
+                   poster="{{ media_value_object.media.get_thumbnail_url }}"
+                   data-setup='{"fluid": true}'>
+                <source src="{{ media_value_object.media.get_trailer_url }}" type="video/mp4" />
+                <p class="vjs-no-js">
+                    To view this video please enable JavaScript, and consider upgrading to a
+                    web browser that supports HTML5 video
+                </p>
+            </video>
+        {% endif %}
+        <!-- Action anchors -->
+        <div class="flex justify-around mt-4 pb-4">
+            <!-- Like -->
+            <a href="#"
+               @click.prevent="like()"
+               :class="liked ? 'text-blue-600' : 'text-blue-500'"
+               class="no-underline flex flex-col items-center transform transition-transform duration-150">
+                <i class="ri-thumb-up-line text-3xl" x-show="!liked"></i>
+                <i class="ri-thumb-up-fill text-3xl" x-show="liked"></i>
+                <span class="mt-1 text-sm" x-text="likeCount"></span>
+            </a>
+            <!-- Report -->
+            <a href="#"
+               @click.prevent="openReportForm()"
+               class="no-underline flex flex-col items-center text-red-500 hover:text-red-600 transform transition-transform duration-150">
+                <i class="ri-error-warning-line text-3xl"></i>
+                <span class="mt-1 text-sm">Report</span>
+            </a>
         </div>
+        {% include "single_media/comments.html" %}
+        {% include "report_form.html" %}
     </div>
-    {% endif %}
-    <form method="POST" action="{% url 'media.unlock' %}">
-        <input type="hidden" name="media_id" value="{{media_value_object.media.id}}">
-        <button type="submit"
-                class="tw w-full mb-5 justify-center inline-flex items-center gap-2 px-5 py-2.5 rounded-xl
-          font-semibold text-yellow-900
-          bg-gradient-to-b from-amber-200 via-amber-300 to-amber-400
-          hover:from-amber-300 hover:via-amber-400 hover:to-amber-500
-          transition-all">
-            <i class="ri-lock-unlock-line text-lg"></i>
-            Unlock for ${{ media_value_object.media.unlock_price }}
-        </button>
-    </form>
-    <video
-            id="my-video"
-            class="video-js vjs-default-skin "
-            controls
-            preload="metadata"
-            poster="{{media_value_object.media.get_thumbnail_url}}"
-            data-setup='{"fluid": true}'>
-        <source src="{{media_value_object.media.get_trailer_url}}" type="video/mp4"/>
-        <p class="vjs-no-js">
-            To view this video please enable JavaScript, and consider upgrading to a
-            web browser that supports HTML5 video
-        </p>
-    </video>
-    {% endif %}
-
-    <!-- Action anchors -->
-    <div class="flex justify-around mt-4 pb-4">
-        <!-- Like -->
-        <a href="#"
-           @click.prevent="like()"
-           :class="liked ? 'text-blue-600' : 'text-blue-500'"
-           class="no-underline flex flex-col items-center transform transition-transform duration-150">
-            <i class="ri-thumb-up-line text-3xl" x-show="!liked"></i>
-            <i class="ri-thumb-up-fill text-3xl" x-show="liked"></i>
-            <span class="mt-1 text-sm" x-text="likeCount"></span>
-        </a>
-
-
-        <!-- Report -->
-        <a href="#"
-           @click.prevent="openReportForm()"
-           class="no-underline flex flex-col items-center text-red-500 hover:text-red-600 transform transition-transform duration-150">
-            <i class="ri-error-warning-line text-3xl"></i>
-            <span class="mt-1 text-sm">Report</span>
-        </a>
-    </div>
-
-    {% include "single_media/comments.html"%}
-
-    {% include "report_form.html" %}
-</div>
-
 {% endblock content %}

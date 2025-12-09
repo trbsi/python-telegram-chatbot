@@ -6,7 +6,7 @@ from django.contrib.auth.models import Group
 from faker import Faker
 
 from database.seeders.media_data import media_list, thumbnail_list
-from src.media.enums import MediaEnum
+from src.media.enums.media_status_enum import MediaStatusEnum
 from src.media.models import Media
 from src.user.enum import UserEnum
 
@@ -33,7 +33,7 @@ class MediaSeeder:
                     file_type=file_type,
                     file_trailer=rand_media if file_type == 'video' else None,
                     file_thumbnail=random_thumbnail if file_type == 'video' else None,
-                    status=MediaEnum.STATUS_PAID.value,
+                    status=MediaStatusEnum.STATUS_PAID.value,
                     description=fake.text(),
                     created_at=datetime.now(),
                     share_count=random.randint(1, 1000),

@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'src.report.apps.ReportConfig',
     'src.engagement.apps.EngagementConfig',
     'src.payment.apps.PaymentConfig',
+    'src.age_verification.apps.AgeVerificationConfig',
 
     'django_celery_beat',
 
@@ -77,6 +78,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "allauth.account.middleware.AccountMiddleware",
     'bugsnag.django.middleware.BugsnagMiddleware',
+    'src.age_verification.middlewares.AgeVerificationMiddleware',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -217,3 +219,18 @@ SLACK_CHANNEL_ID = env('SLACK_CHANNEL_ID')
 
 # Payment
 DEFAULT_PAYMENT_PROVIDER = env('DEFAULT_PAYMENT_PROVIDER')
+
+# GeoIP
+IP_DATABASE_PATH = BASE_DIR / 'media/GeoLite-City.mmdb'
+MAX_MIND_LICENCE = env('MAX_MIND_LICENCE')
+
+# Age Verification
+AGE_VERIFICATION_PROVIDER = env('AGE_VERIFICATION_PROVIDER')
+AGE_VERIFICATION_CONFIG = {
+    'didit.me': {
+        'base_url': env('AGE_VERIFICATION_DIDIT_BASE_URL'),
+        'api_key': env('AGE_VERIFICATION_DIDIT_API_KEY'),
+        'workflow_id': env('AGE_VERIFICATION_DIDIT_WORKFLOW_ID'),
+        'webhook_secret_key': env('AGE_VERIFICATION_DIDIT_WEBHOOK_KEY'),
+    }
+}

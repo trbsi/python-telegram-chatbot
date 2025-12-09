@@ -1,6 +1,6 @@
 from django.db.models import Q
+from src.media.enums.media_file_type_enum import MediaFileTypeEnum
 
-from src.media.enums import MediaEnum
 from src.media.models import Media
 from src.storage.background_tasks.process_media_task.process_media_task import ProcessMediaTask
 from src.storage.tasks import task_process_media
@@ -10,7 +10,7 @@ class RecreateThumbnailAndTrailerCron:
     def recreate_media_asset(self):
         media = (
             Media.objects
-            .filter(file_type=MediaEnum.FILE_TYPE_VIDEO.value)
+            .filter(file_type=MediaFileTypeEnum.FILE_TYPE_VIDEO.value)
             .filter(Q(file_thumbnail__isnull=True) | Q(file_trailer__isnull=True))
         )
 

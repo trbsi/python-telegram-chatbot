@@ -73,7 +73,7 @@ function fileUploaderComponent(uploadApi, userSuggestionApi, myContentUrl) {
 
             xhr.onload = () => {
                 if (xhr.status === 200) {
-                    fileData.statusMessage = "✅ Upload complete! Visit <a href ='"+myContentUrl+"' class='underline font-bold'>My Content</a> to make updates and send consent requests to other creators. ";
+                    fileData.statusMessage = "✅ Upload complete! Visit <a href='"+myContentUrl+"' class='underline font-bold'>My Content</a> to make updates and send consent requests to other creators. We will notify you via email once the video is ready.";
                     fileData.status = 'completed';
 
                     // add to uploadedFiles array to prevent re-upload

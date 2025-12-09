@@ -1,4 +1,4 @@
-from src.media.enums import MediaEnum
+from src.media.enums.media_unlock_enum import MediaUnlockEnum
 from src.media.models import Unlock
 from src.payment.models import PaymentHistory, Balance, Package
 from src.payment.services.payment_providers.payment_provider_service import PaymentProviderService
@@ -10,8 +10,8 @@ class PaymentWebhookService:
         self.payment_provider_service = provider_service or PaymentProviderService()
 
     # @TODO finish webhook
-    def handle_webook(self, body: dict):
-        payment_status: PaymentWebhookValueObject = self.payment_provider_service.handle_webook(body)
+    def handle_webook(self, query_params: dict, body: dict):
+        payment_status: PaymentWebhookValueObject = self.payment_provider_service.handle_webook(query_params, body)
 
         payment_history: PaymentHistory = (
             PaymentHistory
@@ -31,5 +31,5 @@ class PaymentWebhookService:
             balance.save()
 
         if isinstance(foreign_object, Unlock):
-            foreign_object.unlock_type = MediaEnum.UNLOCK_PERMANENT.value
+            foreign_object.unlock_type = MediaUnlockEnum.UNLOCK_PERMANENT.value
             foreign_object.save()

@@ -1,7 +1,7 @@
 from django.core.files.uploadedfile import UploadedFile
 from django.db import transaction
 
-from src.media.enums import MediaEnum
+from src.media.enums.media_status_enum import MediaStatusEnum
 from src.media.models import Media
 from src.media.services.hashtag.hashtag_service import HashtagService
 from src.media.utils import replace_tags
@@ -37,11 +37,11 @@ class UploadMediaService:
 
         match post_type:
             case 'post_now':
-                status = MediaEnum.STATUS_PENDING
+                status = MediaStatusEnum.STATUS_PENDING
             case 'schedule':
-                status = MediaEnum.STATUS_SCHEDULE
+                status = MediaStatusEnum.STATUS_SCHEDULE
             case _:
-                status = MediaEnum.STATUS_PENDING
+                status = MediaStatusEnum.STATUS_PENDING
 
         description = replace_tags(description)
         media = Media.objects.create(

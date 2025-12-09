@@ -7,7 +7,7 @@ from django.core.files.storage import default_storage
 from django.core.files.uploadedfile import UploadedFile, TemporaryUploadedFile
 
 from protectapp import settings
-from src.media.enums import MediaEnum
+from src.media.enums.media_file_type_enum import MediaFileTypeEnum
 
 
 class LocalStorageService:
@@ -60,10 +60,10 @@ class LocalStorageService:
         mime_type = uploaded_file.content_type  # e.g. "image/jpeg", "video/mp4"
 
         if mime_type.startswith("image/"):
-            return MediaEnum.FILE_TYPE_IMAGE.value
+            return MediaFileTypeEnum.FILE_TYPE_IMAGE.value
         elif mime_type.startswith("video/"):
-            return MediaEnum.FILE_TYPE_VIDEO.value
+            return MediaFileTypeEnum.FILE_TYPE_VIDEO.value
         elif mime_type.startswith("audio/"):
-            return MediaEnum.FILE_TYPE_AUDIO.value
+            return MediaFileTypeEnum.FILE_TYPE_AUDIO.value
         else:
             raise Exception("Unsupported file type")

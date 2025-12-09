@@ -75,7 +75,7 @@ def payment_webhook(request: HttpRequest) -> JsonResponse:
     bugsnag.notify(Exception(data))  # @TODO remove log
 
     webhook_service = PaymentWebhookService()
-    webhook_service.handle_webook(data)
+    webhook_service.handle_webook(request.GET, data)
     return JsonResponse({})
 
 

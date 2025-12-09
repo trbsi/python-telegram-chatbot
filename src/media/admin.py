@@ -4,7 +4,7 @@ from django.db.models import QuerySet
 from django.http import HttpRequest
 from django.utils.html import format_html
 
-from src.media.enums import MediaEnum
+from src.media.enums.media_status_enum import MediaStatusEnum
 from src.media.models import Media
 
 
@@ -44,12 +44,12 @@ class AdminMedia(admin.ModelAdmin):
 
     @admin.action(description='Mark as deleted multiple')
     def mark_as_deleted_multiple(self, request: HttpRequest, queryset: QuerySet):
-        queryset.update(status=MediaEnum.STATUS_DELETED.value)
+        queryset.update(status=MediaStatusEnum.STATUS_DELETED.value)
         self.message_user(request, 'Deleted', messages.SUCCESS)
 
     @admin.action(description="Mark as deleted", )
     def mark_as_deleted_single(self, request: HttpRequest, media):
-        media.status = MediaEnum.STATUS_DELETED.value
+        media.status = MediaStatusEnum.STATUS_DELETED.value
         media.save()
         messages.success(request, "Media deleted")
 

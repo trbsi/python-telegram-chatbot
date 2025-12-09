@@ -3,7 +3,7 @@ from django.core.paginator import Paginator, Page
 from django.db.models import QuerySet
 
 from src.core.utils import reverse_lazy_with_query
-from src.media.enums import MediaEnum
+from src.media.enums.media_status_enum import MediaStatusEnum
 from src.media.models import Media
 from src.user.models import User
 
@@ -15,7 +15,7 @@ class UserMediaService:
         user: User = User.objects.get(username=username)
         media: QuerySet[Media] = (
             Media.objects
-            .filter(status=MediaEnum.STATUS_PAID.value)
+            .filter(status=MediaStatusEnum.STATUS_PAID.value)
             .filter(user=user)
             .order_by('-created_at')
         )

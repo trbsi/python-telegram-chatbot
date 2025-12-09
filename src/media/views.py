@@ -1,6 +1,7 @@
 import json
 
 from django.contrib import messages
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
 from django.http import HttpRequest, HttpResponse, JsonResponse
@@ -123,15 +124,19 @@ def update_my_media(request: HttpRequest) -> HttpResponse:
 
 
 @require_POST
-@login_required
 def unlock(request: HttpRequest) -> HttpResponse:
     post = request.POST
     media_id = int(post.get('media_id'))
+    user = request.user
+    is_anonymouse_user = user.is_anonymous
     service = UnlockService()
+
     try:
-        service.unlock_by_balance(user=request.user, media_id=media_id)
+        service.unlock_by_balance(user=user, media_id=media_id)
     except BalanceTooLowException as e:
-        url = service.unlock_by_payment(user=request.user, media_id=media_id)
+        url, user = service.unlock_by_payment(user=user, media_id=media_id)
+        if is_anonymouse_user:
+            login(request, user)
         return redirect(url)
     except Exception as e:
         messages.error(request, str(e))

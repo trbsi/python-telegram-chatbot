@@ -1,5 +1,5 @@
 from protectapp import settings
-from src.media.enums import MediaEnum
+from src.media.enums.media_unlock_enum import MediaUnlockEnum
 from src.media.models import Media
 
 
@@ -10,7 +10,7 @@ class MediaValueObject:
             wrapped_master_key: bytes,
             wrap_nonce: bytes,
             session_key: bytes,
-            unlock_type: str,
+            unlock_type: MediaUnlockEnum,
             is_liked: bool,
             total_likes: int,
             total_comments: int,
@@ -34,10 +34,10 @@ class MediaValueObject:
         return self.session_key.hex()
 
     def is_unlocked(self) -> bool:
-        return self.unlock_type == MediaEnum.UNLOCK_PERMANENT.value
+        return self.unlock_type.is_unlocked_permanent()
 
     def is_unlock_pending(self) -> bool:
-        return self.unlock_type == MediaEnum.UNLOCK_PENDING.value
+        return self.unlock_type.is_pending()
 
     def get_video_metadata_as_json(self) -> dict:
         shards = self.media.shards_metadata
@@ -46,6 +46,7 @@ class MediaValueObject:
             'codec': self.media.get_codec_string(),
             'seconds_per_shard': self.media.get_seconds_per_shard()
         }
+
         shard_metadata = []
         for index, shard in enumerate(shards):
             shard_path = self.media.get_shard_file_path(index)

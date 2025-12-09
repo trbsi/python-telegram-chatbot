@@ -4,7 +4,7 @@ import subprocess
 from pathlib import Path
 
 from protectapp import settings
-from src.media.enums import MediaEnum
+from src.media.enums.media_enum import MediaEnum
 from src.media.models import Media
 from src.storage.services.sharding.shard_metadata_value_object import ShardMetadataValueObject
 from src.storage.services.sharding.video_metadata_value_object import VideoMetadataValueObject
@@ -70,14 +70,18 @@ class SplitVideoService:
         subprocess.run([
             "ffmpeg",
             "-i", input_path,
-            "-c:v", "libvpx",
+            "-c:v", "libvpx",        # VP8
             "-b:v", "1M",
             "-crf", "10",
-            "-c:a", "libvorbis",
+            "-c:a", "libvorbis",     # Vorbis
             "-b:a", "128k",
             "-f", "webm",
             "-cluster_time_limit", "10000",
             "-cluster_size_limit", "5000000",
+            "-reset_timestamps", "0",    # continuous timeline
+            "-map", "0",
+            "-segment_time", "10",       # 10 seconds per segment
+            "-f", "segment",
             output_pattern
         ], check=True)
 

@@ -5,7 +5,7 @@ from django.contrib.auth.models import AnonymousUser
 
 from protectapp import settings
 from src.engagement.models import Like, Comment
-from src.media.enums import MediaEnum
+from src.media.enums.media_unlock_enum import MediaUnlockEnum
 from src.media.models import Media, Unlock
 from src.media.services.single_media.media_value_object import MediaValueObject
 from src.user.models import User
@@ -20,23 +20,29 @@ class SingleMediaService:
 
         if user.is_authenticated:
             unlock = Unlock.objects.filter(user=user, media=media).first()
-            unlock_type = unlock.unlock_type if unlock else MediaEnum.UNLOCK_LOCKED.value
+            unlock_type = MediaUnlockEnum.from_string(unlock.unlock_type) if unlock else MediaUnlockEnum.UNLOCK_LOCKED
             is_liked = Like.objects.filter(user=user, media=media).exists()
         else:
-            unlock_type = MediaEnum.UNLOCK_LOCKED.value
+            unlock_type = MediaUnlockEnum.UNLOCK_LOCKED
             is_liked = False
 
-        unlock_type = MediaEnum.UNLOCK_PERMANENT.value  # @TODO remove this
-        master_key = self._decrypt_wrapped_master_key(media)
-        # Random 32 bytes
-        session_key = os.urandom(32)
-        # standard 12-byte AES-GCM nonce
-        wrap_nonce = os.urandom(12)
-        wrapped_master_key_for_client = AESGCM(session_key).encrypt(
-            nonce=wrap_nonce,
-            data=master_key,
-            associated_data=None
-        )
+        unlock_type = MediaUnlockEnum.UNLOCK_PERMANENT  # @TODO remove this
+        
+        if unlock_type.is_locked():
+            wrapped_master_key_for_client = b'x'
+            wrap_nonce = b'x'
+            session_key = b'x'
+        else:
+            master_key = self._decrypt_wrapped_master_key(media)
+            # Random 32 bytes
+            session_key = os.urandom(32)
+            # standard 12-byte AES-GCM nonce
+            wrap_nonce = os.urandom(12)
+            wrapped_master_key_for_client = AESGCM(session_key).encrypt(
+                nonce=wrap_nonce,
+                data=master_key,
+                associated_data=None
+            )
 
         return MediaValueObject(
             media=media,

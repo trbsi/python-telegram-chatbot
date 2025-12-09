@@ -36,4 +36,7 @@ docker exec -it "$DOCKER_CONTAINER" poetry run python manage.py migrate
 echo "→ Restarting containers"
 docker restart "$DOCKER_CONTAINER" "$WORKER" "$BEAT"
 
+echo "→ Downloading GeoIP"
+docker exec -it "$DOCKER_CONTAINER" poetry run python manage.py download_geoip_command
+
 echo "✔ Done"
