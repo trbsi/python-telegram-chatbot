@@ -33,9 +33,9 @@ def home(request: HttpRequest) -> HttpResponse:
         messages.success(request, f'{username} invited you to become a creator.')
         response = redirect(reverse_lazy('account_signup'))
         response.set_cookie(
-            'invited_by',
+            'invited_by_cookie',
             username,
-            max_age=60 * 60 * 24 * 30,  # seconds (30 day)
+            max_age=60 * 60 * 24 * 7,  # seconds (7 days)
             secure=True,  # only HTTPS
             httponly=True,  # not accessible via JS
             samesite="Lax",

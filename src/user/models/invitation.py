@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Manager
 
 from src.user.models import User
 
@@ -8,3 +9,5 @@ class Invitation(models.Model):
     invited_user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='invited_user')
     invited_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='invited_by_user')
     registered_at = models.DateTimeField(auto_now_add=True)
+
+    objects = Manager()

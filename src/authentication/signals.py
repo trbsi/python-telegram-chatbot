@@ -11,8 +11,9 @@ def after_registration(request, user, **kwargs):
     UserProfile.objects.create(user=user)
 
     try:
-        invited_by_username = request.COOKIES.get('invited_by')
-        invitation_service = InvitationService()
-        invitation_service.save_invitation(invited_by_username=invited_by_username, invited_user=user)
+        invited_by_username = request.COOKIES.get('invited_by_cookie')
+        if invited_by_username:
+            invitation_service = InvitationService()
+            invitation_service.save_invitation(invited_by_username=invited_by_username, invited_user=user)
     except Exception as e:
         bugsnag.notify(e)
