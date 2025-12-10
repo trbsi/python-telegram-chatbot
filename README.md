@@ -40,7 +40,9 @@ docker compose up -d --build
 
 Run `./deploy.sh --build` to build docker or `./deploy.sh` to deplo without building docker
 
-# Shards explanation
+# Video
+
+## Shards explanation
 
 ```
 [
@@ -68,3 +70,6 @@ Run `./deploy.sh --build` to build docker or `./deploy.sh` to deplo without buil
 
 Expose only **nonce**, **shard**, **storage_metadata.file_path**.
 
+## Video theme
+
+https://www.mux.com/blog/the-new-video-js-themes
