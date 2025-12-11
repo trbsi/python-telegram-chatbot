@@ -15,6 +15,7 @@ test/
 static/js/all.min.js
 assets
 temp
+docker/docker-compose.override.yml
 
 # Backup files #
 *.bak
