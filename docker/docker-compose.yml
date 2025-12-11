@@ -103,7 +103,7 @@ services:
     volumes:
       - ../:/app
       - protectapp_media:/app/media
-    depends_on: [ redis, django ]
+    depends_on: [ redis, django, mysql ]
     command: poetry run celery -A protectapp beat --loglevel=debug
     networks: [ protectapp-net ]
 
