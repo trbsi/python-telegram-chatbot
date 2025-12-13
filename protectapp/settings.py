@@ -154,6 +154,7 @@ APP_URL = env('APP_URL')
 APP_ENV = env('APP_ENV')
 APP_NAME = env('APP_NAME')
 PROTOCOL = 'https' if APP_ENV == 'production' else 'http'
+SESSION_COOKIE_SECURE = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/

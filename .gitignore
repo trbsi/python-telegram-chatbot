@@ -16,6 +16,8 @@ static/js/all.min.js
 assets
 temp
 docker/docker-compose.override.yml
+docker/nginx/certs
+docker/nginx/html
 
 # Backup files #
 *.bak
