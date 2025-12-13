@@ -33,6 +33,10 @@ test() {
     docker exec -it "$DJANGO_CONTAINER" poetry run python manage.py test
 }
 
+collectstatic() {
+    docker exec -it "$DJANGO_CONTAINER" poetry run python manage.py collectstatic
+}
+
 revertshards() {
     local media_id="$1"
     echo "Reverting shard: $media_id"
@@ -60,6 +64,9 @@ case "$1" in
         ;;
     test)
         test
+        ;;
+    collectstatic)
+        collectstatic
         ;;
     revertshards)
       if [[ -z "$2" ]]; then
