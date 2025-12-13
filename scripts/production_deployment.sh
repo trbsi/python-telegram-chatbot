@@ -12,31 +12,31 @@ if [[ "$1" == "--build" ]]; then
     BUILD_DOCKER=true
 fi
 
-echo "→ Updating repository"
+echo "🚀 --------------------------- Updating repository ---------------------------"
 git checkout master
 git checkout .
 git pull --rebase
 
 if $BUILD_DOCKER; then
-    echo "→ Rebuilding Docker"
+    echo "🛠️ --------------------------- Rebuilding Docker ---------------------------"
     cd docker
     docker compose up -d --build
     cd -
 fi
 
-echo "--------------------------- Collecting JS "---------------------------"
+echo "📦 --------------------------- Collecting JS ---------------------------"
 docker exec -it "$DOCKER_CONTAINER" poetry run python manage.py collect_javascript_command
 
-echo "--------------------------- Collecting static files "---------------------------"
+echo "🖼️ --------------------------- Collecting static files ---------------------------"
 docker exec -it "$DOCKER_CONTAINER" poetry run python manage.py collectstatic --noinput --clear
 
-echo "--------------------------- Running migrations "---------------------------"
+echo "📜 --------------------------- Running migrations ---------------------------"
 docker exec -it "$DOCKER_CONTAINER" poetry run python manage.py migrate
 
-echo "--------------------------- Restarting containers "---------------------------"
+echo "🔄 --------------------------- Restarting containers ---------------------------"
 docker restart "$DOCKER_CONTAINER" "$WORKER" "$BEAT"
 
-echo ""-------------------------- Downloading GeoIP ---------------------------"
-docker exec -it "$DOCKER_CONTAINER" poetry run python manage.py download_geoip_command
+echo "🌍 -------------------------- Downloading GeoIP ---------------------------"
+docker exec -it "$DOCKER_CONTAINER" poetry run python.manage.py download_geoip_command
 
-echo "✔ Done"
+echo "✅ --------------------------- Done ---------------------------"
