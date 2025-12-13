@@ -64,64 +64,65 @@ class Command(BaseCommand):
 
         # Obfuscation step
         subprocess.run(
-        [
-            "javascript-obfuscator",
-            file_path,
-            "--output", file_path,
-    
-            # Core
-            "--compact", "true",
-            "--log", "false",
-    
-            # Control flow
-            "--control-flow-flattening", "true",
-            "--control-flow-flattening-threshold", "1",
-    
-            # Dead code
-            "--dead-code-injection", "true",
-            "--dead-code-injection-threshold", "1",
-    
-            # Debug protection
-            "--debug-protection", "true",
-            "--debug-protection-interval", "4000",
-            "--disable-console-output", "true",
-    
-            # Identifiers
-            "--identifier-names-generator", "hexadecimal",
-            "--rename-globals", "false",
-    
-            # Self defending
-            "--self-defending", "true",
-    
-            # Optimizations
-            "--numbers-to-expressions", "true",
-            "--simplify", "true",
-    
-            # Strings
-            "--split-strings", "true",
-            "--split-strings-chunk-length", "5",
-    
-            # String array
-            "--string-array", "true",
-            "--string-array-threshold", "1",
-            "--string-array-calls-transform", "true",
-            "--string-array-encoding", "rc4",
-            "--string-array-index-shift", "true",
-            "--string-array-rotate", "true",
-            "--string-array-shuffle", "true",
-    
-            # String array wrappers
-            "--string-array-wrappers-count", "5",
-            "--string-array-wrappers-chained-calls", "true",
-            "--string-array-wrappers-parameters-max-count", "5",
-            "--string-array-wrappers-type", "function",
-    
-            # Object keys
-            "--transform-object-keys", "true",
-    
-            # Unicode
-            "--unicode-escape-sequence", "false",
-        ],
-        check=True
-    )
+            [
+                "javascript-obfuscator",
+                file_path,
+                "--output", file_path,
+        
+                # Core
+                "--compact", "true",
+                "--log", "false",
+        
+                # Control flow
+                "--control-flow-flattening", "true",
+                "--control-flow-flattening-threshold", "1",
+        
+                # Dead code
+                "--dead-code-injection", "true",
+                "--dead-code-injection-threshold", "1",
+        
+                # Debug protection
+                "--debug-protection", "true",
+                "--debug-protection-interval", "4000",
+                "--disable-console-output", "true",
+        
+                # Identifiers
+                "--identifier-names-generator", "hexadecimal",
+                "--rename-globals", "false",
+        
+                # Self defending
+                "--self-defending", "true",
+        
+                # Optimizations
+                "--numbers-to-expressions", "true",
+                "--simplify", "true",
+        
+                # Strings
+                "--split-strings", "true",
+                "--split-strings-chunk-length", "5",
+        
+                # String array
+                "--string-array", "true",
+                "--string-array-threshold", "1",
+                "--string-array-calls-transform", "true",
+                "--string-array-encoding", "rc4",
+                "--string-array-index-shift", "true",
+                "--string-array-rotate", "true",
+                "--string-array-shuffle", "true",
+        
+                # String array wrappers
+                "--string-array-wrappers-count", "5",
+                "--string-array-wrappers-chained-calls", "true",
+                "--string-array-wrappers-parameters-max-count", "5",
+                "--string-array-wrappers-type", "function",
+        
+                # Object keys
+                "--transform-object-keys", "true",
+        
+                # Unicode
+                "--unicode-escape-sequence", "false",
+            ],
+            check=True
+        )
+
 
