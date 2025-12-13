@@ -85,7 +85,7 @@ services:
       - ../:/app
       - protectapp_media:/app/media
     depends_on: [ redis, django ]
-    command: poetry run celery -A protectapp worker --loglevel=info
+    command: poetry run celery -A protectapp worker --loglevel=info --autoscale=8,2
     networks: [ protectapp-net ]
 
   celery-beat:
@@ -115,3 +115,4 @@ volumes:
   protectapp_media:
   protectapp_certificates:
   protectapp_certs:
+
