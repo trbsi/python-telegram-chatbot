@@ -8,12 +8,11 @@ services:
       - "443:443"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./nginx/certs:/etc/nginx/certs:ro
-      #- ./nginx/local_certs:/etc/nginx/certs
+      - protectapp_certs:/etc/nginx/certs:ro
       - ./nginx/vhost:/etc/nginx/vhost.d
       - ./nginx/html:/usr/share/nginx/html
       - ./nginx/my_custom_proxy_settings.conf:/etc/nginx/conf.d/my_custom_proxy_settings.conf
-      - ../assets:/usr/share/nginx/html/static # to be able to access assets via /static url (see ./vhost/mydomain.con)
+      - ../assets:/usr/share/nginx/assets # to be able to access assets via /static url (see ./vhost/mydomain.con)
     networks: [ protectapp-net ]
 
   django:
@@ -37,7 +36,6 @@ services:
     working_dir: /app
     depends_on: [ mysql, redis ]
     command: poetry run gunicorn protectapp.wsgi:application -b 0.0.0.0:8000 --workers 5 --reload
-    #command: python manage.py runserver 0.0.0.0:8000
     expose: [ "8000" ]
     networks: [ protectapp-net ]
 
@@ -116,3 +114,4 @@ volumes:
   protectapp_redis_data:
   protectapp_media:
   protectapp_certificates:
+  protectapp_certs:
