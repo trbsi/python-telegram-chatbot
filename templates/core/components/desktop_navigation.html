@@ -1,6 +1,6 @@
 <nav class="hidden md:flex items-center gap-4 relative">
     {% if user.is_authenticated %}
-        <button onclick="InviteUser()"
+        <button onclick="inviteUser()"
            class="flex items-center gap-1 hover:text-blue-600">
             <i class="ri-user-add-line"></i> Invite a creator <span class="text-xs">(left: {{TEMPLATE_INVITATIONS_LEFT}})</span>
         </button>

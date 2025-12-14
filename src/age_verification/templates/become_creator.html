@@ -1,9 +1,8 @@
 {% extends 'core/layout.html' %}
 {% block content %}
-    {% include "components/elements/back_button.html" with include_header=True %}
     <div class="p-5">
         <!-- Heading -->
-        <h1 class="text-center text-2xl font-semibold text-white mb-4">Complete These Steps to Get Started</h1>
+        <h1 class="text-center text-2xl font-semibold mb-4">Complete These Steps to Get Started</h1>
         {% if user_invited %}
             <!-- Step 1 -->
             {% if is_creator_agreement_completed %}
@@ -33,7 +32,8 @@
                     <div class="bg-red-900/30 border-red-600 text-white relative w-full rounded-2xl border-2 p-6 text-center shadow-lg transition hover:scale-105">
                         <div class="text-5xl mb-3">🎂</div>
                         {% if age_verification %}
-                            <h1 class="text-lg font-bold rounded-2xl border-2 text-red-500">Status: {{ age_verification.status }}</h1>
+                            <h1 class="text-lg font-bold rounded-2xl border-2 text-red-500">
+                                Status: {{ age_verification.status }}</h1>
                         {% endif %}
                         <h2 class="text-lg font-bold text-white">Click to Age Verification</h2>
                         <p class="mt-2 text-sm text-gray-400">Verify your identity and age with our KYC provider</p>
@@ -41,29 +41,35 @@
                 </a>
             {% endif %}
         {% else %}
-                <div class="mb-5 bg-yellow-900/30 border-yellow-600 text-white relative w-full rounded-2xl border-2 p-6 text-center shadow-lg transition hover:scale-105">
-                    <h2 class="text-lg font-bold text-white">Welcome to Our Community!</h2>
-                    <div class="mt-2 text-sm text-gray-400">
-                        <p>
-                        We're building something special here, and currently, access is by invitation only.
-                        </p>
+            <div class="mb-6 w-full max-w-3xl mx-auto rounded-2xl border-2 border-yellow-600 bg-yellow-100/40 p-8 text-center text-black shadow-xl transition-transform hover:scale-105">
+                <h2 class="text-2xl font-extrabold mb-4">Welcome to Our Community!</h2>
 
-                        <p>
-                        Why? We believe the best communities grow through meaningful connections. Each new member is invited by someone who already values what we're creating.
-                        </p>
+                <div class="space-y-4 text-left">
+                    <p>
+                        We're building something special here, and currently, access is <strong>by invitation
+                        only</strong>.
+                    </p>
 
-                        <p>
-                        How to join:<br>
-                        1. Connect with someone already using {{TEMPLATE_APP_NAME}}<br>
-                        2. Ask them to send you an invitation<br>
-                        3. Create your account and start contributing!
-                        </p>
+                    <p>
+                        Why? We believe the best communities grow through meaningful connections. Each new member is
+                        invited by someone who already values what we're creating.
+                    </p>
 
-                        <p>
+                    <p>
+                        <strong>How to join:</strong>
+                    <ol class="list-decimal list-inside mt-2 space-y-1">
+                        <li>Connect with someone already using {{ TEMPLATE_APP_NAME }}</li>
+                        <li>Ask them to send you an invitation</li>
+                        <li>Create your account and start contributing!</li>
+                    </ol>
+                    </p>
+
+                    <p class="font-semibold">
                         Together, we're creating something amazing. We can't wait to welcome you!
-                        </p>
-                    </div>
+                    </p>
                 </div>
+            </div>
+
         {% endif %}
     </div>
 {% endblock content %}

@@ -1,104 +1,117 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
-        <meta name="csrf-token" content="{{ csrf_token }}">
-        <title>{{ TEMPLATE_APP_NAME }} |
-            {% block title %}
-            {% endblock title %}
-        </title>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>{{ TEMPLATE_APP_NAME }} |
+        {% block title %}
+        {% endblock title %}
+    </title>
 
-        <link href="{% static 'css/base.css' %}" rel="stylesheet">
-        
-        <!-- Tailwidncss -->
-        <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
 
-        <!-- Remixicon -->
-        <link href="https://cdn.jsdelivr.net/npm/remixicon@4.7.0/fonts/remixicon.css"
-              rel="stylesheet" />
+    <!-- Tailwidncss -->
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 
-        <!-- JS libs -->
-        <script src="https://unpkg.com/alpinejs" defer></script>
-        <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <!-- Remixicon -->
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.7.0/fonts/remixicon.css"
+          rel="stylesheet"/>
 
-        <!-- Video js -->
-        <link href="https://vjs.zencdn.net/8.23.4/video-js.css" rel="stylesheet" />
-        <script src="https://vjs.zencdn.net/8.23.4/video.min.js"></script>
+    <!-- JS libs -->
+    <script src="https://unpkg.com/alpinejs" defer></script>
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"
+            integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
 
-        <!-- Toastr -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
-        <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"
-              rel="stylesheet">
+    <!-- Video js -->
+    <link href="https://vjs.zencdn.net/8.23.4/video-js.css" rel="stylesheet"/>
+    <script src="https://vjs.zencdn.net/8.23.4/video.min.js"></script>
 
-        <!-- Video js theme -->
-        <link href="https://unpkg.com/@videojs/themes@1/dist/city/index.css" rel="stylesheet">
-  </head>
-    <body class="antialiased text-gray-800 bg-gray-50">
-        <!-- NAV -->
-        <header class="bg-white shadow-md sticky top-0 z-50">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between h-16">
-                    <a href="/" class="flex items-center gap-3">
-                        <span class="font-semibold text-lg logo">{{ TEMPLATE_APP_NAME }}</span>
-                    </a>
-                    <!-- Desktop links -->
-                    {% include "core/components/desktop_navigation.html" %}
-                    <!-- Mobile menu button -->
-                    <div class="md:hidden">
-                        <button id="nav-toggle"
-                                aria-controls="mobile-menu"
-                                aria-expanded="false"
-                                class="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
-                            <svg id="icon-open"
-                                 class="w-6 h-6"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 viewBox="0 0 24 24"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                            </svg>
-                            <svg id="icon-close"
-                                 class="w-6 h-6 hidden"
-                                 fill="none"
-                                 stroke="currentColor"
-                                 viewBox="0 0 24 24"
-                                 xmlns="http://www.w3.org/2000/svg">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-                            </svg>
-                        </button>
-                    </div>
+    <!-- Toastr -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"
+          rel="stylesheet">
+
+    <!-- Video js theme -->
+    <link href="https://unpkg.com/@videojs/themes@1/dist/city/index.css" rel="stylesheet">
+</head>
+<body class="antialiased text-gray-800 bg-gray-50">
+<!-- NAV -->
+<header class="bg-white shadow-md sticky top-0 z-50">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+            <a href="/" class="flex items-center gap-3">
+                <span class="font-semibold text-lg logo">{{ TEMPLATE_APP_NAME }}</span>
+            </a>
+            <!-- Desktop links -->
+            {% include "core/components/desktop_navigation.html" %}
+            <!-- Mobile menu button -->
+            <div class="md:hidden">
+                <button id="nav-toggle"
+                        aria-controls="mobile-menu"
+                        aria-expanded="false"
+                        class="p-2 rounded-md focus:outline-none focus:ring-2 focus:ring-primary">
+                    <svg id="icon-open"
+                         class="w-6 h-6"
+                         fill="none"
+                         stroke="currentColor"
+                         viewBox="0 0 24 24"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                    <svg id="icon-close"
+                         class="w-6 h-6 hidden"
+                         fill="none"
+                         stroke="currentColor"
+                         viewBox="0 0 24 24"
+                         xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                              d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    <!-- Mobile menu -->
+    {% include "core/components/mobile_navigation.html" %}
+</header>
+<!-- HERO -->
+<main>
+    <section class="container mx-auto  sm:px-6 lg:px-8">
+        <div class="max-w-3xl mx-auto bg-white p-4  shadow-sm">
+            {% block content %}
+            {% endblock content %}
+        </div>
+    </section>
+    <!-- FOOTER -->
+    <footer class="mt-8 bg-teal-900 text-white border-t">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <div class="text-sm">
+                    © <span id="year"></span> {{ TEMPLATE_APP_NAME }}. All rights reserved.
+                </div>
+                <div class="flex gap-4 text-sm">
+                    <a href="#" class="tw underline hover:text-primary">Privacy</a>
+                    <a href="#" class="tw underline hover:text-primary">Terms</a>
+                    <a href="{% url 'contact' %}" class="tw underline hover:text-primary">Contact</a>
                 </div>
             </div>
-            <!-- Mobile menu -->
-            {% include "core/components/mobile_navigation.html" %}
-        </header>
-        <!-- HERO -->
-        <main>
-            <section class="container mx-auto  sm:px-6 lg:px-8">
-                <div class="max-w-3xl mx-auto bg-white p-4  shadow-sm">
-                    {% block content %}
-                    {% endblock content %}
-                </div>
-            </section>
-            <!-- FOOTER -->
-            <footer class="mt-8 bg-teal-900 text-white border-t">
-                <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                    <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-                        <div class="text-sm">
-                            © <span id="year"></span> {{ TEMPLATE_APP_NAME }}. All rights reserved.
-                        </div>
-                        <div class="flex gap-4 text-sm">
-                            <a href="#" class="tw underline hover:text-primary">Privacy</a>
-                            <a href="#" class="tw underline hover:text-primary">Terms</a>
-                            <a href="{% url 'contact' %}" class="tw underline hover:text-primary">Contact</a>
-                        </div>
-                    </div>
-                </div>
-            </footer>
-        </main>
+        </div>
+    </footer>
+</main>
 
-        {% include "core/components/javascript.html" %}
-    </body>
+<script src="{% static 'js/core/core.js' %}"></script>
+{% block javascript_global %}
+{% endblock javascript_global %}
+
+{% if TEMPLATE_APP_ENV == 'production' %}
+    <script src="{% static 'js/all.min.js' %}"></script>
+{% else %}
+    {% block javascript_include %}
+    {% endblock javascript_include %}
+{% endif %}
+{% include "core/components/javascript.html" %}
+</body>
 </html>

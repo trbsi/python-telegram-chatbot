@@ -4,10 +4,9 @@ import json
 import traceback
 from time import time
 
-from app import settings
-from app.log import log
 from django.http.request import HttpRequest
 
+from protectapp import settings
 from src.age_verification.models import AgeVerification
 
 

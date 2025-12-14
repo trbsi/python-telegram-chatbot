@@ -2,8 +2,8 @@ from django.contrib.auth.models import Group
 
 from src.age_verification.models import AgeVerification, CreatorAgreement
 from src.user.enum import UserEnum
+from src.user.models import Invitation
 from src.user.models import User
-from user.models import Invitation
 
 
 class CreatorService:

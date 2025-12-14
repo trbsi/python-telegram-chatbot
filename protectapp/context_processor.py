@@ -1,6 +1,6 @@
-from core.utils import full_url_for_route
 from protectapp import settings
-from user.models import Invitation
+from src.core.utils import full_url_for_route
+from src.user.models import Invitation
 
 
 def global_vars(request):

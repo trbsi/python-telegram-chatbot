@@ -29,6 +29,7 @@ urlpatterns = (
             path('engagement/', include('src.engagement.urls')),
             path('report/', include('src.report.urls')),
             path('payment/', include('src.payment.urls')),
+            path('age-verification/', include('src.age_verification.urls')),
             path('.privatnomjesto/', admin.site.urls),
         ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 )

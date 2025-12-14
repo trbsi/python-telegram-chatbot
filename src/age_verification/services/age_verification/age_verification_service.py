@@ -1,8 +1,8 @@
 from django.http.request import HttpRequest
 
-from age_verification.services.age_verification.age_verification_value_object import AgeVerificationValueObject
 from protectapp import settings
 from src.age_verification.models import AgeVerification
+from src.age_verification.services.age_verification.age_verification_value_object import AgeVerificationValueObject
 from src.age_verification.services.didit.didit_session_service import DiditSessionService
 from src.age_verification.services.didit.didit_webhook_service import DiditWebhookService
 from src.user.models import User
