@@ -3,8 +3,6 @@ from src.user.models.invitation import Invitation
 
 
 class InvitationService:
-    MAX_INVITES = 10
-
     def can_invite(self, username: str) -> bool:
         user_exists = User.objects.filter(username=username).exists()
         if user_exists and not self._max_invites_reached(username):
@@ -18,7 +16,7 @@ class InvitationService:
 
     def _max_invites_reached(self, username: str) -> bool:
         count = Invitation.objects.filter(invited_by__username=username).count()
-        if count > self.MAX_INVITES:
+        if count > Invitation.MAX_INVITES:
             return True
 
         return False

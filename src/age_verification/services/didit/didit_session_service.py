@@ -2,6 +2,7 @@
 import requests
 from django.urls.base import reverse_lazy
 
+from age_verification.services.age_verification.age_verification_value_object import AgeVerificationValueObject
 from protectapp import settings
 from src.age_verification.models import AgeVerification
 from src.user.models import User
@@ -15,7 +16,7 @@ class DiditSessionService:
         self.workflow_id = self.config['workflow_id']
 
     # https://docs.didit.me/reference/create-session-verification-sessions
-    def create_session(self, user: User) -> dict:
+    def create_session(self, user: User) -> AgeVerificationValueObject:
         url = f'{self.base_url}/v2/session/'
         callback = f'{settings.APP_URL}{reverse_lazy('age_verification.become_creator')}'
 
@@ -34,9 +35,8 @@ class DiditSessionService:
         response = requests.post(url, json=payload, headers=headers)
 
         data = response.json()
-
-        return {
-            'session_id': data.get('session_id'),
-            'status': data.get('status'),
-            'redirect_url': data.get('url'),
-        }
+        return AgeVerificationValueObject(
+            session_id=data.get('session_id'),
+            status=data.get('status'),
+            redirect_url=data.get('url'),
+        )

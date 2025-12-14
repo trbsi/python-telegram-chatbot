@@ -11,5 +11,4 @@ urlpatterns = [
     path('legal-documents', views.legal_documents, name='legal_documents'),
     path('contact', views.contact, name='contact'),
     path('v/<int:id>', media_views.view_single_media, name='media.view_single_media'),
-
 ]

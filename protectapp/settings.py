@@ -155,6 +155,7 @@ APP_ENV = env('APP_ENV')
 APP_NAME = env('APP_NAME')
 PROTOCOL = 'https' if APP_ENV == 'production' else 'http'
 SESSION_COOKIE_SECURE = True
+IS_IN_BETA = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
@@ -201,7 +202,6 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 
-
 # Email
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = env('EMAIL_HOST')
@@ -241,6 +241,3 @@ AGE_VERIFICATION_CONFIG = {
         'webhook_secret_key': env('AGE_VERIFICATION_DIDIT_WEBHOOK_KEY'),
     }
 }
-
-
-

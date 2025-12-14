@@ -4,10 +4,10 @@ import json
 import traceback
 from time import time
 
-from django.http.request import HttpRequest
-
 from app import settings
 from app.log import log
+from django.http.request import HttpRequest
+
 from src.age_verification.models import AgeVerification
 
 
@@ -42,11 +42,12 @@ class DiditWebhookService:
             status = body.get("status")
             vendor_data = body.get("vendor_data")
 
-            age_verification = (AgeVerification
-                                .objects
-                                .filter(provider_session_id=session_id)
-                                .filter(user_id=vendor_data)
-                                .first())
+            age_verification = (
+                AgeVerification
+                .objects
+                .filter(provider_session_id=session_id)
+                .filter(user_id=vendor_data)
+                .first())
 
             if status == 'Approved':
                 status = AgeVerification.STATUS_VERIFIED

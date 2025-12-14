@@ -3,6 +3,7 @@ from django.contrib.auth.models import Group
 from src.age_verification.models import AgeVerification, CreatorAgreement
 from src.user.enum import UserEnum
 from src.user.models import User
+from user.models import Invitation
 
 
 class CreatorService:
@@ -21,6 +22,12 @@ class CreatorService:
 
             creator_role.user_set.add(user)
             user_role.user_set.remove(user)
+
+    def is_user_invited(self, user: User) -> bool:
+        if not Invitation.FEATURE_ACTIVE:
+            return True
+
+        return Invitation.objects.filter(invited_user=user).exists()
 
     def is_age_verification_completed(self, user: User) -> bool:
         return (AgeVerification.objects

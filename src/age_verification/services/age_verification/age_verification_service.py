@@ -1,5 +1,6 @@
 from django.http.request import HttpRequest
 
+from age_verification.services.age_verification.age_verification_value_object import AgeVerificationValueObject
 from protectapp import settings
 from src.age_verification.models import AgeVerification
 from src.age_verification.services.didit.didit_session_service import DiditSessionService
@@ -11,7 +12,7 @@ class AgeVerificationService:
     def is_didit(self):
         return settings.AGE_VERIFICATION_PROVIDER == AgeVerification.PROVIDER_DIDIT
 
-    def start_verification(self, user: User) -> str:
+    def start_verification(self, user: User) -> AgeVerificationValueObject:
         if self.is_didit():
             service = DiditSessionService()
             result = service.create_session(user)
@@ -26,7 +27,7 @@ class AgeVerificationService:
             status=result.get('status'),
         )
 
-        return result.get('redirect_url')
+        return result
 
     def finish_verification(self, request: HttpRequest) -> bool:
         if self.is_didit():

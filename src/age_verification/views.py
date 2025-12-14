@@ -25,7 +25,8 @@ def become_creator(request: HttpRequest) -> HttpResponse:
         {
             'is_creator_agreement_completed': service.is_creator_agreement_completed(request.user),
             'is_age_verification_completed': service.is_age_verification_completed(request.user),
-            'age_verification': service.get_age_verification(request.user)
+            'age_verification': service.get_age_verification(request.user),
+            'is_user_invited': service.is_user_invited(request.user),
         }
     )
 
@@ -63,9 +64,9 @@ def start_age_verification(request: HttpRequest) -> HttpResponse:
         return redirect(reverse_lazy('age_verification.become_creator'))
 
     service = AgeVerificationService()
-    url = service.start_verification(request.user)
+    age_verification_value_object = service.start_verification(request.user)
 
-    return redirect(url)
+    return redirect(age_verification_value_object.redirect_url)
 
 
 @require_POST

@@ -3,6 +3,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 
 from protectapp import settings
+from src.user.enum import UserEnum
 
 
 # Create your models here.
@@ -21,10 +22,10 @@ class User(AbstractUser):
         return f"https://ui-avatars.com/api/?name={self.username}"
 
     def is_regular_user(self):
-        return False
+        return self.groups.filter(name=UserEnum.ROLE_USER.value).exists()
 
     def is_creator(self):
-        return True
+        return self.groups.filter(name=UserEnum.ROLE_CREATOR.value).exists()
 
     def get_role(self) -> str:
         return self.groups.first().name

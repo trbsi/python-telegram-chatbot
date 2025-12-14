@@ -45,10 +45,8 @@ def upload(request: HttpRequest) -> HttpResponse:
     if user.is_regular_user():
         raise PermissionDenied
 
-    is_creator = user.is_creator()
-    if is_creator or is_creator == False:
-        if not _can_access_upload(request):
-            return redirect(reverse_lazy('age_verification.become_creator'))
+    if not _can_access_upload(request):
+        return redirect(reverse_lazy('age_verification.become_creator'))
 
     return render(
         request,
@@ -154,18 +152,13 @@ def record_views(request: HttpRequest) -> JsonResponse:
     return JsonResponse({})
 
 
-# @TODO finish this
 def _can_access_upload(request: HttpRequest) -> bool:
-    return True
-    service = CreatorService()
-    age_verification = service.is_age_verification_completed(request.user)
-    agreement = service.is_creator_agreement_completed(request.user)
-
-    if not age_verification or not agreement:
-        messages.warning(request, 'You have to sign creator agreement and verify your age')
-        return False
-    else:
+    user = request.user
+    if user.is_creator():
         return True
+
+    messages.warning(request, 'You have to sign creator agreement and verify your age')
+    return False
 
 
 @require_GET
