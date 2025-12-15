@@ -1,6 +1,10 @@
 {% extends "core/layout.html" %}
 {% load static %}
 
+{% block title %}
+    {{ media_value_object.media.user.username }}
+{% endblock title %}
+
 {% if media_value_object.is_unlocked %}
     {% block javascript_global %}
         {{ media_value_object.get_video_metadata_as_json|json_script:"video-meta" }}
