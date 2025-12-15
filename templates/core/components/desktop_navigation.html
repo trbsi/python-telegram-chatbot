@@ -1,8 +1,8 @@
 <nav class="hidden md:flex items-center gap-4 relative">
     {% if user.is_authenticated %}
         <button onclick="inviteUser()"
-           class="flex items-center gap-1 hover:text-blue-600">
-            <i class="ri-user-add-line"></i> Invite a creator <span class="text-xs">(left: {{TEMPLATE_INVITATIONS_LEFT}})</span>
+                class="flex items-center gap-1 hover:text-blue-600">
+            <i class="ri-user-add-line"></i> Invite a creator <span class="text-xs">({{ TEMPLATE_INVITATIONS_LEFT }} left)</span>
         </button>
         <a href="{% url 'media.upload' %}"
            class="tw flex items-center gap-1 hover:text-blue-600">
@@ -12,13 +12,13 @@
         <div class="relative">
             <button id="accountDropdownBtn"
                     class="flex items-center gap-1 hover:text-blue-600 focus:outline-none">
-                <i class="ri-user-line"></i> {{user.username}} <i class="ri-arrow-down-s-line ml-1"></i>
+                <i class="ri-user-line"></i> {{ user.username }} <i class="ri-arrow-down-s-line ml-1"></i>
             </button>
             <div id="accountDropdownMenu"
                  class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg hidden">
                 <a href="{% url 'media.my_content' %}"
                    class="tw flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
-                    <i class="ri-key-line"></i> My Content
+                    <i class="ri-folder-line"></i> My Content
                 </a>
                 <hr class="my-1">
                 <a href="{% url 'account_reset_password' %}"
@@ -28,6 +28,10 @@
                 <a href="{% url 'account_email' %}"
                    class="tw flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
                     <i class="ri-mail-line"></i> Update Email
+                </a>
+                <a href="{% url 'user.delete' %}"
+                   class="tw flex items-center gap-2 px-4 py-2 hover:bg-gray-100">
+                    <i class="ri-delete-bin-line"></i> Delete profile
                 </a>
                 <hr class="my-1">
                 <a href="{% url 'account_logout' %}"

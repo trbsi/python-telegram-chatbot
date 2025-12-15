@@ -1,5 +1,3 @@
-{% load static %}
-
 <!-- Minimal JS for interactions (menu toggle + year) -->
 <script>
     // Mobile nav toggle
@@ -9,11 +7,11 @@
     const iconClose = document.getElementById('icon-close');
 
     navToggle?.addEventListener('click', () => {
-      const expanded = navToggle.getAttribute('aria-expanded') === 'true';
-      navToggle.setAttribute('aria-expanded', String(!expanded));
-      mobileMenu.classList.toggle('hidden');
-      iconOpen.classList.toggle('hidden');
-      iconClose.classList.toggle('hidden');
+        const expanded = navToggle.getAttribute('aria-expanded') === 'true';
+        navToggle.setAttribute('aria-expanded', String(!expanded));
+        mobileMenu.classList.toggle('hidden');
+        iconOpen.classList.toggle('hidden');
+        iconClose.classList.toggle('hidden');
     });
 
     // Set current year
@@ -46,10 +44,10 @@
                 text: "I’m on {{TEMPLATE_APP_NAME}}, a platform for creators. I think you’d enjoy it too — check it out!",
                 url: '{{TEMPLATE_INVITATION_URL}}'
             })
-            .catch(err => {
-                // User cancelled or error occurred
-                console.log("Share cancelled", err);
-            });
+                .catch(err => {
+                    // User cancelled or error occurred
+                    console.log("Share cancelled", err);
+                });
         } else {
             alert("Sharing not supported on this browser.");
         }
@@ -63,13 +61,13 @@
     {% if messages %}
         {% for message in messages %}
             {% if message.tags == 'success' %}
-            toastr.success('{{message}}');
+                toastr.success('{{message}}');
             {% elif message.tags == 'error' %}
-            toastr.error('{{message}}');
+                toastr.error('{{message}}');
             {% elif message.tags == 'warning' %}
-            toastr.warning('{{message}}');
+                toastr.warning('{{message}}');
             {% elif message.tags == 'info' %}
-            toastr.info('{{message}}');
+                toastr.info('{{message}}');
             {% endif %}
         {% endfor %}
     {% endif %}

@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %} {% endblock title %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Tailwind CDN (safe for simple pages) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="min-h-screen bg-gray-50 flex items-center justify-center px-4">
+
+<div class="max-w-md w-full text-center bg-white rounded-2xl shadow-xl p-8">
+    <div class="text-6xl font-extrabold text-gray-300 mb-4">
+        {% block code %}
+        {% endblock code %}
+    </div>
+
+    <h1 class="text-2xl font-bold text-gray-800 mb-2">
+        {% block heading %}
+        {% endblock heading %}
+    </h1>
+
+    <p class="text-gray-600 mb-6">
+        {% block message %}
+        {% endblock message %}
+    </p>
+
+    <a href="/"
+       class="inline-block rounded-lg bg-indigo-600 px-5 py-2.5 text-white font-semibold
+                  hover:bg-indigo-700 transition">
+        Go back home
+    </a>
+</div>
+
+</body>
+</html>

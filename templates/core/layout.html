@@ -97,6 +97,10 @@
                     <a href="#" class="tw underline hover:text-primary">Terms</a>
                     <a href="{% url 'contact' %}" class="tw underline hover:text-primary">Contact</a>
                 </div>
+                <div class="flex gap-4 text-sm">
+                    <a href="#" id="open_preferences_center" class="tw underline text-white ">Update cookies
+                        preferences</a>
+                </div>
             </div>
         </div>
     </footer>
@@ -112,6 +116,8 @@
     {% block javascript_include %}
     {% endblock javascript_include %}
 {% endif %}
+
 {% include "core/components/javascript.html" %}
+{% include "core/components/cookie_consent.html" %}
 </body>
 </html>

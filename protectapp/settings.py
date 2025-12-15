@@ -58,6 +58,7 @@ INSTALLED_APPS = [
     'src.engagement.apps.EngagementConfig',
     'src.payment.apps.PaymentConfig',
     'src.age_verification.apps.AgeVerificationConfig',
+    'src.consent.apps.ConsentConfig',
 
     'django_celery_beat',
 
@@ -153,7 +154,6 @@ USE_TZ = True
 APP_URL = env('APP_URL')
 APP_ENV = env('APP_ENV')
 APP_NAME = env('APP_NAME')
-PROTOCOL = 'https' if APP_ENV == 'production' else 'http'
 SESSION_COOKIE_SECURE = True
 IS_IN_BETA = True
 

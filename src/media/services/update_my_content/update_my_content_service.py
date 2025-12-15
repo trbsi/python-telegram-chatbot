@@ -29,7 +29,7 @@ class UpdateMyContentService:
         else:
             for (index, id) in enumerate(ids):
                 description = replace_tags(descriptions[index])
-                unlockPrice = replace_tags(unlockPrices[index])
+                unlockPrice = unlockPrices[index]
                 media: Media = Media.objects.filter(user=user, id=id).first()
                 if media:
                     media.description = description

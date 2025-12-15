@@ -63,7 +63,7 @@ def buy_single_package(request: HttpRequest, package_id: int) -> HttpResponse:
     return redirect(redirect_url)
 
 
-@require_POST
+# expect GET and POST
 @csrf_exempt
 def payment_webhook(request: HttpRequest) -> JsonResponse:
     if request.content_type == 'application/json':
@@ -74,7 +74,7 @@ def payment_webhook(request: HttpRequest) -> JsonResponse:
     bugsnag.notify(Exception(data))  # @TODO remove log
 
     webhook_service = PaymentWebhookService()
-    webhook_service.handle_webook(request.GET, data)
+    webhook_service.handle_webook(request.GET.dict(), data)
     return JsonResponse({})
 
 

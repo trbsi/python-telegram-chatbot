@@ -1,22 +1,26 @@
 {% extends "core/layout.html" %}
 {% load static %}
+
 {% if media_value_object.is_unlocked %}
     {% block javascript_global %}
         {{ media_value_object.get_video_metadata_as_json|json_script:"video-meta" }}
         <script>
             const videoMetadata = JSON.parse(document.getElementById("video-meta").textContent);
-            const sessionKey = '{{media_value_object.get_session_key}}'
-            const videoKey = '{{media_value_object.get_wrapped_master_key}}'
-            const videoNonce = '{{media_value_object.get_wrap_nonce}}'
+            const sessionKey = '{{media_value_object.get_session_key}}';
+            const videoKey = '{{media_value_object.get_wrapped_master_key}}';
+            const videoNonce = '{{media_value_object.get_wrap_nonce}}';
+            const isUnlocked = true;
         </script>
     {% endblock javascript_global %}
 {% endif %}
+
 {% block javascript_include %}
     {% if media_value_object.is_unlocked %}
         <script src="{% static 'js/media/video_player.js' %}"></script>
     {% endif %}
     <script src="{% static 'js/media/single_media.js' %}"></script>
 {% endblock javascript_include %}
+
 {% block content %}
     <div id="media-view"
          class="max-w-md mx-auto flex flex-col   "
@@ -57,7 +61,7 @@
                 </form>
             {% endif %}
             <video id="my-video"
-                   class="video-js vjs-default-skin mt-3"
+                   class="video-js vjs-theme-city mt-3"
                    controls
                    preload="metadata"
                    poster="{{ media_value_object.media.get_thumbnail_url }}"

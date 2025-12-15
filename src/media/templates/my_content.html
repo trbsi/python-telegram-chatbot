@@ -12,30 +12,8 @@
                   id="my_content_form">
                 {% csrf_token %}
                 {% for media in media_list %}
-                    <div class="media-block  p-4  space-y-2 mb-5 border-b-1 border-gray-400">
-                        <div>
-                            {% url 'media.view_single_media' id=media.id as media_url %}
-                            <button type="button"
-                                    x-on:click="copyLink('{{ media_url|full_url_filter }}')"
-                                    class="">Click to copy</button>
-                            <button type="button"
-                                    x-on:click="shareLink('{{ media_url|full_url_filter }}')"
-                                    class="">Click to share</button>
-                            <a href="{{ media_url|full_url_filter }}">{{ media_url|full_url_filter }}</a>
-                        </div>
-                        <input type="hidden" name="media_ids" value="{{ media.id }}">
-                        <div class="flex items-center">
-                            <input name="delete"
-                                   value="{{ media.id }}"
-                                   id="delete{{ media.id }}"
-                                   type="checkbox"
-                                   class="flex-0 w-4 h-4 bg-gray-500 border-gray-700 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600">
-                            <label for="delete{{ media.id }}"
-                                   class="flex-1 py-2 ms-2 text-sm font-medium">
-                                Mark for
-                                deletion
-                            </label>
-                        </div>
+                    <input type="hidden" name="media_ids" value="{{ media.id }}">
+                    <div class="media-block  space-y-2 mb-5 pb-4 border-b-1 border-gray-400">
                         <!-- Preview -->
                         {% if media.is_processed %}
                             <div class="w-full rounded overflow-hidden  flex items-end justify-center">
@@ -43,7 +21,7 @@
                                     <video src="{{ media.get_file_url }}"
                                            preload="none"
                                            poster="{{ media.get_thumbnail_url }}"
-                                           class="object-contain w-full h-full"
+                                           class="object-contain max-h-150"
                                            controls>
                                     </video>
                                 {% endif %}
@@ -51,12 +29,125 @@
                         {% else %}
                             {% include "components/elements/info_alert.html" with message="Processing media... We will notify you via email once it's ready." %}
                         {% endif %}
+                        <div class="flex items-center gap-3 rounded-md border border-gray-200 bg-gray-50 px-3 py-2">
+                            <input
+                                    name="delete"
+                                    value="{{ media.id }}"
+                                    id="delete{{ media.id }}"
+                                    type="checkbox"
+                                    class="flex-0 h-4 w-4 rounded border-gray-300 text-red-600 focus:ring-2 focus:ring-red-500"
+                            >
+                            <label
+                                    for="delete{{ media.id }}"
+                                    class="flex-1 text-sm font-medium text-gray-700 cursor-pointer"
+                            >
+                                Mark for deletion
+                            </label>
+                        </div>
+                        <div class="rounded-lg border border-gray-200 bg-white p-2 space-y-4 shadow-sm">
+                            <!-- Header -->
+                            <div class="space-y-1">
+                                <h3 class="text-sm font-semibold text-gray-800">
+                                    <!-- Optional link -->
+                                    <a href="{{ media.public_media_url }}" target="_blank"
+                                       class="text-blue-600 text-sm hover:underline break-all">
+                                        Public Link {{ media.public_media_url }}
+                                    </a>
+                                </h3>
+                                <p class="text-xs text-gray-500">
+                                    Share this link with anyone who wants to buy it.
+                                </p>
+                            </div>
+
+                            <!-- URL display -->
+                            <div class="flex items-center gap-2 rounded-md border border-gray-200 bg-gray-50 p-1">
+                                <span class="flex-1 break-all text-sm text-gray-700 italic">
+                                    {{ media.public_media_url }}
+                                </span>
+                                <button
+                                        type="button"
+                                        x-on:click="copyLink('{{ media.public_media_url }}')"
+                                        class="shrink-0 rounded-md bg-gray-200 px-2 py-1 text-xs text-gray-800 hover:bg-gray-300 transition"
+                                >
+                                    <i class="ri-file-copy-line"></i>
+                                </button>
+                            </div>
+
+                            <!-- Action buttons -->
+                            <div class="grid grid-cols-2 gap-2">
+                                <button
+                                        type="button"
+                                        x-on:click="copyLink('{{ media.public_media_url }}')"
+                                        class="flex items-center justify-center gap-2 rounded-md bg-blue-500 px-3 py-2 text-sm font-medium text-white hover:bg-blue-600 transition"
+                                >
+                                    <i class="ri-file-copy-line"></i>
+                                    Copy
+                                </button>
+
+                                <button
+                                        type="button"
+                                        x-on:click="shareLink('{{ media.public_media_url }}')"
+                                        class="flex items-center justify-center gap-2 rounded-md bg-green-500 px-3 py-2 text-sm font-medium text-white hover:bg-green-600 transition"
+                                >
+                                    <i class="ri-share-forward-line"></i>
+                                    Share
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="rounded-lg border border-gray-200 bg-white p-2 space-y-4 shadow-sm">
+                            <!-- Header -->
+                            <div class="space-y-1">
+                                <h3 class="text-sm font-semibold text-gray-800">Consent Link</h3>
+                                <p class="text-xs text-gray-500">
+                                    Share this link with anyone who needs to give consent. Tap the link or the share
+                                    button to
+                                    open your device’s sharing options.
+                                </p>
+                            </div>
+
+                            <!-- URL display -->
+                            <div class="flex items-center gap-2 rounded-md border border-gray-200 bg-gray-50 p-1">
+                                <span class="flex-1 break-all text-sm md:text-base italic text-gray-700">
+                                    {{ media.consent_url }}
+                                </span>
+                                <button
+                                        type="button"
+                                        @click="copyLink('{{ media.consent_url }}')"
+                                        class="shrink-0 rounded-md bg-gray-200 px-2 py-1 text-xs text-gray-800 hover:bg-gray-300 transition"
+                                >
+                                    <i class="ri-file-copy-line"></i>
+                                </button>
+                            </div>
+
+                            <!-- Action buttons -->
+                            <div class="grid grid-cols-2 gap-2">
+                                <button
+                                        type="button"
+                                        @click="copyLink('{{ media.consent_url }}')"
+                                        class="flex items-center justify-center gap-2 rounded-md bg-blue-500 px-3 py-2 text-sm font-medium text-white hover:bg-blue-600 transition"
+                                >
+                                    <i class="ri-file-copy-line"></i>
+                                    Copy
+                                </button>
+
+                                <button
+                                        type="button"
+                                        @click="shareLink('{{ media.consent_url }}')"
+                                        class="flex items-center justify-center gap-2 rounded-md bg-green-500 px-3 py-2 text-sm font-medium text-white hover:bg-green-600 transition"
+                                >
+                                    <i class="ri-share-forward-line"></i>
+                                    Share
+                                </button>
+                            </div>
+
+                        </div>
                         <div data-suggestion-root>
                             <!-- Textarea for file description -->
-                            <textarea id="description_field_{{media.id}}"
+                            <textarea id="description_field_{{ media.id }}"
                                       name="descriptions"
                                       rows="5"
-                                      data-file-id="{{media.id}}"
+                                      data-file-id="{{ media.id }}"
                                       placeholder="Add a description and hashtags. Tag another creator here."
                                       @input="userSuggestionComponent.fetchSuggestions($event)"
                                       class="w-full p-2 rounded   text-sm">{{ media.get_description }}</textarea>
@@ -70,7 +161,7 @@
                                    name="unlockPrices"
                                    step="0.01"
                                    value="{{ media.unlock_price }}"
-                                   class="w-full p-2 rounded bg-gray-700 text-white text-sm" />
+                                   class="w-full p-2 rounded bg-gray-700 text-white text-sm"/>
                         </div>
                     </div>
                 {% endfor %}

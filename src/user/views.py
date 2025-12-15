@@ -1,10 +1,14 @@
+from django.contrib import messages
+from django.contrib.auth import logout
+from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import AnonymousUser
 from django.http import HttpRequest, HttpResponse, JsonResponse, Http404
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
-from django.views.decorators.http import require_GET
+from django.views.decorators.http import require_GET, require_POST
 
 from src.user.models import User
+from src.user.services.delete_user.delete_user_service import DeleteUserService
 from src.user.services.user_media.user_media_service import UserMediaService
 from src.user.services.user_profile.user_profile_service import UserProfileService
 
@@ -48,3 +52,20 @@ def api_get_user_media(request: HttpRequest) -> JsonResponse:
     )
 
     return JsonResponse({'results': data['result'], 'next_page': data['next_page']})
+
+
+# ------------------- DELETE USER ------------------------
+@require_GET
+@login_required
+def delete(request: HttpRequest) -> HttpResponse:
+    return render(request, 'delete.html')
+
+
+@require_POST
+@login_required
+def do_delete(request: HttpRequest) -> HttpResponse:
+    delete_user_service = DeleteUserService()
+    delete_user_service.delete_user(user=request.user)
+    logout(request)
+    messages.success(request=request, message='Account deleted successfully')
+    return redirect(reverse_lazy('home'))

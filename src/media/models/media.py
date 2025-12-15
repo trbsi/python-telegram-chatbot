@@ -1,6 +1,7 @@
 from django.db import models
 
 from protectapp import settings
+from src.core.utils import full_url_for_route
 from src.media.enums.media_file_type_enum import MediaFileTypeEnum
 from src.media.enums.media_status_enum import MediaStatusEnum
 from src.media.models import Hashtag
@@ -68,6 +69,16 @@ class Media(models.Model):
 
     def get_description(self) -> str:
         return load_tags(self.description)
+
+    def consent_url(self) -> str:
+        return full_url_for_route(
+            'consent.request_consent', kwargs={'media_id': self.id}
+        )
+
+    def public_media_url(self) -> str:
+        return full_url_for_route(
+            'media.view_single_media', kwargs={'id': self.id}
+        )
 
     # File metadata getters
     def get_codec_string(self) -> str:

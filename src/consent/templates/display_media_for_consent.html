@@ -1,0 +1,88 @@
+{% extends "core/layout.html" %}
+{% load static %}
+
+{% block content %}
+    <div class="flex flex-col space-y-6">
+        <p class="mb-4">
+            Please review each video below. Select the items you approve for publication.
+            By checking an item, you confirm that you appear in it and voluntarily give permission for this content
+            to be used, shared, or published by the creator. Only select the items you fully agree to release.
+        </p>
+        {% if media %}
+            <form id="media-form" method="post" action="{% url 'consent.give_media_consent' %}">
+                {% csrf_token %}
+                <div class="flex flex-col gap-6">
+                    {% for single_media in media %}
+                        <div class="item relative flex flex-col items-start md:items-center gap-4 p-4 relative rounded-lg border border-gray-200 bg-white p-4 space-y-4 shadow-sm">
+
+                            <!-- Checkbox -->
+                            <input type="checkbox"
+                                   class="item-check w-5 h-5 accent-blue-500"
+                                   name="selectedMedia"
+                                   value="{{ single_media.id }}">
+
+                            <!-- Media preview -->
+                            <div class="w-full md:w-48 flex-shrink-0">
+                                {% if single_media.is_image %}
+                                    <img src="{{ single_media.get_file_url }}" class="w-full h-48 object-cover rounded">
+                                {% else %}
+                                    <video class="w-full object-cover rounded" muted controls>
+                                        <source src="{{ single_media.get_file_url }}" type="video/mp4">
+                                    </video>
+                                {% endif %}
+                            </div>
+
+                            <!-- Info: username + created time -->
+                            <div class="flex flex-col justify-center text-white">
+                                <a href="{% url 'user.profile' username=single_media.user.username %}" target="_blank"
+                                   class="font-semibold underline">
+                                    @{{ single_media.user.username }}
+                                </a>
+                                <span class="text-sm text-gray-400">{{ single_media.created_at|date:"M d, Y H:i" }}</span>
+                                <p class="text-sm">
+                                    {{ single_media.get_description }}
+                                </p>
+                            </div>
+
+                            <!-- Blue border overlay when checked -->
+                            <div class="check-overlay absolute inset-0 border-4 border-blue-500 opacity-0 pointer-events-none rounded transition"></div>
+                        </div>
+                    {% endfor %}
+                    <button type="submit"
+                            class="px-4 py-2 bg-gradient-to-r from-primary to-secondary text-white rounded transition hover:opacity-90">
+                        Submit
+                    </button>
+                </div>
+            </form>
+        {% elif not request.user.is_authenticated %}
+            <div class="p-4 mb-4 text-sm text-yellow-800 bg-yellow-100 rounded-lg border border-yellow-200"
+                 role="alert">
+                To review and approve content, please <a href="{% url 'login' %}" class="underline font-bold">log in</a>
+                or <a
+                    href="{% url 'register' %}" class="underline font-bold">create
+                an account</a>. Only registered users can view the videos and
+                images that require consent.
+            </div>
+        {% else %}
+            <div class="p-4 mb-4 text-sm text-green-800 bg-green-100 rounded-lg border border-green-200" role="alert">
+                No media available. There are currently no videos or images requiring your approval.
+            </div>
+        {% endif %}
+    </div>
+{% endblock content %}
+
+{% block javascript_global %}
+    <script>
+        $(document).ready(function () {
+            $('.item input[type="checkbox"]').on('change', function () {
+                const overlay = $(this).siblings('.check-overlay');
+                if ($(this).is(':checked')) {
+                    overlay.css('opacity', '1');
+                } else {
+                    overlay.css('opacity', '0');
+                }
+            });
+        });
+    </script>
+{% endblock javascript_global %}
+

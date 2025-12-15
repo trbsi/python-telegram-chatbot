@@ -1,0 +1,35 @@
+{% extends "core/layout.html" %}
+
+{% block content %}
+    <div>
+        <h1 class="text-2xl font-semibold mb-6">Delete account</h1>
+        <p class="text-sm pb-7">
+            We’re sorry to see you go. Deleting your account will permanently remove your profile, settings, and
+            personal information from our systems.
+        </p>
+        <p class="text-sm pb-7">
+            Your account and profile details will be permanently deleted. Any saved preferences, history, or other
+            personal data will be erased.
+        </p>
+        <p class="text-sm pb-7">
+            Content you’ve shared (such as comments, posts, or uploaded files) may remain if required for legal,
+            security, or community reasons, but it will no longer be linked to your account.
+        </p>
+        <p class="text-sm pb-7">
+            This action cannot be undone.
+
+            If you’d like to proceed, please confirm your choice below.
+        </p>
+
+        <form method="post" action="{% url 'user.do_delete' %}" novalidate class="space-y-5" x-data>
+            {% csrf_token %}
+            <button @click="if(confirm('Are you sure?') === false) $event.preventDefault()"
+                    type="submit"
+                    class="w-full rounded-xl  bg-red-500 px-4 py-2.5 text-white font-medium shadow
+                 hover:bg-indigo-500 focus:outline-none focus:ring-4 focus:ring-indigo-500/40"
+            >
+                Delete account
+            </button>
+        </form>
+    </div>
+{% endblock content %}

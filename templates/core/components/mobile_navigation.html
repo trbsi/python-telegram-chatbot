@@ -2,11 +2,12 @@
     <div class="px-2 pt-2 pb-3 space-y-2 sm:px-3 bg-white">
         {% if user.is_authenticated %}
             <div class="w-full primary-gradient text-center text-white p-1 rounded-md">
-                <i class="ri-user-line"></i> {{user.username}}
+                <i class="ri-user-line"></i> {{ user.username }}
             </div>
+            <hr class="border-gray-200">
             <button onclick="inviteUser()"
-               class="flex items-center px-4 py-2 rounded-lg text-gray-800 hover:text-blue-600 transition">
-                <i class="ri-user-add-line"></i>Invite a creator <span class="text-xs">(left: {{TEMPLATE_INVITATIONS_LEFT}})</span>
+                    class="w-full flex items-center px-4 py-2 rounded-lg text-gray-800 hover:text-blue-600 transition">
+                <i class="ri-user-add-line"></i>Invite a creator ({{ TEMPLATE_INVITATIONS_LEFT }} left)
             </button>
             <hr class="border-gray-200">
             <a href="{% url 'media.upload' %}"
@@ -25,6 +26,10 @@
             <a href="{% url 'account_email' %}"
                class="tw flex items-center px-4 py-2 rounded-lg text-gray-800 hover:text-indigo-600 transition">
                 <i class="ri-mail-line mr-2 text-xl"></i> Update Email
+            </a>
+            <a href="{% url 'user.delete' %}"
+               class="tw flex items-center px-4 py-2 rounded-lg text-gray-800 hover:text-indigo-600 transition">
+                <i class="ri-delete-bin-line mr-2 text-xl"></i> Delete profile
             </a>
             <hr class="border-gray-200">
             <a href="{% url 'account_logout' %}"

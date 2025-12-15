@@ -4,11 +4,12 @@ from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import PermissionDenied
-from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse, Http404
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_GET, require_POST
 
+from src.media.models import Media
 from src.media.services.load_feed.load_feed_service import LoadFeedService
 from src.media.services.my_content.my_content_service import MyContentService
 from src.media.services.single_media.single_media_service import SingleMediaService
@@ -23,7 +24,11 @@ from src.user.models import User
 @require_GET
 def view_single_media(request: HttpRequest, id: int) -> HttpResponse:
     service = SingleMediaService()
-    media_value_object = service.get_single_media(media_id=id, user=request.user)
+    try:
+        media_value_object = service.get_single_media(media_id=id, user=request.user)
+    except Media.DoesNotExist:
+        raise Http404('Media not found')
+
     return render(
         request,
         'single_media.html',
@@ -153,7 +158,7 @@ def record_views(request: HttpRequest) -> JsonResponse:
 
 
 def _can_access_upload(request: HttpRequest) -> bool:
-    user = request.user
+    user: User = request.user
     if user.is_creator():
         return True
 
