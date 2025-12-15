@@ -1,6 +1,7 @@
 from django.contrib.auth.models import AbstractUser
 from django.core.validators import RegexValidator
 from django.db import models
+from django.urls import reverse_lazy
 
 from protectapp import settings
 from src.user.enum import UserEnum
@@ -29,3 +30,6 @@ class User(AbstractUser):
 
     def get_role(self) -> str:
         return self.groups.first().name
+
+    def get_profile_url(self) -> str:
+        return reverse_lazy('user.profile', kwargs={'username': self.username})

@@ -14,20 +14,27 @@ from src.user.models import User
 class SingleMediaService:
 
     def get_single_media(self, media_id: int, user: User | AnonymousUser) -> MediaValueObject:
-        media = Media.objects.filter(id=media_id).filter(is_processed=True, is_approved=True).get()
+        media = Media.objects \
+            .select_related('user') \
+            .filter(id=media_id) \
+            .filter(is_processed=True, is_approved=True) \
+            .get()
+
         total_likes = Like.objects.filter(media=media).count()
         total_comments = Comment.objects.filter(media=media).count()
 
         if user.is_authenticated:
-            unlock = Unlock.objects.filter(user=user, media=media).first()
-            unlock_type = MediaUnlockEnum.from_string(unlock.unlock_type) if unlock else MediaUnlockEnum.UNLOCK_LOCKED
+            if user == media.user:
+                unlock_type = MediaUnlockEnum.UNLOCK_PERMANENT
+            else:
+                unlock = Unlock.objects.filter(user=user, media=media).first()
+                unlock_type = MediaUnlockEnum.from_string(unlock.unlock_type) if unlock \
+                    else MediaUnlockEnum.UNLOCK_LOCKED
             is_liked = Like.objects.filter(user=user, media=media).exists()
         else:
             unlock_type = MediaUnlockEnum.UNLOCK_LOCKED
             is_liked = False
 
-        # unlock_type = MediaUnlockEnum.UNLOCK_PERMANENT  # @TODO remove this
-        
         if unlock_type.is_locked():
             wrapped_master_key_for_client = b'x'
             wrap_nonce = b'x'

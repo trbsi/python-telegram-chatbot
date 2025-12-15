@@ -74,7 +74,9 @@ def payment_webhook(request: HttpRequest) -> JsonResponse:
     bugsnag.notify(Exception(data))  # @TODO remove log
 
     webhook_service = PaymentWebhookService()
-    webhook_service.handle_webook(request.GET.dict(), data)
+    result = webhook_service.handle_webook(request.GET.dict(), data)
+    if result:
+        return redirect(result)
     return JsonResponse({})
 
 
@@ -106,7 +108,7 @@ def api_can_spend(request: HttpRequest) -> JsonResponse:
     if result == False:
         return JsonResponse(
             {
-                'error': f'Your balance is too low. <a href="{reverse_lazy('payment.list_packages')}" class="underline">Click here to buy more coins.</a>'
+                'error': f'Your balance is too low. <a href="{reverse_lazy("payment.list_packages")}" class="underline">Click here to buy more coins.</a>'
             },
             status=402
         )

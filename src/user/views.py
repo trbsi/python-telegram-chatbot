@@ -2,7 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import AnonymousUser
-from django.http import HttpRequest, HttpResponse, JsonResponse, Http404
+from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_GET, require_POST
@@ -20,9 +20,6 @@ def profile(request: HttpRequest, username: str) -> HttpResponse:
     logged_in_user = request.user
     user_profile_service = UserProfileService()
     current_user: User = user_profile_service.get_user_by_username(username)
-
-    if current_user.is_regular_user() and current_user.username != logged_in_user.username:
-        raise Http404
 
     is_the_same_user = logged_in_user.id == current_user.id
     media_api_url = reverse_lazy('user.api.get_media')

@@ -1,9 +1,8 @@
 import random
 from decimal import Decimal
 
-from django.urls import reverse_lazy
-
 from protectapp import settings
+from src.core.utils import reverse_lazy_with_query
 from src.payment.enums import PaymentEnum
 from src.payment.models import PaymentHistory
 from src.payment.services.payment_providers.ccbill.ccbill_create_checkout_service import CCBillCreateCheckoutService
@@ -28,9 +27,10 @@ class PaymentProviderService():
 
     def create_checkout(self, payment_history: PaymentHistory) -> CheckoutValueObject:
         if self.default_payment_provider == PaymentEnum.PROVIDER_DUMMY.value:
+            payment_id = str(random.randint(100000, 1000000))
             return CheckoutValueObject(
-                reverse_lazy('payment.webhook', kwargs={'payment_id': payment_history.provider_payment_id}),
-                str(random.randint(100000, 1000000))
+                reverse_lazy_with_query('payment.webhook', query_params={'payment_id': payment_id}),
+                payment_id
             )
         elif self.default_payment_provider == PaymentEnum.PROVIDER_CCBILL.value:
             return self.ccbill_create_checkout_service.create_checkout(payment_history)

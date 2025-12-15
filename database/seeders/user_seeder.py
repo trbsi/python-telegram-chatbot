@@ -1,6 +1,7 @@
 from django.contrib.auth.models import Group
 from faker import Faker
 
+from src.payment.models import Balance
 from src.user.models import UserProfile, User
 
 
@@ -28,3 +29,7 @@ class UserSeeder:
             profile: UserProfile = creator.profile
             profile.bio = faker.text(max_nb_chars=200)
             profile.save()
+
+            # -------- Balance ---------
+            Balance.objects.create(user=user)
+            Balance.objects.create(user=creator)

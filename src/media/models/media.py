@@ -42,7 +42,7 @@ class Media(models.Model):
         ]
 
     def get_file_url(self) -> str:
-        return f'{settings.STORAGE_CDN_URL}/{self.file_metadata.get('file_path')}'
+        return f'{settings.STORAGE_CDN_URL}/{self.file_metadata.get("file_path")}'
 
     def get_trailer_url(self) -> str | None:
         if self.is_image():
@@ -51,7 +51,7 @@ class Media(models.Model):
         if self.file_trailer is None:
             return None
 
-        return f'{settings.STORAGE_CDN_URL}/{self.file_trailer.get('file_path')}'
+        return f'{settings.STORAGE_CDN_URL}/{self.file_trailer.get("file_path")}'
 
     def get_thumbnail_url(self) -> str | None:
         if self.is_image():
@@ -59,7 +59,7 @@ class Media(models.Model):
 
         if self.file_thumbnail is None:
             return None
-        return f'{settings.STORAGE_CDN_URL}/{self.file_thumbnail.get('file_path')}'
+        return f'{settings.STORAGE_CDN_URL}/{self.file_thumbnail.get("file_path")}'
 
     def is_image(self):
         return self.file_type == MediaFileTypeEnum.FILE_TYPE_IMAGE.value

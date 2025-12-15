@@ -44,10 +44,6 @@ class SpendService:
             object: Media | Comment
     ) -> Decimal:
 
-        # @TODO what if people start registering as creators and do things for free?
-        if spender.is_creator():
-            return Decimal(0)
-
         spender_balance = Balance.objects.get(user=spender)
         recipient_balance = Balance.objects.get(user=recipient)
 
