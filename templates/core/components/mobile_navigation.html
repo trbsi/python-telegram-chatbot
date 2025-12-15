@@ -5,10 +5,12 @@
                 <i class="ri-user-line"></i> {{ user.username }}
             </div>
             <hr class="border-gray-200">
-            <button onclick="inviteUser()"
-                    class="w-full flex items-center px-4 py-2 rounded-lg text-gray-800 hover:text-blue-600 transition">
-                <i class="ri-user-add-line"></i>Invite a creator ({{ TEMPLATE_INVITATIONS_LEFT }} left)
-            </button>
+            {% if user.is_creator %}
+                <button onclick="inviteUser()"
+                        class="w-full flex items-center px-4 py-2 rounded-lg text-gray-800 hover:text-blue-600 transition">
+                    <i class="ri-user-add-line"></i>Invite a creator ({{ TEMPLATE_INVITATIONS_LEFT }} left)
+                </button>
+            {% endif %}
             <hr class="border-gray-200">
             <a href="{% url 'media.upload' %}"
                class="tw flex items-center px-4 py-2 rounded-lg text-gray-800 hover:text-blue-600 transition">

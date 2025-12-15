@@ -1,9 +1,11 @@
 <nav class="hidden md:flex items-center gap-4 relative">
     {% if user.is_authenticated %}
-        <button onclick="inviteUser()"
-                class="flex items-center gap-1 hover:text-blue-600">
-            <i class="ri-user-add-line"></i> Invite a creator <span class="text-xs">({{ TEMPLATE_INVITATIONS_LEFT }} left)</span>
-        </button>
+        {% if user.is_creator %}
+            <button onclick="inviteUser()"
+                    class="flex items-center gap-1 hover:text-blue-600">
+                <i class="ri-user-add-line"></i> Invite a creator <span class="text-xs">({{ TEMPLATE_INVITATIONS_LEFT }} left)</span>
+            </button>
+        {% endif %}
         <a href="{% url 'media.upload' %}"
            class="tw flex items-center gap-1 hover:text-blue-600">
             <i class="ri-upload-line"></i> Upload
