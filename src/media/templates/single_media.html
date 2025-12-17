@@ -13,7 +13,11 @@
             const sessionKey = '{{media_value_object.get_session_key}}';
             const videoKey = '{{media_value_object.get_wrapped_master_key}}';
             const videoNonce = '{{media_value_object.get_wrap_nonce}}';
-            const isUnlocked = true;
+            {% if media_value_object.is_unlocked %}
+                const isUnlocked = true;
+            {% else %}
+                const isUnlocked = false;
+            {% endif %}
         </script>
     {% endblock javascript_global %}
 {% endif %}
