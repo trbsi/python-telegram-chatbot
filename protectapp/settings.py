@@ -156,6 +156,7 @@ APP_ENV = env('APP_ENV')
 APP_NAME = env('APP_NAME')
 SESSION_COOKIE_SECURE = True
 IS_IN_BETA = True
+DATE_TIME_FORMAT = '%m/%d/%Y %I:%M%p'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
