@@ -1,4 +1,4 @@
-function adultPopup(balanceEndpoint) {
+function adultPopup() {
     return {
         open: false,
 
