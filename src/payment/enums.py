@@ -25,12 +25,16 @@ class PaymentEnum(Enum):
     PROVIDER_SEGPAY = 'segpay'
     PROVIDER_EPOCH = 'epoch'
     PROVIDER_CCBILL = 'ccbill'
+    PROVIDER_STRIPE = 'stripe'
     PROVIDER_DUMMY = 'dummy'
 
     STATUS_PENDING = 'pending'
     STATUS_SUCCESS = 'success'
     STATUS_CANCELED = 'canceled'
     STATUS_FAILED = 'failed'
+
+    def is_success(self):
+        return self == PaymentEnum.STATUS_SUCCESS
 
     @staticmethod
     def statuses() -> Tuple:

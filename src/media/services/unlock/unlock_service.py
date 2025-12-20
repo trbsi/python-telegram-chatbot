@@ -45,7 +45,8 @@ class UnlockService():
         checkout_value_object = self.buy_package_service.buy_custom_package(
             user=user,
             price=media.unlock_price,
-            amount=media.unlock_price
+            amount=media.unlock_price,
+            content_object=media
         )
 
         unlock = Unlock.objects.create(

@@ -18,25 +18,35 @@ class BuyPackageService():
         value_object: CheckoutValueObject = self._create_checkout(
             user=user,
             price=package.price,
-            amount=package.amount
+            amount=package.amount,
+            content_object=package
         )
-
-        payment_history = PaymentHistory.objects.filter(provider_payment_id=value_object.provider_payment_id).first()
-        payment_history.content_object = package
-        payment_history.save()
 
         return value_object
 
-    def buy_custom_package(self, user: User, price: Decimal, amount: Decimal) -> CheckoutValueObject:
+    def buy_custom_package(
+            self,
+            user: User,
+            price: Decimal,
+            amount: Decimal,
+            content_object: object
+    ) -> CheckoutValueObject:
         value_object: CheckoutValueObject = self._create_checkout(
             user=user,
             price=price,
-            amount=amount
+            amount=amount,
+            content_object=content_object
         )
 
         return value_object
 
-    def _create_checkout(self, user: User, price: Decimal, amount: Decimal) -> CheckoutValueObject:
+    def _create_checkout(
+            self,
+            user: User,
+            price: Decimal,
+            amount: Decimal,
+            content_object: object
+    ) -> CheckoutValueObject:
         payment_history = PaymentHistory.objects.create(
             user=user,
             price=price,
@@ -44,6 +54,7 @@ class BuyPackageService():
             provider=settings.DEFAULT_PAYMENT_PROVIDER,
             provider_payment_id='default_no_id',
             status=PaymentEnum.STATUS_PENDING.value,
+            content_object=content_object
         )
 
         value_object: CheckoutValueObject = self.payment_provider_service.create_checkout(payment_history)

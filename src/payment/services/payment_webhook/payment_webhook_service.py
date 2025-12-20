@@ -23,7 +23,7 @@ class PaymentWebhookService:
         payment_history.status = payment_status.status
         payment_history.save()
 
-        if not payment_status.is_success():
+        if not payment_status.status.is_success():
             return
 
         foreign_object = payment_history.content_object

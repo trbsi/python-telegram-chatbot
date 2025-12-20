@@ -47,8 +47,7 @@
             </video>
         {% else %}
             {% if media_value_object.is_unlock_pending %}
-                {% include "components/elements/info_alert.html" with message="Waiting for payment confirmation. Try again in a few
-                seconds." %}
+                {% include "components/elements/info_alert.html" with message="Waiting for payment confirmation. Try again in a few seconds." %}
             {% else %}
                 <form method="POST" action="{% url 'media.unlock' %}">
                     {% csrf_token %}
