@@ -22,7 +22,7 @@ class StripeCreateCheckoutService:
                 {
                     "price_data": {
                         "currency": settings.DEFAULT_CURRENCY,
-                        "unit_amount": payment_history.price * 100,  # amount in cents → $5.00
+                        "unit_amount": int(payment_history.price * 100),  # amount in cents → $5.00
                         "product_data": {
                             "name": "Unlocked Video Access",
                             "description": "One-time access to premium video",
