@@ -20,7 +20,7 @@ class PaymentWebhookService:
             .objects
             .get(provider_payment_id=payment_status.provider_payment_id)
         )
-        payment_history.status = payment_status.status
+        payment_history.status = payment_status.status.value
         payment_history.save()
 
         if not payment_status.status.is_success():

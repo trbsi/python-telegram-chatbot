@@ -44,6 +44,5 @@ class StripeWebhookService():
             status = PaymentEnum.STATUS_FAILED
 
         stripe_object = event.data.object
-        metadata = stripe_object.metadata
 
         return PaymentWebhookValueObject(stripe_object.id, status)
