@@ -1,6 +1,7 @@
 import random
 
-from src.user.models import User, UserProfile
+from src.user.models import User
+from src.user.services.post_registration.post_registration_service import PostRegistrationService
 
 
 class CreateUserService:
@@ -12,6 +13,7 @@ class CreateUserService:
             password=f"automatic{random_int}"
         )
 
-        UserProfile.objects.create(user=user)
+        service = PostRegistrationService()
+        service.post_register(user=user)
 
         return user
