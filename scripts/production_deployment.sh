@@ -17,6 +17,9 @@ git checkout master
 git checkout .
 git pull --rebase
 
+echo "🚀 --------------------------- Install dependencies ---------------------------"
+docker exec -it "$DOCKER_CONTAINER" poetry install
+
 if $BUILD_DOCKER; then
     echo "🛠️ --------------------------- Rebuilding Docker ---------------------------"
     cd docker
