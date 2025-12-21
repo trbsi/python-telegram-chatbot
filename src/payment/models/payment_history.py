@@ -12,7 +12,7 @@ class PaymentHistory(models.Model):
     price = models.DecimalField(decimal_places=2, max_digits=10)
     amount = models.DecimalField(decimal_places=2, max_digits=10)
     provider = models.CharField(max_length=10, choices=PaymentEnum.providers())
-    provider_payment_id = models.CharField(max_length=50)
+    provider_payment_id = models.CharField(max_length=100)
     status = models.CharField(max_length=10, choices=PaymentEnum.statuses())
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

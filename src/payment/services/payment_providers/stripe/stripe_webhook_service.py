@@ -1,5 +1,3 @@
-import json
-
 import bugsnag
 import stripe
 
@@ -45,7 +43,6 @@ class StripeWebhookService():
         elif event.type == "checkout.session.expired":
             status = PaymentEnum.STATUS_FAILED
 
-        bugsnag.notify(Exception(json.dumps(event)))
         stripe_object = event.data.object
         metadata = stripe_object.metadata
 
