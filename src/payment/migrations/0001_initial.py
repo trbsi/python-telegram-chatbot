@@ -6,7 +6,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -33,7 +32,8 @@ class Migration(migrations.Migration):
                 ('balance', models.DecimalField(decimal_places=2, default=0.0, max_digits=10)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
-                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='balance', to=settings.AUTH_USER_MODEL)),
+                ('user', models.OneToOneField(on_delete=django.db.models.deletion.CASCADE, related_name='balance',
+                                              to=settings.AUTH_USER_MODEL)),
             ],
         ),
         migrations.CreateModel(
@@ -44,21 +44,14 @@ class Migration(migrations.Migration):
                 ('amount', models.DecimalField(decimal_places=2, max_digits=10)),
                 ('provider', models.CharField(choices=[('segpay', 'SegGay'), ('epoch', 'Epoch')], max_length=10)),
                 ('provider_payment_id', models.CharField(max_length=50)),
-                ('status', models.CharField(choices=[('pending', 'Pending'), ('success', 'Success'), ('canceled', 'Canceled'), ('failed', 'Failed')], max_length=10)),
+                ('status', models.CharField(
+                    choices=[('pending', 'Pending'), ('success', 'Success'), ('canceled', 'Canceled'),
+                             ('failed', 'Failed')], max_length=10)),
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('object_id', models.PositiveIntegerField(blank=True, null=True)),
-                ('content_type', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='contenttypes.contenttype')),
-                ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
-            ],
-        ),
-        migrations.CreateModel(
-            name='Payout',
-            fields=[
-                ('id', models.BigAutoField(primary_key=True, serialize=False)),
-                ('amount', models.DecimalField(decimal_places=2, max_digits=10)),
-                ('provider', models.CharField(choices=[('segpay', 'SegGay'), ('epoch', 'Epoch')], max_length=10)),
-                ('created_at', models.DateTimeField(auto_now_add=True)),
+                ('content_type', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL,
+                                                   to='contenttypes.contenttype')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
@@ -70,9 +63,12 @@ class Migration(migrations.Migration):
                 ('created_at', models.DateTimeField(auto_now_add=True)),
                 ('updated_at', models.DateTimeField(auto_now=True)),
                 ('object_id', models.PositiveIntegerField()),
-                ('by_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='spent_by_user', to=settings.AUTH_USER_MODEL)),
-                ('content_type', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='contenttypes.contenttype')),
-                ('on_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='spent_on_user', to=settings.AUTH_USER_MODEL)),
+                ('by_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='spent_by_user',
+                                              to=settings.AUTH_USER_MODEL)),
+                ('content_type',
+                 models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='contenttypes.contenttype')),
+                ('on_user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, related_name='spent_on_user',
+                                              to=settings.AUTH_USER_MODEL)),
             ],
         ),
     ]

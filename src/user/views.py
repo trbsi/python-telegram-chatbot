@@ -6,10 +6,10 @@ from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_GET, require_POST
+from src.user.services.user_media.user_media_service import UserMediaService
 
 from src.user.models import User
 from src.user.services.delete_user.delete_user_service import DeleteUserService
-from src.user.services.user_media.user_media_service import UserMediaService
 from src.user.services.user_profile.user_profile_service import UserProfileService
 
 
@@ -32,23 +32,6 @@ def profile(request: HttpRequest, username: str) -> HttpResponse:
         'report_content_api': reverse_lazy('report.api.report_content'),
         'is_following': False
     })
-
-
-@require_GET
-def api_get_user_media(request: HttpRequest) -> JsonResponse:
-    get = request.GET
-    page = int(get.get('page'))
-    username = get.get('username')
-    user: User | AnonymousUser = request.user
-
-    user_media_service = UserMediaService()
-    data: dict = user_media_service.get_user_media(
-        current_user=user,
-        username=username,
-        current_page=page
-    )
-
-    return JsonResponse({'results': data['result'], 'next_page': data['next_page']})
 
 
 # ------------------- DELETE USER ------------------------

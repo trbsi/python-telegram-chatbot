@@ -37,12 +37,6 @@ collectstatic() {
     docker exec -it "$DJANGO_CONTAINER" poetry run python manage.py collectstatic
 }
 
-revertshards() {
-    local media_id="$1"
-    echo "Reverting shard: $media_id"
-    docker exec -it "$DJANGO_CONTAINER" poetry run python manage.py revert_shard_command "$media_id"
-}
-
 # Parse command-line argument
 if [[ $# -lt 1 ]]; then
     echo "Usage: $0 {builddocker|migrate|makemigrations}"
@@ -67,13 +61,6 @@ case "$1" in
         ;;
     collectstatic)
         collectstatic
-        ;;
-    revertshards)
-      if [[ -z "$2" ]]; then
-          echo "Usage: $0 revertshards <shard_id>"
-          exit 1
-      fi
-      revertshards "$2"
         ;;
     *)
         echo "Unknown command: $1"

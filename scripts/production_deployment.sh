@@ -27,9 +27,6 @@ if $BUILD_DOCKER; then
     cd -
 fi
 
-echo "📦 --------------------------- Collecting JS ---------------------------"
-docker exec -it "$DOCKER_CONTAINER" poetry run python manage.py collect_javascript_command
-
 echo "🖼️ --------------------------- Collecting static files ---------------------------"
 docker exec -it "$DOCKER_CONTAINER" poetry run python manage.py collectstatic --noinput --clear
 

@@ -1,9 +1,8 @@
 from django.core.management import call_command, CommandError
 
-from database.seeders.group_seeder import GroupSeeder
-from database.seeders.media_seeder import MediaSeeder
-from database.seeders.user_seeder import UserSeeder
 from chatapp import settings
+from database.seeders.group_seeder import GroupSeeder
+from database.seeders.user_seeder import UserSeeder
 from src.core.management.commands.base_command import BaseCommand
 
 
@@ -38,9 +37,6 @@ class Command(BaseCommand):
 
         self.write('Seeding users')
         UserSeeder.seed()
-
-        self.write('Seeding media')
-        MediaSeeder.seed()
 
         self.stdout.write(self.style.SUCCESS('Done'))
 
