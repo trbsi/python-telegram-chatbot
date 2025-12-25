@@ -1,7 +1,7 @@
 import stripe
 from stripe.checkout import Session
 
-from protectapp import settings
+from chatapp import settings
 from src.media.models import Media
 from src.payment.models import PaymentHistory
 from src.payment.value_objects.checkout_value_object import CheckoutValueObject

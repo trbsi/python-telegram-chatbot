@@ -1,6 +1,6 @@
 from b2sdk.v2 import B2Api, Bucket, FileVersion
 
-from protectapp import settings
+from chatapp import settings
 from src.storage.init_storage import init_remote_storage
 
 

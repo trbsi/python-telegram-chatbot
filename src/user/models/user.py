@@ -3,7 +3,7 @@ from django.core.validators import RegexValidator
 from django.db import models
 from django.urls import reverse_lazy
 
-from protectapp import settings
+from chatapp import settings
 from src.user.enum import UserEnum
 
 

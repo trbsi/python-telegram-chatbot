@@ -1,4 +1,4 @@
-from protectapp import settings
+from chatapp import settings
 
 
 class PushNotificationValueObject():

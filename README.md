@@ -9,19 +9,19 @@ You need this to be able to run crypto in javascript
 ``` 
 sudo apt install mkcert
 mkcert -install
-mkcert protectapp.loc
+mkcert chatapp.loc
 ```
 
 This creates:
 
-- protectapp.loc.pem
-- protectapp.loc-key.pem
+- chatapp.loc.pem
+- chatapp.loc-key.pem
 
 2. Move to the folder
 
 ```
-mv protectapp.loc.pem docker/nginx/local_certs/protectapp.crt
-mv protectapp.loc-key.pem docker/nginx/local_certs/protectapp.key
+mv chatapp.loc.pem docker/nginx/local_certs/chatapp.crt
+mv chatapp.loc-key.pem docker/nginx/local_certs/chatapp.key
 ```
 
 3. Rebuild/start docker

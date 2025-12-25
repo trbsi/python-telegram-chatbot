@@ -1,7 +1,7 @@
 import hashlib
 import uuid
 
-from protectapp import settings
+from chatapp import settings
 from src.payment.models import PaymentHistory
 from src.payment.value_objects.checkout_value_object import CheckoutValueObject
 

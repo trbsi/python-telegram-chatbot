@@ -6,7 +6,7 @@ from django.db.models import Model
 from django.urls import reverse_lazy
 from django.utils.http import urlencode
 
-from protectapp import settings
+from chatapp import settings
 from src.core.value_object.ip_data import IpData
 
 

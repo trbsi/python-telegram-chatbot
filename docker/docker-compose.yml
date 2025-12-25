@@ -1,25 +1,25 @@
 services:
   nginx-proxy:
     image: jwilder/nginx-proxy
-    container_name: protectapp-nginx-proxy
+    container_name: chatapp-nginx-proxy
     restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
     volumes:
       - /var/run/docker.sock:/tmp/docker.sock:ro
-      - protectapp_certs:/etc/nginx/certs:ro
+      - chatapp_certs:/etc/nginx/certs:ro
       - ./nginx/vhost:/etc/nginx/vhost.d
       - ./nginx/html:/usr/share/nginx/html
       - ./nginx/my_custom_proxy_settings.conf:/etc/nginx/conf.d/my_custom_proxy_settings.conf
       - ../assets:/usr/share/nginx/assets # to be able to access assets via /static url (see ./vhost/mydomain.con)
-    networks: [ protectapp-net ]
+    networks: [ chatapp-net ]
 
   django:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    container_name: protectapp-django
+    container_name: chatapp-django
     restart: unless-stopped
     environment:
       VIRTUAL_HOST: ${DJANGO_HOST}
@@ -28,20 +28,20 @@ services:
       DATABASE_HOST: mysql
       VIRTUAL_PORT: 8000
       REDIS_URL: redis://redis:6379/0
-      DJANGO_SETTINGS_MODULE: protectapp.settings
+      DJANGO_SETTINGS_MODULE: chatapp.settings
       CELERY_BROKER_URL: redis://redis:6379/0
     volumes:
       - ../:/app
-      - protectapp_media:/app/media
+      - chatapp_media:/app/media
     working_dir: /app
     depends_on: [ mysql, redis ]
-    command: poetry run gunicorn protectapp.wsgi:application -b 0.0.0.0:8000 --workers 5 --reload
+    command: poetry run gunicorn chatapp.wsgi:application -b 0.0.0.0:8000 --workers 5 --reload
     expose: [ "8000" ]
-    networks: [ protectapp-net ]
+    networks: [ chatapp-net ]
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
-    container_name: protectapp-phpmyadmin
+    container_name: chatapp-phpmyadmin
     restart: unless-stopped
     environment:
       PMA_HOST: mysql
@@ -49,11 +49,11 @@ services:
       LETSENCRYPT_HOST: ${LETSENCRYPT_HOST_PMA}
       LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
     depends_on: [ mysql ]
-    networks: [ protectapp-net ]
+    networks: [ chatapp-net ]
 
   mysql:
     image: mysql:8
-    container_name: protectapp-mysql
+    container_name: chatapp-mysql
     restart: unless-stopped
     environment:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
@@ -61,58 +61,58 @@ services:
       MYSQL_USER: ${MYSQL_USER}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD}
     volumes:
-      - protectapp_mysql_data:/var/lib/mysql
-    networks: [ protectapp-net ]
+      - chatapp_mysql_data:/var/lib/mysql
+    networks: [ chatapp-net ]
 
   redis:
     image: redis:7-alpine
-    container_name: protectapp-redis
+    container_name: chatapp-redis
     restart: unless-stopped
     volumes:
-      - protectapp_redis_data:/data
-    networks: [ protectapp-net ]
+      - chatapp_redis_data:/data
+    networks: [ chatapp-net ]
 
   celery-worker:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    container_name: protectapp-celery-worker
+    container_name: chatapp-celery-worker
     restart: unless-stopped
     environment:
       CELERY_BROKER_URL: redis://redis:6379/0
-      DJANGO_SETTINGS_MODULE: protectapp.settings
+      DJANGO_SETTINGS_MODULE: chatapp.settings
     volumes:
       - ../:/app
-      - protectapp_media:/app/media
+      - chatapp_media:/app/media
     depends_on: [ redis, django ]
-    command: poetry run celery -A protectapp worker --loglevel=info --autoscale=8,2
-    networks: [ protectapp-net ]
+    command: poetry run celery -A chatapp worker --loglevel=info --autoscale=8,2
+    networks: [ chatapp-net ]
 
   celery-beat:
     build:
       context: ..
       dockerfile: docker/Dockerfile
-    container_name: protectapp-celery-beat
+    container_name: chatapp-celery-beat
     restart: unless-stopped
     environment:
       CELERY_BROKER_URL: redis://redis:6379/0
-      DJANGO_SETTINGS_MODULE: protectapp.settings
+      DJANGO_SETTINGS_MODULE: chatapp.settings
       CELERY_BEAT_SCHEDULER: django_celery_beat.schedulers:DatabaseScheduler
     volumes:
       - ../:/app
-      - protectapp_media:/app/media
+      - chatapp_media:/app/media
     depends_on: [ redis, django, mysql ]
-    command: poetry run celery -A protectapp beat --loglevel=debug
-    networks: [ protectapp-net ]
+    command: poetry run celery -A chatapp beat --loglevel=debug
+    networks: [ chatapp-net ]
 
 networks:
-  protectapp-net:
+  chatapp-net:
     driver: bridge
 
 volumes:
-  protectapp_mysql_data:
-  protectapp_redis_data:
-  protectapp_media:
-  protectapp_certificates:
-  protectapp_certs:
+  chatapp_mysql_data:
+  chatapp_redis_data:
+  chatapp_media:
+  chatapp_certificates:
+  chatapp_certs:
 

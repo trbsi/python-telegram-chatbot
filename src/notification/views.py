@@ -8,7 +8,7 @@ from django.http import JsonResponse
 from django.views.decorators.http import require_GET
 from django.views.decorators.http import require_POST
 
-from protectapp import settings
+from chatapp import settings
 from src.core.utils import reverse_lazy_admin
 from src.media.models import Media
 from src.notification.services.notification_service import NotificationService

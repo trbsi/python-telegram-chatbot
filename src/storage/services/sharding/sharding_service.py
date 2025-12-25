@@ -4,7 +4,7 @@ import uuid
 
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 
-from protectapp import settings
+from chatapp import settings
 from src.media.models import Media
 from src.storage.services.local_storage_service import LocalStorageService
 from src.storage.services.remote_storage_service import RemoteStorageService

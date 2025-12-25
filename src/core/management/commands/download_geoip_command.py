@@ -9,7 +9,7 @@ import requests
 from django.utils import timezone
 from requests import Response
 
-from protectapp import settings
+from chatapp import settings
 from src.core.management.commands.base_command import BaseCommand
 
 

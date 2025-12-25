@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 set -e
 
-DOCKER_CONTAINER="protectapp-django"
-WORKER="protectapp-celery-worker"
-BEAT="protectapp-celery-beat"
+DOCKER_CONTAINER="chatapp-django"
+WORKER="chatapp-celery-worker"
+BEAT="chatapp-celery-beat"
 
 BUILD_DOCKER=false
 

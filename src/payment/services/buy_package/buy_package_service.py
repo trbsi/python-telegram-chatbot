@@ -1,6 +1,6 @@
 from decimal import Decimal
 
-from protectapp import settings
+from chatapp import settings
 from src.payment.enums import PaymentEnum
 from src.payment.models import PaymentHistory, Package
 from src.payment.services.payment_providers.payment_provider_service import PaymentProviderService

@@ -1,7 +1,7 @@
 import bugsnag
 import stripe
 
-from protectapp import settings
+from chatapp import settings
 from src.payment.enums import PaymentEnum
 from src.payment.value_objects.payment_webhook_value_object import PaymentWebhookValueObject
 

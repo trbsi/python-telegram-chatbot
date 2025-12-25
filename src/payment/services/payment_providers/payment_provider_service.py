@@ -1,7 +1,7 @@
 import random
 from decimal import Decimal
 
-from protectapp import settings
+from chatapp import settings
 from src.core.utils import reverse_lazy_with_query
 from src.payment.enums import PaymentEnum
 from src.payment.models import PaymentHistory

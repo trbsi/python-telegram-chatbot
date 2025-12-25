@@ -1,4 +1,4 @@
-from protectapp import settings
+from chatapp import settings
 from src.media.enums.media_unlock_enum import MediaUnlockEnum
 from src.media.models import Unlock
 from src.payment.enums import PaymentEnum

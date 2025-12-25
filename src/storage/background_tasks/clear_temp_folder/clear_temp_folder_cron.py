@@ -2,7 +2,7 @@ from pathlib import Path
 
 from django.utils import timezone
 
-from protectapp import settings
+from chatapp import settings
 
 
 class ClearTempFolderCron:

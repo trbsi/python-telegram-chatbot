@@ -2,7 +2,7 @@ import bugsnag
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
-from protectapp import settings
+from chatapp import settings
 from src.notification.value_objects.push_notification_value_object import PushNotificationValueObject
 
 

@@ -3,7 +3,7 @@ import subprocess
 import time
 from pathlib import Path
 
-from protectapp import settings
+from chatapp import settings
 from src.core.management.commands.base_command import BaseCommand
 
 

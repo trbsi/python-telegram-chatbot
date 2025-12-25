@@ -1,7 +1,3 @@
 services:
-  nginx-proxy:
-    volumes:
-      - ./nginx/local_certs:/etc/nginx/certs:ro
-
   django:
     command: python manage.py runserver 0.0.0.0:8000

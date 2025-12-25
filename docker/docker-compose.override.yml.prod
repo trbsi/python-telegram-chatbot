@@ -1,7 +1,7 @@
 services:
   acme-companion:
     image: nginxproxy/acme-companion
-    container_name: protectapp-acme-companion
+    container_name: chatapp-acme-companion
     restart: unless-stopped
     depends_on:
       - nginx-proxy
@@ -9,8 +9,8 @@ services:
       - nginx-proxy
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - protectapp_certs:/etc/nginx/certs:rw
+      - chatapp_certs:/etc/nginx/certs:rw
     environment:
       DEFAULT_EMAIL: ${LETSENCRYPT_EMAIL}
     networks:
-      - protectapp-net
+      - chatapp-net

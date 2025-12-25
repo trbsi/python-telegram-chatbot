@@ -1,6 +1,6 @@
 from b2sdk.v2 import *
 
-from protectapp import settings
+from chatapp import settings
 
 
 def init_remote_storage() -> B2Api | dict:

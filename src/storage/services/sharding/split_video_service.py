@@ -3,7 +3,7 @@ import os.path
 import subprocess
 from pathlib import Path
 
-from protectapp import settings
+from chatapp import settings
 from src.media.enums.media_enum import MediaEnum
 from src.media.models import Media
 from src.storage.services.sharding.shard_metadata_value_object import ShardMetadataValueObject

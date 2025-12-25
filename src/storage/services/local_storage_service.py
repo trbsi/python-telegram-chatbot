@@ -6,7 +6,7 @@ from pathlib import Path
 from django.core.files.storage import default_storage
 from django.core.files.uploadedfile import UploadedFile, TemporaryUploadedFile
 
-from protectapp import settings
+from chatapp import settings
 from src.media.enums.media_file_type_enum import MediaFileTypeEnum
 
 

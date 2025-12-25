@@ -1,6 +1,6 @@
 from django.db import models
 
-from protectapp import settings
+from chatapp import settings
 
 
 # instance: UserProfile

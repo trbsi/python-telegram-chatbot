@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
-# protectapp.sh - Docker + Django helper script
+# chatapp.sh - Docker + Django helper script
 
 set -e  # Exit immediately if a command fails
 
 DOCKER_DIR="./docker"
-DJANGO_CONTAINER="protectapp-django"
+DJANGO_CONTAINER="chatapp-django"
 
 # Functions
 builddocker() {
