@@ -54,14 +54,15 @@ INSTALLED_APPS = [
     'src.user.apps.UserConfig',
     'src.authentication.apps.AuthenticationConfig',
     'src.payment.apps.PaymentConfig',
+    'src.chat.apps.ChatConfig',
 
     'django_celery_beat',
 
     'allauth',
     'allauth.account',
     # Optional -- requires install using `django-allauth[socialaccount]`.
-    'allauth.socialaccount',
-    'allauth.socialaccount.providers.twitter_oauth2',
+    # 'allauth.socialaccount',
+    # 'allauth.socialaccount.providers.twitter_oauth2',
 ]
 
 MIDDLEWARE = [
