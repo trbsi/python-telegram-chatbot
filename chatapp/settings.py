@@ -241,3 +241,6 @@ AGE_VERIFICATION_CONFIG = {
         'webhook_secret_key': env('AGE_VERIFICATION_DIDIT_WEBHOOK_KEY'),
     }
 }
+
+# Telegram
+TELEGRAM_BOT_TOKEN = env('TELEGRAM_BOT_TOKEN')
