@@ -2,7 +2,6 @@ import stripe
 from stripe.checkout import Session
 
 from chatapp import settings
-from src.media.models import Media
 from src.payment.models import PaymentHistory
 from src.payment.value_objects.checkout_value_object import CheckoutValueObject
 
@@ -12,8 +11,6 @@ class StripeCreateCheckoutService:
     # https://docs.stripe.com/api/checkout/sessions/create?lang=python
     def create_checkout(self, payment_history: PaymentHistory) -> CheckoutValueObject:
         stripe.api_key = settings.STRIPE_API_KEY
-        content_object: Media = payment_history.content_object
-        success_url = cancel_url = content_object.public_media_url()
 
         session: Session = stripe.checkout.Session.create(
             mode="payment",

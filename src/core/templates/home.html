@@ -3,10 +3,6 @@
 {% load static %}
 {% block title %}Home{% endblock %}
 
-{% block javascript_include %}
-    <script src="{% static 'js/media/feed.js' %}"></script>
-{% endblock javascript_include %}
-
 {% block content %}
     <section class="bg-orange-50 py-24 px-6">
         <div class="max-w-5xl mx-auto text-center">
@@ -19,10 +15,6 @@
             <p class="mt-6 text-lg md:text-xl text-gray-700 max-w-3xl mx-auto">
                 Designed to reduce leaks and unauthorized uploads by adding friction —
                 without hurting playback quality for real viewers.
-            </p>
-
-            <p class="mt-6 text-lg md:text-xl text-gray-700 max-w-3xl mx-auto">
-                <a href="{% url 'media.view_single_media' id=1 %}">Click for the demo</a>
             </p>
 
             <!-- Key points -->

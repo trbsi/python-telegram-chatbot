@@ -21,6 +21,7 @@ dependencies = [
     "stripe (>=14.1.0,<15.0.0)",
     "faker (>=39.0.0,<40.0.0)",
     "python-telegram-bot (>=22.5,<23.0)",
+    "pillow (>=12.0.0,<13.0.0)",
 ]
 
 [build-system]

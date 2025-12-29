@@ -1,7 +1,3 @@
-from chatapp import settings
-from src.media.enums.media_unlock_enum import MediaUnlockEnum
-from src.media.models import Unlock
-from src.payment.enums import PaymentEnum
 from src.payment.models import PaymentHistory, Balance, Package
 from src.payment.services.payment_providers.payment_provider_service import PaymentProviderService
 from src.payment.value_objects.payment_webhook_value_object import PaymentWebhookValueObject
@@ -31,9 +27,3 @@ class PaymentWebhookService:
             balance = Balance.objects.get(user=payment_history.user)
             balance.balance += payment_history.amount
             balance.save()
-
-        if isinstance(foreign_object, Unlock):
-            foreign_object.unlock_type = MediaUnlockEnum.UNLOCK_PERMANENT.value
-            foreign_object.save()
-            if settings.DEFAULT_PAYMENT_PROVIDER == PaymentEnum.PROVIDER_DUMMY.value:
-                return foreign_object.media.public_media_url()

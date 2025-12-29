@@ -75,7 +75,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "allauth.account.middleware.AccountMiddleware",
     'bugsnag.django.middleware.BugsnagMiddleware',
-    'src.age_verification.middlewares.AgeVerificationMiddleware',
 ]
 
 ROOT_URLCONF = 'chatapp.urls'
@@ -168,7 +167,6 @@ STORAGES = {
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-MEDIA_ROOT_ENCRYPT_KEY = env('MEDIA_ROOT_ENCRYPT_KEY')
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
@@ -226,21 +224,6 @@ DEFAULT_PAYMENT_PROVIDER = env('DEFAULT_PAYMENT_PROVIDER')
 DEFAULT_CURRENCY = 'USD'
 STRIPE_API_KEY = env('STRIPE_API_KEY')
 STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET')
-
-# GeoIP
-IP_DATABASE_PATH = BASE_DIR / 'media/GeoLite-City.mmdb'
-MAX_MIND_LICENCE = env('MAX_MIND_LICENCE')
-
-# Age Verification
-AGE_VERIFICATION_PROVIDER = env('AGE_VERIFICATION_PROVIDER')
-AGE_VERIFICATION_CONFIG = {
-    'didit.me': {
-        'base_url': env('AGE_VERIFICATION_DIDIT_BASE_URL'),
-        'api_key': env('AGE_VERIFICATION_DIDIT_API_KEY'),
-        'workflow_id': env('AGE_VERIFICATION_DIDIT_WORKFLOW_ID'),
-        'webhook_secret_key': env('AGE_VERIFICATION_DIDIT_WEBHOOK_KEY'),
-    }
-}
 
 # Telegram
 TELEGRAM_BOT_TOKEN = env('TELEGRAM_BOT_TOKEN')

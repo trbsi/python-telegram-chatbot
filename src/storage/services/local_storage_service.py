@@ -7,7 +7,6 @@ from django.core.files.storage import default_storage
 from django.core.files.uploadedfile import UploadedFile, TemporaryUploadedFile
 
 from chatapp import settings
-from src.media.enums.media_file_type_enum import MediaFileTypeEnum
 
 
 class LocalStorageService:
@@ -58,12 +57,4 @@ class LocalStorageService:
 
     def get_file_type(self, uploaded_file: UploadedFile) -> str:
         mime_type = uploaded_file.content_type  # e.g. "image/jpeg", "video/mp4"
-
-        if mime_type.startswith("image/"):
-            return MediaFileTypeEnum.FILE_TYPE_IMAGE.value
-        elif mime_type.startswith("video/"):
-            return MediaFileTypeEnum.FILE_TYPE_VIDEO.value
-        elif mime_type.startswith("audio/"):
-            return MediaFileTypeEnum.FILE_TYPE_AUDIO.value
-        else:
-            raise Exception("Unsupported file type")
+        raise Exception("Unsupported file type")

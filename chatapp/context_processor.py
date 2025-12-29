@@ -1,7 +1,5 @@
 from chatapp import settings
 from src.core.utils import full_url_for_route
-from src.user.models import Invitation
-
 
 def global_vars(request):
     invitation_left = 0

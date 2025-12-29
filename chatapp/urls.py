@@ -24,13 +24,8 @@ urlpatterns = (
             path('', include('src.core.urls')),
             path('notification/', include('src.notification.urls')),
             path('accounts/', include('allauth.urls')),
-            path('media/', include('src.media.urls')),
             path('user/', include('src.user.urls')),
-            path('engagement/', include('src.engagement.urls')),
-            path('report/', include('src.report.urls')),
             path('payment/', include('src.payment.urls')),
-            path('age-verification/', include('src.age_verification.urls')),
-            path('consent/', include('src.consent.urls')),
             path('.privatnomjesto/', admin.site.urls),
         ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 )

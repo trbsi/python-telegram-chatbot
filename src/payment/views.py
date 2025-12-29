@@ -1,14 +1,12 @@
-import bugsnag
 import json
+
+import bugsnag
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.models import AnonymousUser
 from django.http import HttpRequest, HttpResponse, JsonResponse
 from django.shortcuts import render, redirect
-from django.urls.base import reverse_lazy
 from django.views.decorators.csrf import csrf_exempt
-from django.views.decorators.http import require_GET, require_POST
-from src.payment.services.spendings.can_spend_service import CanSpendService
+from django.views.decorators.http import require_GET
 
 from src.payment.models import Balance, Package
 from src.payment.services.buy_package.buy_package_service import BuyPackageService
