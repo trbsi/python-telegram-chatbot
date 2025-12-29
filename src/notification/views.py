@@ -1,17 +1,12 @@
-import json
 import random
 
 import bugsnag
-from django.contrib.auth.decorators import login_required
 from django.http import HttpRequest
 from django.http import JsonResponse
 from django.views.decorators.http import require_GET
-from django.views.decorators.http import require_POST
 
 from chatapp import settings
-from src.core.utils import reverse_lazy_admin
 from src.notification.services.notification_service import NotificationService
-from src.notification.services.web_push_notifications.web_push_subscribe_service import WebPushSubscribeService
 from src.notification.value_objects.email_value_object import EmailValueObject
 from src.notification.value_objects.push_notification_value_object import PushNotificationValueObject
 from src.user.models import User
@@ -22,22 +17,6 @@ def api_web_push_keys(request: HttpRequest) -> JsonResponse:
     return JsonResponse({
         'public_key': settings.WEB_PUSH_PUBLIC_KEY
     })
-
-
-@require_POST
-@login_required
-def api_web_push_subscribe(request: HttpRequest) -> JsonResponse:
-    """
-    body example:
-    {'endpoint': 'https://web.push.apple.com/QDWQpghdBE...', 'keys': {'p256dh': 'BKSeSkq..., 'auth': '7LdJ...'}}
-    """
-    body = json.loads(request.body)
-
-    print(body)
-    web_service = WebPushSubscribeService()
-    web_service.push_subscribe(request.user, body)
-
-    return JsonResponse({})
 
 
 @require_GET
