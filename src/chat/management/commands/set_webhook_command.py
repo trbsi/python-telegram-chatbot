@@ -10,6 +10,7 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("url", type=str, nargs='?', default=None)
 
+    # @TODO RuntimeWarning: coroutine 'Command.handle' was never awaited
     async def handle(self, *args, **options):
         url = options['url']
         if url is None:
