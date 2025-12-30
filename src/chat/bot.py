@@ -1,3 +1,4 @@
+import bugsnag
 from telegram import Update
 from telegram.ext import (
     ApplicationBuilder,
@@ -15,6 +16,7 @@ class TelegramBot:
         await update.message.reply_text("Hello from Django 👋")
 
     async def echo(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        bugsnag.notify(Exception(update.message.text))
         await update.message.reply_text(update.message.text)
 
     def build_application(self) -> Application:
