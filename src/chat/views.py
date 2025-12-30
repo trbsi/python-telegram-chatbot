@@ -18,9 +18,9 @@ async def webhook(request: HttpRequest) -> JsonResponse:
     async with _init_lock:
         if not app._initialized:
             await app.initialize()
-            
+
     data = json.loads(request.body.decode('utf-8'))
-    update = Update.de_json(data, app.bot_data)
+    update = Update.de_json(data, app.bot)
     await app.process_update(update)
     return JsonResponse({"ok": True})
 
