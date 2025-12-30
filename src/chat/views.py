@@ -32,4 +32,4 @@ async def set_webhook(request: HttpRequest) -> JsonResponse:
 
     bot = Bot(settings.TELEGRAM_BOT_TOKEN)
     await bot.set_webhook(url)
-    return JsonResponse({"ok": True})
+    return JsonResponse({"ok": True, 'url': url})
