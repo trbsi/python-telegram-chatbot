@@ -1,3 +1,4 @@
+import asyncio
 import json
 
 from django.http import HttpRequest, JsonResponse
@@ -9,10 +10,15 @@ from src.chat.bot import TelegramBot
 
 bot = TelegramBot()
 app = bot.build_application()
+_init_lock = asyncio.Lock()
 
 
 @csrf_exempt
 async def webhook(request: HttpRequest) -> JsonResponse:
+    async with _init_lock:
+        if not app._initialized:
+            await app.initialize()
+            
     data = json.loads(request.body.decode('utf-8'))
     update = Update.de_json(data, app.bot_data)
     await app.process_update(update)
