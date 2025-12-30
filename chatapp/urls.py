@@ -26,6 +26,7 @@ urlpatterns = (
             path('accounts/', include('allauth.urls')),
             path('user/', include('src.user.urls')),
             path('payment/', include('src.payment.urls')),
+            path('chat/', include('src.chat.urls')),
             path('.privatnomjesto/', admin.site.urls),
         ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 )

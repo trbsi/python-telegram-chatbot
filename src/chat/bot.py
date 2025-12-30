@@ -4,7 +4,7 @@ from telegram.ext import (
     CommandHandler,
     MessageHandler,
     ContextTypes,
-    filters,
+    filters, Application,
 )
 
 from chatapp import settings
@@ -17,7 +17,7 @@ class TelegramBot:
     async def echo(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(update.message.text)
 
-    def build_application(self):
+    def build_application(self) -> Application:
         app = ApplicationBuilder().token(settings.TELEGRAM_BOT_TOKEN).build()
 
         app.add_handler(CommandHandler("start", self.start))
