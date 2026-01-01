@@ -1,9 +1,9 @@
-from telegram import Update
-from telegram.ext import (
-    ContextTypes,
-)
+from telegram import Bot
+
+from chatapp import settings
 
 
 class AutoReplyService:
-    async def reply_now(self, message: str, update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-        await update.message.reply_text(message)
+    def reply_now(self, message: str, chat_id: int) -> None:
+        bot = Bot(token=settings.TELEGRAM_BOT_TOKEN)
+        bot.send_message(chat_id=chat_id, text=message)

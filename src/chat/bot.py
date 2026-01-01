@@ -15,13 +15,16 @@ from src.chat.tasks import auto_reply
 class TelegramBot:
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         try:
-            auto_reply.delay('Hello', update, context)
+            chat_id = update.effective_chat.id
+            auto_reply.delay('Hello', chat_id)
         except Exception as e:
             bugsnag.notify(e)
 
     async def echo(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         try:
-            auto_reply.delay(update.message.text, update, context)
+            chat_id = update.effective_chat.id
+            text = update.message.text
+            auto_reply.delay(text, chat_id)
         except Exception as e:
             bugsnag.notify(e)
 
