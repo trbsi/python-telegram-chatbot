@@ -14,7 +14,10 @@ from src.chat.tasks import auto_reply
 
 class TelegramBot:
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
-        await update.message.reply_text("Hello from Django 👋")
+        try:
+            auto_reply.delay('Hello', update, context)
+        except Exception as e:
+            bugsnag.notify(e)
 
     async def echo(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         try:
