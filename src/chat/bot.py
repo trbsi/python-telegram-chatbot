@@ -9,6 +9,7 @@ from telegram.ext import (
 )
 
 from chatapp import settings
+from src.chat.tasks import auto_reply
 
 
 class TelegramBot:
@@ -17,7 +18,7 @@ class TelegramBot:
 
     async def echo(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         try:
-            await update.message.reply_text(update.message.text)
+            auto_reply.delay(update.message.text, update, context)
         except Exception as e:
             bugsnag.notify(e)
 
