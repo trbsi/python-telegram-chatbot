@@ -1,9 +1,10 @@
+from pathlib import Path
+
 from django.contrib import messages
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse_lazy
 from django.views.decorators.http import require_GET
-from pathlib import Path
 
 from chatapp import settings
 from src.core.utils import reverse_lazy_with_query
@@ -78,4 +79,4 @@ def contact(request: HttpRequest) -> HttpResponse:
             PushNotificationValueObject(body='Check your email, there is new support email sent by someone')
         )
         messages.success(request, 'We will get back to you soon!')
-    return render(request, 'contact.html', {'company': settings.COMPANY})
+    return render(request, 'contact.html', {'company': settings.APP_NAME})
