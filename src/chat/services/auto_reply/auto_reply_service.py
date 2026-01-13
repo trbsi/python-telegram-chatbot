@@ -29,6 +29,7 @@ class AutoReplyService:
     def _split_sentences(self, sentence: str) -> list:
         sentences = re.split(r'(?<=[.!?])\s+', sentence)
         protected_word = {'i'}
+        startswith = {"i'"}
 
         for index, sentence in enumerate(sentences):
             if sentence.endswith('.'):
@@ -38,6 +39,10 @@ class AutoReplyService:
             for i, word in enumerate(sentence_split):
                 if word in protected_word:
                     sentence_split[i] = word.capitalize()
+
+                for start in startswith:
+                    if word.startswith(start):
+                        sentence_split[i] = word.capitalize()
 
             sentence = " ".join(sentence_split)
             sentences[index] = sentence
