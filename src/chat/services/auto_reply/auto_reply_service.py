@@ -24,10 +24,11 @@ class AutoReplyService:
 
     def reply_now(self, message: str, chat_id: int, user_id: int) -> None:
         try:
+            admin = User.get_admin()
             sender = self._create_or_get_sender(user_id)
             conversation: Conversation = self.create_conversation_service.create_conversation(
                 sender=sender,
-                recipient=User.get_admin()
+                recipient=admin
             )
             chat_history = self.prepare_messages_service.get_chat_history(conversation)
             self.send_message_service.send_message(
@@ -47,8 +48,15 @@ class AutoReplyService:
 
             async def _send():
                 for i in range(number_of_sentences):
+                    msg = sentences[i]
                     await asyncio.sleep(random.randint(1, 5))
-                    await bot.send_message(chat_id=chat_id, text=sentences[i])
+                    await bot.send_message(chat_id=chat_id, text=msg)
+                    await asyncio.to_thread(
+                        self.send_message_service.send_message,
+                        sender=admin,
+                        conversation=conversation,
+                        message_content=msg
+                    )
 
             asyncio.run(_send())
         except Exception as e:
