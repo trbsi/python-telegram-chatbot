@@ -37,6 +37,10 @@ collectstatic() {
     docker exec -it "$DJANGO_CONTAINER" poetry run python manage.py collectstatic
 }
 
+createsuperuser() {
+    docker exec -it "$DJANGO_CONTAINER" poetry run python manage.py createsuperuser
+}
+
 # Parse command-line argument
 if [[ $# -lt 1 ]]; then
     echo "Usage: $0 {builddocker|migrate|makemigrations}"
@@ -61,6 +65,9 @@ case "$1" in
         ;;
     collectstatic)
         collectstatic
+        ;;
+    createsuperuser)
+        createsuperuser
         ;;
     *)
         echo "Unknown command: $1"

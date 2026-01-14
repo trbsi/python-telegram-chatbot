@@ -9,22 +9,23 @@ from telegram.ext import (
 )
 
 from chatapp import settings
-from src.chat.tasks import auto_reply
+from src.chat.tasks import auto_reply_task
 
 
 class TelegramBot:
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         try:
             chat_id = update.effective_chat.id
-            auto_reply.delay('Hello', chat_id)
+            auto_reply_task.delay('Hello', chat_id)
         except Exception as e:
             bugsnag.notify(e)
 
-    async def echo(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+    async def send(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         try:
             chat_id = update.effective_chat.id
+            user_id = update.effective_user.id
             text = update.message.text
-            auto_reply.delay(text, chat_id)
+            auto_reply_task.delay(text, chat_id, user_id)
         except Exception as e:
             bugsnag.notify(e)
 
@@ -32,6 +33,6 @@ class TelegramBot:
         app = ApplicationBuilder().token(settings.TELEGRAM_BOT_TOKEN).build()
 
         app.add_handler(CommandHandler("start", self.start))
-        app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.echo))
+        app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, self.send))
 
         return app

@@ -33,3 +33,10 @@ class User(AbstractUser):
 
     def get_profile_url(self) -> str:
         return reverse_lazy('user.profile', kwargs={'username': self.username})
+
+    def is_admin(self):
+        return self.is_superuser
+
+    @staticmethod
+    def get_admin():
+        return User.objects.filter(is_superuser=True).first()

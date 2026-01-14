@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'src.authentication.apps.AuthenticationConfig',
     'src.payment.apps.PaymentConfig',
     'src.chat.apps.ChatConfig',
+    'src.inbox.apps.InboxConfig',
 
     'django_celery_beat',
 
@@ -206,8 +207,6 @@ EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 ADMIN_EMAILS = env('ADMIN_EMAILS').split(',')
 
-# Bugsnag
-
 # BugSnag
 bugsnag.configure(
     api_key=env("BUGSNAG_API_KEY"),
@@ -226,3 +225,6 @@ STRIPE_WEBHOOK_SECRET = env('STRIPE_WEBHOOK_SECRET')
 
 # Telegram
 TELEGRAM_BOT_TOKEN = env('TELEGRAM_BOT_TOKEN')
+
+# AI
+IS_AI_ENABLED = env.bool('IS_AI_ENABLED')

@@ -3,10 +3,12 @@ import json
 
 from django.http import HttpRequest, JsonResponse
 from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.http import require_GET
 from telegram import Update, Bot
 
 from chatapp import settings
 from src.chat.bot import TelegramBot
+from src.chat.services.auto_reply.auto_reply_service import AutoReplyService
 
 bot = TelegramBot()
 app = bot.build_application()
@@ -39,3 +41,10 @@ async def set_webhook(request: HttpRequest) -> JsonResponse:
     bot = Bot(settings.TELEGRAM_BOT_TOKEN)
     await bot.set_webhook(url)
     return JsonResponse({"ok": True, 'url': url})
+
+
+@require_GET
+def test_reply(request: HttpRequest) -> JsonResponse:
+    service = AutoReplyService()
+    service.reply_now(message='hey ho', chat_id=6612820383, user_id=948373)
+    return JsonResponse({'a': 'b'})
