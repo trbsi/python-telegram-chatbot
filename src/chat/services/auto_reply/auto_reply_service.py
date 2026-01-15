@@ -44,7 +44,7 @@ class AutoReplyService:
                 sentence = "I want you so bad. mmm this is Hot. Like it, do you? I'm super good"
 
             sentences = self.split_sentences_service.split_sentences(sentence)
-            number_of_sentences = random.randint(1, 3)
+            number_of_sentences = random.randint(1, min(3, len(sentences)))
             for i in range(number_of_sentences):
                 self.send_message_service.send_message(
                     sender=sender,
