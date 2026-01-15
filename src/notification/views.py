@@ -60,4 +60,4 @@ def test_notifications(request: HttpRequest) -> JsonResponse:
     bugsnag.notify(Exception(f'This is test error {random.randint(1, 100000)}'))
     NotificationService.send_notification(*notifications)
 
-    return JsonResponse({'success': True})
+    return JsonResponse({'success': 'ok'})

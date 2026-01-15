@@ -47,4 +47,4 @@ async def set_webhook(request: HttpRequest) -> JsonResponse:
 def test_reply(request: HttpRequest) -> JsonResponse:
     service = AutoReplyService()
     service.reply_now(message='hey ho', chat_id=6612820383, user_id=948373)
-    return JsonResponse({'a': 'b'})
+    return JsonResponse({'success': True})
