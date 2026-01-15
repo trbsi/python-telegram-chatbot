@@ -49,7 +49,7 @@ class AutoReplyService:
                 self.send_message_service.send_message(
                     sender=sender,
                     conversation=conversation,
-                    message_content=message
+                    message_content=sentences[i]
                 )
             asyncio.run(self._send(sentences, chat_id, number_of_sentences))
         except Exception as e:
