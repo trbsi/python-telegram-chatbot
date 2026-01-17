@@ -36,7 +36,12 @@ class AutoReplyService:
             )
 
             if settings.AI_API_URL:
-                sentence = self.llm_service.get_remote_reply(conversation)
+                try:
+                    sentence = self.llm_service.get_remote_reply(conversation)
+                except Exception as e:
+                    if settings.APP_ENV != 'production':
+                        bugsnag.notify(e)
+                    sentence = 'Service is unavailable'
             elif settings.IS_AI_ENABLED:
                 sentence = self.llm_service.get_local_reply(conversation)
             else:
