@@ -1,12 +1,20 @@
+import requests
 import torch
 from peft import PeftModel
 from transformers import AutoTokenizer, AutoModel
 
 from chatapp import settings
+from src.chat.services.auto_reply.prepare_messages_service import PrepareMessagesService
+from src.inbox.models import Conversation
 
 
 class LlmReplyService():
-    def get_reply(self, chat_history: list) -> str:
+    def __init__(self):
+        self.prepare_messages_service = PrepareMessagesService()
+
+    def get_local_reply(self, conversation: Conversation) -> str:
+        chat_history = self.prepare_messages_service.get_chat_history(conversation)
+
         base_model = "mistralai/Mistral-7B-Instruct-v0.3"
         trained_model = f'{settings.BASE_DIR}/trained_model'
 
@@ -42,3 +50,9 @@ class LlmReplyService():
         reply = tokenizer.decode(generated_tokens, skip_special_tokens=True)
 
         return reply
+
+    def get_remote_reply(self, conversation: Conversation) -> str:
+        chat_history = self.prepare_messages_service.get_chat_history(conversation)
+        result = requests.post(settings.AI_API_URL, json=chat_history)
+        json = result.json()
+        return json['message']

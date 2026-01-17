@@ -6,7 +6,6 @@ from telegram import Bot
 
 from chatapp import settings
 from src.chat.services.auto_reply.llm_reply import LlmReplyService
-from src.chat.services.auto_reply.prepare_messages_service import PrepareMessagesService
 from src.chat.services.auto_reply.split_sentences_service import SplitSentencesService
 from src.inbox.models import Conversation
 from src.inbox.services.create_conversation.create_conversation_service import CreateConversationService
@@ -19,7 +18,6 @@ class AutoReplyService:
     def __init__(self):
         self.llm_service = LlmReplyService()
         self.create_conversation_service = CreateConversationService()
-        self.prepare_messages_service = PrepareMessagesService()
         self.send_message_service = SendMessageService()
         self.split_sentences_service = SplitSentencesService()
 
@@ -37,9 +35,10 @@ class AutoReplyService:
                 message_content=message
             )
 
-            if settings.IS_AI_ENABLED:
-                chat_history = self.prepare_messages_service.get_chat_history(conversation)
-                sentence = self.llm_service.get_reply(chat_history)
+            if settings.AI_API_URL:
+                sentence = self.llm_service.get_remote_reply(conversation)
+            elif settings.IS_AI_ENABLED:
+                sentence = self.llm_service.get_local_reply(conversation)
             else:
                 sentence = "I want you so bad. mmm this is Hot. Like it, do you? I'm super good"
 
