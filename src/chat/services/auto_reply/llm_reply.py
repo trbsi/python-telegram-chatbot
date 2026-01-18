@@ -8,24 +8,34 @@ from src.chat.services.auto_reply.prepare_messages_service import PrepareMessage
 from src.inbox.models import Conversation
 
 
-class LlmReplyService():
+class LlmReplyService:
+    _tokenizer = None
+    _model = None
+
     def __init__(self):
         self.prepare_messages_service = PrepareMessagesService()
+
+        if LlmReplyService._tokenizer is None and LlmReplyService._model is None:
+            base_model = "mistralai/Mistral-7B-Instruct-v0.3"
+            trained_model = f'{settings.BASE_DIR}/trained_model'
+
+            tokenizer = AutoTokenizer.from_pretrained(base_model)
+            model = AutoModel.from_pretrained(base_model, dtype=torch.float16, device_map={'': 'cuda'})
+
+            if tokenizer.pad_token is None:
+                tokenizer.pad_token = tokenizer.eos_token
+
+            model = PeftModel.from_pretrained(model, trained_model)
+            model.eval()
+
+            LlmReplyService._tokenizer = tokenizer
+            LlmReplyService._model = model
 
     def get_local_reply(self, conversation: Conversation) -> str:
         chat_history = self.prepare_messages_service.get_chat_history(conversation)
 
-        base_model = "mistralai/Mistral-7B-Instruct-v0.3"
-        trained_model = f'{settings.BASE_DIR}/trained_model'
-
-        tokenizer = AutoTokenizer.from_pretrained(base_model)
-        model = AutoModel.from_pretrained(base_model, dtype=torch.float16, device_map={'': 'cuda'})
-
-        if tokenizer.pad_token is None:
-            tokenizer.pad_token = tokenizer.eos_token
-
-        model = PeftModel.from_pretrained(model, trained_model)
-        model.eval()
+        tokenizer = LlmReplyService._tokenizer
+        model = LlmReplyService._model
 
         input_text = tokenizer.apply_chat_template(
             chat_history,
