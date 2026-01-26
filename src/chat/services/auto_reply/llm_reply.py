@@ -15,7 +15,7 @@ class LlmReplyService:
     def __init__(self):
         self.prepare_messages_service = PrepareMessagesService()
 
-        if LlmReplyService._tokenizer is None and LlmReplyService._model is None:
+        if LlmReplyService._tokenizer is None or LlmReplyService._model is None:
             base_model = "mistralai/Mistral-7B-Instruct-v0.3"
             trained_model = f'{settings.BASE_DIR}/trained_model'
 

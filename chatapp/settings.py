@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     'src.payment.apps.PaymentConfig',
     'src.chat.apps.ChatConfig',
     'src.inbox.apps.InboxConfig',
+    'src.gpu.apps.GpuConfig',
 
     'django_celery_beat',
 
@@ -229,3 +230,9 @@ TELEGRAM_BOT_TOKEN = env('TELEGRAM_BOT_TOKEN')
 # AI
 IS_AI_ENABLED = env.bool('IS_AI_ENABLED')
 AI_API_URL = env('AI_API_URL')
+
+# GPU
+GPU_PROVIDER = env('GPU_PROVIDER')
+VAST_API_KEY = env('VAST_API_KEY')
+VAST_API_BASE_URL = 'https://console.vast.ai/api/v0'
+LLM_REPO_URL = env('LLM_REPO_URL')

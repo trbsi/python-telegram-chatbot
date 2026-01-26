@@ -105,12 +105,8 @@
 {% block javascript_global %}
 {% endblock javascript_global %}
 
-{% if TEMPLATE_APP_ENV == 'production' %}
-    <script src="{% static 'js/all.min.js' %}"></script>
-{% else %}
-    {% block javascript_include %}
-    {% endblock javascript_include %}
-{% endif %}
+{% block javascript_include %}
+{% endblock javascript_include %}
 
 {% include "core/components/javascript.html" %}
 {% include "core/components/cookie_consent.html" %}

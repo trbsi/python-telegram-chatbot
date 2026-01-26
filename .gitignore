@@ -18,6 +18,7 @@ temp
 docker/docker-compose.override.yml
 docker/nginx/certs
 docker/nginx/html
+static/lora_model.zip
 
 # Backup files #
 *.bak
