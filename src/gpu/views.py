@@ -1,18 +1,22 @@
+import json
+
 import bugsnag
 from django.http import HttpRequest, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 
 from src.gpu.models import GpuInstance
 
 
 @require_POST
+@csrf_exempt
 def register_gpu(request: HttpRequest) -> JsonResponse:
     try:
-        post = request.POST
+        post = json.loads(request.body)
         gpu_instance = GpuInstance.objects.filter(id=post['instance_id']).first()
         if gpu_instance is None:
             GpuInstance.objects.create(
-                instance_id=post['instance_id'],
+                instance_id=int(post['instance_id']),
                 ip_address=post['ip'],
                 port=post['port'],
             )
