@@ -1,28 +1,68 @@
+import bugsnag
 from django.core.management.base import BaseCommand
 
 from src.gpu.models import GpuInstance
 from src.gpu.services.create_gpu_instance_service import CreateGpuInstanceService
+from src.gpu.services.destroy_gpu_service import DestroyGpuService
 from src.gpu.services.find_gpu_service import FindGpuService
 from src.gpu.services.get_gpu_service import GetGpuService
+from src.gpu.value_objects.gpu_instance_value_object import GpuInstanceValueObject
 
 
 class Command(BaseCommand):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.find_gpu_service = FindGpuService()
+        self.create_gpu_service = CreateGpuInstanceService()
+        self.destroy_gpu_service = DestroyGpuService()
+        self.get_gpu_service = GetGpuService()
+
     def handle(self, *args, **options):
+        gpu_instance: GpuInstance = GpuInstance.objects.first()
+
         try:
-            gpu_instance = GpuInstance.objects.first()
             if not gpu_instance:
-                raise Exception("Instance not found")
+                self._create_new_instance()
+                raise Exception("Instance does not exist in database")
 
-            service = GetGpuService()
-            instance = service.get_instance(gpu_instance.instance_id)
-            if instance["actual_status"] != "running":
+            current_instance = self.get_gpu_service.get_instance(gpu_instance.instance_id)
+            gpu_instance.price_per_hour = current_instance.price_per_hour
+            gpu_instance.save()
+
+            if not current_instance.is_active():
+                self._create_new_instance()
                 raise Exception("GPU not running")
-        except Exception:
-            find_gpu_service = FindGpuService()
-            create_gpu_service = CreateGpuInstanceService()
+            elif current_instance.is_expensive():
+                self._gpu_is_expensive(current_instance)
+                raise Exception("GPU is expensive")
+        except Exception as e:
+            bugsnag.notify(e)
 
-            offer = find_gpu_service.find_cheapest_gpu()
-            instance = create_gpu_service.create_instance(offer_id=offer.offer_id)
+    def _gpu_is_expensive(self, current_instance: GpuInstanceValueObject):
+        offer = self.find_gpu_service.find_cheapest_gpu()
+        instance = None
 
-            print(offer)
-            print(instance)
+        if offer.price_per_hour < current_instance.price_per_hour:
+            gpu_instance: GpuInstance = GpuInstance.objects.first()
+            if gpu_instance:
+                gpu_instance.delete()
+
+            self.destroy_gpu_service.destroy_instance(current_instance.instance_id)
+            instance = self.create_gpu_service.create_instance(offer_id=offer.offer_id)
+            # database model will be created via /register-gpu endpoint
+
+        print(offer)
+        print(instance)
+
+    def _create_new_instance(self):
+        gpu_instance = GpuInstance.objects.first()
+        if gpu_instance:
+            self.destroy_gpu_service.destroy_instance(gpu_instance.instance_id)
+            gpu_instance.delete()
+
+        offer = self.find_gpu_service.find_cheapest_gpu()
+        instance = self.create_gpu_service.create_instance(offer_id=offer.offer_id)
+        # database model will be created via /register-gpu endpoint
+
+        print(offer)
+        print(instance)

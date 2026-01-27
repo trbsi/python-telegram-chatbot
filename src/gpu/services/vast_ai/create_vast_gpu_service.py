@@ -2,6 +2,7 @@ import requests
 
 from chatapp import settings
 from src.core.utils import full_url_for_route
+from src.gpu.value_objects.gpu_instance_value_object import GpuInstanceValueObject
 
 
 class CreateVastGpuService:
@@ -10,7 +11,7 @@ class CreateVastGpuService:
             offer_id: int,
             disk_gb: int,
             image: str = "nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04"
-    ) -> dict:
+    ) -> GpuInstanceValueObject:
         HEADERS = {
             "Authorization": f"Bearer {settings.VAST_API_KEY}",
         }
@@ -35,4 +36,9 @@ class CreateVastGpuService:
             timeout=30
         )
         r.raise_for_status()
-        return r.json()
+        instance = r.json()
+        return GpuInstanceValueObject(
+            instance_id=instance['new_contract'],
+            price_per_hour=0.0,
+            status='ok'
+        )

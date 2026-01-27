@@ -7,6 +7,7 @@ from telegram import Bot
 from chatapp import settings
 from src.chat.services.auto_reply.llm_reply import LlmReplyService
 from src.chat.services.auto_reply.split_sentences_service import SplitSentencesService
+from src.gpu.models import GpuInstance
 from src.inbox.models import Conversation
 from src.inbox.services.create_conversation.create_conversation_service import CreateConversationService
 from src.inbox.services.send_message.send_message_service import SendMessageService
@@ -34,15 +35,15 @@ class AutoReplyService:
                 conversation=conversation,
                 message_content=message
             )
+            gpu_instance = GpuInstance.objects.first()
 
-            if settings.AI_API_URL:
+            if gpu_instance:
                 try:
-                    sentence = self.llm_service.get_remote_reply(conversation)
+                    sentence = self.llm_service.get_remote_reply(gpu_instance, conversation)
                 except Exception as e:
-                    if settings.APP_ENV != 'production':
-                        bugsnag.notify(e)
+                    bugsnag.notify(e)
                     sentence = 'Service is unavailable'
-            elif settings.IS_AI_ENABLED:
+            elif settings.IS_LOCAL_AI_ENABLED:
                 sentence = self.llm_service.get_local_reply(conversation)
             else:
                 sentence = "I want you so bad. mmm this is Hot. Like it, do you? I'm super good"

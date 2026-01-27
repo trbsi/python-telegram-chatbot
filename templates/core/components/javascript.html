@@ -37,23 +37,6 @@
     }
 </script>
 <script>
-    function inviteUser() {
-        if (navigator.share) {
-            navigator.share({
-                title: 'Join me on {{TEMPLATE_APP_NAME}}',
-                text: "I’m on {{TEMPLATE_APP_NAME}}, a platform for creators. I think you’d enjoy it too — check it out!",
-                url: '{{TEMPLATE_INVITATION_URL}}'
-            })
-                .catch(err => {
-                    // User cancelled or error occurred
-                    console.log("Share cancelled", err);
-                });
-        } else {
-            alert("Sharing not supported on this browser.");
-        }
-    }
-</script>
-<script>
     toastr.options.closeDuration = 10000;
     toastr.options.progressBar = true;
     toastr.options.escapeHtml = false;

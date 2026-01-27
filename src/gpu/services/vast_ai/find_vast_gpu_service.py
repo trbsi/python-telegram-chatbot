@@ -1,11 +1,11 @@
 import requests
 
 from chatapp import settings
-from src.gpu.value_objects.gpu_value_object import GpuValueObject
+from src.gpu.value_objects.gpu_offer_value_object import GpuOfferValueObject
 
 
 class FindVastGpuService:
-    def find_cheapest_gpu(self, min_vram=15) -> GpuValueObject:
+    def find_cheapest_gpu(self, min_vram=15) -> GpuOfferValueObject:
         HEADERS = {
             "Authorization": f"Bearer {settings.VAST_API_KEY}",
         }
@@ -19,7 +19,7 @@ class FindVastGpuService:
             "order": [["price", "asc"]]  # sort by price ascending
         }
 
-        r = requests.get(
+        r = requests.post(
             f"{settings.VAST_API_BASE_URL}/bundles",
             headers=HEADERS,
             json=body,
@@ -32,8 +32,9 @@ class FindVastGpuService:
             raise RuntimeError("No GPU offers found")
 
         offer = offers[0]  # cheapest
-        return GpuValueObject(
+        return GpuOfferValueObject(
             offer["id"],
             offer["gpu_name"],
             offer["gpu_ram"],
+            offer["search"]["gpuCostPerHour"],
         )
