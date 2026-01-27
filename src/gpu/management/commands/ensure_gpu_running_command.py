@@ -39,30 +39,36 @@ class Command(BaseCommand):
             bugsnag.notify(e)
 
     def _gpu_is_expensive(self, current_instance: GpuInstanceValueObject):
+        print('GPU is expensive. Finding cheap one.')
         offer = self.find_gpu_service.find_cheapest_gpu()
         instance = None
 
         if offer.price_per_hour < current_instance.price_per_hour:
+            print('Found cheap one')
             gpu_instance: GpuInstance = GpuInstance.objects.first()
             if gpu_instance:
                 gpu_instance.delete()
 
+            print('Destroying existing instance. Creating new one.')
             self.destroy_gpu_service.destroy_instance(current_instance.instance_id)
             instance = self.create_gpu_service.create_instance(offer_id=offer.offer_id)
             # database model will be created via /register-gpu endpoint
 
-        print(offer)
-        print(instance)
+        print(offer.__dict__)
+        print(instance.__dict__)
 
     def _create_new_instance(self):
+        print('Creating new instance')
         gpu_instance = GpuInstance.objects.first()
         if gpu_instance:
+            print('Destroying existing')
             self.destroy_gpu_service.destroy_instance(gpu_instance.instance_id)
             gpu_instance.delete()
 
+        print('Find cheapest GPU. Creating new one')
         offer = self.find_gpu_service.find_cheapest_gpu()
         instance = self.create_gpu_service.create_instance(offer_id=offer.offer_id)
         # database model will be created via /register-gpu endpoint
 
-        print(offer)
-        print(instance)
+        print(offer.__dict__)
+        print(instance.__dict__)
