@@ -26,6 +26,7 @@ class CreateVastGpuService:
                 "GITHUB_REPO": settings.LLM_REPO_URL,
                 "VPS_ENDPOINT": full_url_for_route('gpu.register_gpu'),
                 "REGISTRATION_TOKEN": "not_used_but_just_in_case",
+                "MODEL_URL": settings.MODEL_URL
             }
         }
 

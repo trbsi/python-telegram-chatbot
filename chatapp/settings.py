@@ -236,3 +236,4 @@ VAST_API_KEY = env('VAST_API_KEY')
 VAST_API_BASE_URL = 'https://console.vast.ai/api/v0'
 LLM_REPO_URL = env('LLM_REPO_URL')
 MAX_GPU_PRICE_PER_HOUR = env('MAX_GPU_PRICE_PER_HOUR')
+MODEL_URL = env('MODEL_URL')
