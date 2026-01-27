@@ -10,7 +10,7 @@ class CreateVastGpuService:
             self,
             offer_id: int,
             disk_gb: int,
-            image: str = "nvidia/cuda:12.1.1-cudnn8-runtime-ubuntu22.04"
+            image: str
     ) -> GpuInstanceValueObject:
         HEADERS = {
             "Authorization": f"Bearer {settings.VAST_API_KEY}",

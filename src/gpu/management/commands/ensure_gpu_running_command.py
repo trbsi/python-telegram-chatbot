@@ -25,7 +25,7 @@ class Command(BaseCommand):
                 self._create_new_instance()
                 raise Exception("Instance does not exist in database")
 
-            current_instance = self.get_gpu_service.get_instance(gpu_instance.instance_id)
+            current_instance = self.get_gpu_service.get_instance(int(gpu_instance.instance_id))
             gpu_instance.price_per_hour = current_instance.price_per_hour
             gpu_instance.save()
 

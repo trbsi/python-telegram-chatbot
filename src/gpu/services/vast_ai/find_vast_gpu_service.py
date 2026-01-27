@@ -12,11 +12,11 @@ class FindVastGpuService:
 
         body = {
             "limit": 1,  # get only the cheapest
-            "type": "bid",  # cheapest type
+            "type": "on-demand",  # cheapest type
             "rentable": {"eq": True},
             "rented": {"eq": False},
-            "min_ram": min_vram,  # minimum 15GB RAM
-            "order": [["price", "asc"]]  # sort by price ascending
+            "gpu_ram": {"gte": min_vram * 1024},  # minimum 15GB RAM
+            "order": [["dph_total", "asc"]]  # sort by price ascending
         }
 
         r = requests.post(
