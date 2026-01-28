@@ -13,25 +13,26 @@ class CreateVastGpuService:
             image: str
     ) -> GpuInstanceValueObject:
         HEADERS = {
-            "Authorization": f"Bearer {settings.VAST_API_KEY}",
+            'Authorization': f'Bearer {settings.VAST_API_KEY}',
         }
 
         payload = {
-            "image": image,
-            "disk": disk_gb,
-            "onstart": open(f'{settings.BASE_DIR}/scripts/vast_ai_deployment.sh').read(),
-            "ssh": True,
-            "label": "gpu-worker",
-            "env": {
-                "GITHUB_REPO": settings.LLM_REPO_URL,
-                "VPS_ENDPOINT": full_url_for_route('gpu.register_gpu'),
-                "REGISTRATION_TOKEN": "not_used_but_just_in_case",
-                "MODEL_URL": settings.MODEL_URL
+            'image': image,
+            'disk': disk_gb,
+            'onstart': open(f'{settings.BASE_DIR}/scripts/vast_ai_deployment.sh').read(),
+            'ssh': True,
+            'label': 'gpu-worker',
+            'env': {
+                'GITHUB_REPO': settings.LLM_REPO_URL,
+                'VPS_ENDPOINT': full_url_for_route('gpu.register_gpu'),
+                'REGISTRATION_TOKEN': 'not_used_but_just_in_case',
+                'MODEL_URL': settings.MODEL_URL,
+                'BUGSNAG_API_KEY':settings.BUGSNAG_API_KEY
             }
         }
 
         r = requests.put(
-            f"{settings.VAST_API_BASE_URL}/asks/{offer_id}",
+            f'{settings.VAST_API_BASE_URL}/asks/{offer_id}',
             headers=HEADERS,
             json=payload,
             timeout=30
@@ -42,5 +43,6 @@ class CreateVastGpuService:
             instance_id=instance['new_contract'],
             price_per_hour=0.0,
             status='ok',
-            public_ip='0'
+            public_ip='0',
+            port=0
         )

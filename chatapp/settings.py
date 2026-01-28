@@ -209,6 +209,7 @@ DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 ADMIN_EMAILS = env('ADMIN_EMAILS').split(',')
 
 # BugSnag
+BUGSNAG_API_KEY = env('BUGSNAG_API_KEY')
 bugsnag.configure(
     api_key=env("BUGSNAG_API_KEY"),
     project_root=BASE_DIR,
