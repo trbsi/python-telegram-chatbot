@@ -18,7 +18,7 @@ class CreateVastGpuService:
         }
 
         payload = {
-            'image': 'nvidia/cuda:12.1.1-runtime-ubuntu22.04' if image is None else image,
+            'image': 'vastai/base-image:@vastai-automatic-tag' if image is None else image,
             'template_hash_id': settings.VAST_TEMPLATE_HASH, # VastAI NVIDIA/CUDA with exposed 8000 port
             'disk': disk_gb,
             'onstart': open(f'{settings.BASE_DIR}/scripts/vast_ai_deployment.sh').read(),
