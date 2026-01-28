@@ -14,4 +14,4 @@ class GpuInstance(models.Model):
     objects = models.Manager()
 
     def get_endpoint(self):
-        return f'http://{self.ip_address}:{self.port}'
+        return f'http://{self.ip_address}:{self.port}/reply'
