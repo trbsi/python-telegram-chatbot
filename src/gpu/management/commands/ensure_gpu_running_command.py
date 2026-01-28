@@ -23,7 +23,7 @@ class Command(BaseCommand):
         try:
             if not gpu_instance:
                 self._create_new_instance()
-                raise Exception("Instance does not exist in database")
+                bugsnag.notify(Exception('Instance does not exist in database'))
 
             current_instance = self.get_gpu_service.get_instance(int(gpu_instance.instance_id))
             gpu_instance.price_per_hour = current_instance.price_per_hour
@@ -31,13 +31,14 @@ class Command(BaseCommand):
 
             if not current_instance.is_active():
                 self._create_new_instance()
-                raise Exception("GPU not running")
+                bugsnag.notify(Exception('GPU not running'))
             elif current_instance.is_expensive():
                 self._gpu_is_expensive(current_instance)
-                raise Exception("GPU is expensive")
+                bugsnag.notify(Exception('GPU is expensive'))
             else:
                 print('Everything is ok')
         except Exception as e:
+            self._create_new_instance()
             bugsnag.notify(e)
 
     def _gpu_is_expensive(self, current_instance: GpuInstanceValueObject):
