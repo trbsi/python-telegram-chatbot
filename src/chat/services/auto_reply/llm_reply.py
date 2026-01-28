@@ -1,9 +1,5 @@
 import requests
-import torch
-from peft import PeftModel
-from transformers import AutoTokenizer, AutoModel
 
-from chatapp import settings
 from src.chat.services.auto_reply.prepare_messages_service import PrepareMessagesService
 from src.gpu.models import GpuInstance
 from src.inbox.models import Conversation
@@ -16,23 +12,24 @@ class LlmReplyService:
     def __init__(self):
         self.prepare_messages_service = PrepareMessagesService()
 
-        if LlmReplyService._tokenizer is None or LlmReplyService._model is None:
-            base_model = "mistralai/Mistral-7B-Instruct-v0.3"
-            trained_model = f'{settings.BASE_DIR}/trained_model'
-
-            tokenizer = AutoTokenizer.from_pretrained(base_model)
-            model = AutoModel.from_pretrained(base_model, dtype=torch.float16, device_map={'': 'cuda'})
-
-            if tokenizer.pad_token is None:
-                tokenizer.pad_token = tokenizer.eos_token
-
-            model = PeftModel.from_pretrained(model, trained_model)
-            model.eval()
-
-            LlmReplyService._tokenizer = tokenizer
-            LlmReplyService._model = model
+        # if LlmReplyService._tokenizer is None or LlmReplyService._model is None:
+        #     base_model = "mistralai/Mistral-7B-Instruct-v0.3"
+        #     trained_model = f'{settings.BASE_DIR}/trained_model'
+        #
+        #     tokenizer = AutoTokenizer.from_pretrained(base_model)
+        #     model = AutoModel.from_pretrained(base_model, dtype=torch.float16, device_map={'': 'cuda'})
+        #
+        #     if tokenizer.pad_token is None:
+        #         tokenizer.pad_token = tokenizer.eos_token
+        #
+        #     model = PeftModel.from_pretrained(model, trained_model)
+        #     model.eval()
+        #
+        #     LlmReplyService._tokenizer = tokenizer
+        #     LlmReplyService._model = model
 
     def get_local_reply(self, conversation: Conversation) -> str:
+        raise Exception('Not implemented locally')
         chat_history = self.prepare_messages_service.get_chat_history(conversation)
 
         tokenizer = LlmReplyService._tokenizer
