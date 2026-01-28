@@ -35,6 +35,8 @@ class Command(BaseCommand):
             elif current_instance.is_expensive():
                 self._gpu_is_expensive(current_instance)
                 raise Exception("GPU is expensive")
+            else:
+                print('Everything is ok')
         except Exception as e:
             bugsnag.notify(e)
 
