@@ -13,7 +13,7 @@ def register_gpu(request: HttpRequest) -> JsonResponse:
     try:
         service = MyGpuService()
         gpu_instance_value_object = service.get_my_gpu()
-        gpu_instance = GpuInstance.objects.filter(id=gpu_instance_value_object.instance_id).first()
+        gpu_instance: GpuInstance = GpuInstance.objects.filter(id=gpu_instance_value_object.instance_id).first()
         
         if gpu_instance is None:
             GpuInstance.objects.create(
@@ -24,6 +24,7 @@ def register_gpu(request: HttpRequest) -> JsonResponse:
         else:
             gpu_instance.ip_address = gpu_instance_value_object.public_ip
             gpu_instance.port = gpu_instance_value_object.port
+            gpu_instance.status = gpu_instance_value_object.status
             gpu_instance.save()
     except Exception as e:
         bugsnag.notify(e)

@@ -19,9 +19,13 @@ class Command(BaseCommand):
         self.get_gpu_service = GetGpuService()
 
     def handle(self, *args, **options):
-        gpu_instance: GpuInstance = GpuInstance.objects.order_by('-id').first()
+        creating_instance = GpuInstance.objects.filter(status=GpuInstance.STATUS_CREATING).count()
+        if creating_instance > 0:
+            print('There is instance being created.')
+            return
 
         try:
+            gpu_instance: GpuInstance = GpuInstance.objects.order_by('-id').first()
             if not gpu_instance:
                 self._create_new_instance()
                 bugsnag.notify(Exception('Instance does not exist in database'))
@@ -57,7 +61,7 @@ class Command(BaseCommand):
             print('Destroying existing instance. Creating new one.')
             self.destroy_gpu_service.destroy_instance(current_instance.instance_id)
             instance = self.create_gpu_service.create_instance(offer_id=offer.offer_id)
-            # database model will be created via /register-gpu endpoint
+            self._create_temp_instance(instance)
 
         print(offer.__dict__)
         print(instance.__dict__)
@@ -76,7 +80,15 @@ class Command(BaseCommand):
 
         offer = self.find_gpu_service.find_cheapest_gpu()
         instance = self.create_gpu_service.create_instance(offer_id=offer.offer_id)
-        # database model will be created via /register-gpu endpoint
+        self._create_temp_instance(instance)
 
         print(offer.__dict__)
         print(instance.__dict__)
+
+    def _create_temp_instance(self, instance: GpuInstanceValueObject):
+        GpuInstance.objects.create(
+            instance_id=instance.instance_id,
+            ip_address='0',
+            port=0,
+            status=GpuInstance.STATUS_CREATING
+        )

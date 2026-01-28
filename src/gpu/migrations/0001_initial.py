@@ -19,6 +19,7 @@ class Migration(migrations.Migration):
                 ('ip_address', models.GenericIPAddressField()),
                 ('port', models.IntegerField()),
                 ('price_per_hour', models.FloatField(blank=True, null=True)),
+                ('status', models.CharField(max_length=15)),
             ],
         ),
     ]
