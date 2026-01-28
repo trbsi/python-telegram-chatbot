@@ -20,4 +20,4 @@ class GpuInstanceValueObject:
         return self.status == "running"
 
     def is_expensive(self) -> bool:
-        return self.price_per_hour > settings.MAX_GPU_PRICE_PER_HOUR
+        return float(self.price_per_hour) > float(settings.MAX_GPU_PRICE_PER_HOUR)
