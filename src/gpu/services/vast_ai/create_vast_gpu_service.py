@@ -41,5 +41,6 @@ class CreateVastGpuService:
         return GpuInstanceValueObject(
             instance_id=instance['new_contract'],
             price_per_hour=0.0,
-            status='ok'
+            status='ok',
+            public_ip='0'
         )

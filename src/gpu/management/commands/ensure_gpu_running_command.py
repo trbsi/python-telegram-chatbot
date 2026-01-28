@@ -18,7 +18,7 @@ class Command(BaseCommand):
         self.get_gpu_service = GetGpuService()
 
     def handle(self, *args, **options):
-        gpu_instance: GpuInstance = GpuInstance.objects.first()
+        gpu_instance: GpuInstance = GpuInstance.objects.order_by('-id').first()
 
         try:
             if not gpu_instance:
@@ -45,7 +45,7 @@ class Command(BaseCommand):
 
         if offer.price_per_hour < current_instance.price_per_hour:
             print('Found cheap one')
-            gpu_instance: GpuInstance = GpuInstance.objects.first()
+            gpu_instance: GpuInstance = GpuInstance.objects.order_by('-id').first()
             if gpu_instance:
                 gpu_instance.delete()
 
@@ -59,7 +59,7 @@ class Command(BaseCommand):
 
     def _create_new_instance(self):
         print('Creating new instance')
-        gpu_instance = GpuInstance.objects.first()
+        gpu_instance = GpuInstance.objects.order_by('-id').first()
         if gpu_instance:
             print('Destroying existing')
             self.destroy_gpu_service.destroy_instance(gpu_instance.instance_id)

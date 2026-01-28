@@ -19,6 +19,7 @@ docker/docker-compose.override.yml
 docker/nginx/certs
 docker/nginx/html
 static/lora_model.zip
+*Zone.Identifier
 
 # Backup files #
 *.bak

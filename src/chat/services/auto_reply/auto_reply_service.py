@@ -35,7 +35,7 @@ class AutoReplyService:
                 conversation=conversation,
                 message_content=message
             )
-            gpu_instance = GpuInstance.objects.first()
+            gpu_instance = GpuInstance.objects.order_by('-id').first()
 
             if gpu_instance:
                 try:

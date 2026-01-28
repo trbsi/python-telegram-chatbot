@@ -6,11 +6,15 @@ class GpuInstanceValueObject:
             self,
             instance_id: int,
             price_per_hour: float,
-            status: str
+            status: str,
+            public_ip: str,
+            port: int
     ):
         self.instance_id = instance_id
         self.price_per_hour = price_per_hour
         self.status = status
+        self.public_ip = public_ip
+        self.port = port
 
     def is_active(self) -> bool:
         return self.status == "running"
