@@ -25,6 +25,7 @@ class Command(BaseCommand):
             if not gpu_instance:
                 self._create_new_instance()
                 bugsnag.notify(Exception('Instance does not exist in database'))
+                return
 
             current_instance = self.get_gpu_service.get_instance(int(gpu_instance.instance_id))
             gpu_instance.price_per_hour = current_instance.price_per_hour
@@ -66,8 +67,11 @@ class Command(BaseCommand):
         gpu_instance = GpuInstance.objects.order_by('-id').first()
         if gpu_instance:
             print('Destroying existing')
-            self.destroy_gpu_service.destroy_instance(gpu_instance.instance_id)
             gpu_instance.delete()
+            try:
+                self.destroy_gpu_service.destroy_instance(gpu_instance.instance_id)
+            except Exception as e:
+                pass
 
         print('Find cheapest GPU. Creating new one')
         offer = self.find_gpu_service.find_cheapest_gpu()
