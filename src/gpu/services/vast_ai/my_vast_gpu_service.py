@@ -5,7 +5,8 @@ from src.gpu.value_objects.gpu_instance_value_object import GpuInstanceValueObje
 
 
 class MyVastGpuService:
-    def get_my_gpus(self) -> GpuInstanceValueObject:
+    # https://docs.vast.ai/api-reference/instances/show-instances
+    def get_my_gpu(self) -> GpuInstanceValueObject:
         HEADERS = {
             "Authorization": f"Bearer {settings.VAST_API_KEY}",
         }
@@ -22,6 +23,17 @@ class MyVastGpuService:
             public_ip=instance['public_ipaddr'],
             port=self._get_port(ports),
         )
+
+    # https://docs.vast.ai/api-reference/instances/show-instances
+    def get_my_gpus(self) -> list:
+        HEADERS = {
+            "Authorization": f"Bearer {settings.VAST_API_KEY}",
+        }
+
+        r = requests.get(f"{settings.VAST_API_BASE_URL}/instances", headers=HEADERS)
+        r.raise_for_status()
+        instances = r.json()['instances']
+        return instances
 
     def _get_port(self, ports: dict) -> int:
         for key, mapping in ports.items():

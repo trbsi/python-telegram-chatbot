@@ -6,18 +6,20 @@ from src.gpu.value_objects.gpu_instance_value_object import GpuInstanceValueObje
 
 
 class CreateVastGpuService:
+    # https://docs.vast.ai/api-reference/instances/create-instance
     def create_instance(
             self,
             offer_id: int,
             disk_gb: int,
-            image: str
+            image: str|None
     ) -> GpuInstanceValueObject:
         HEADERS = {
             'Authorization': f'Bearer {settings.VAST_API_KEY}',
         }
 
         payload = {
-            'image': image,
+            'image': 'nvidia/cuda:12.1.1-runtime-ubuntu22.04' if image is None else image,
+            'template_hash_id': '3109ee3e3500e00a0e4ed073a6446be7', # VastAI NVIDIA/CUDA
             'disk': disk_gb,
             'onstart': open(f'{settings.BASE_DIR}/scripts/vast_ai_deployment.sh').read(),
             'ssh': True,
@@ -28,7 +30,7 @@ class CreateVastGpuService:
                 'REGISTRATION_TOKEN': 'not_used_but_just_in_case',
                 'MODEL_URL': settings.MODEL_URL,
                 'BUGSNAG_API_KEY':settings.BUGSNAG_API_KEY
-            }
+            },
         }
 
         r = requests.put(

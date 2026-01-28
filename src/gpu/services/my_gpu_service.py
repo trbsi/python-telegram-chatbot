@@ -7,8 +7,8 @@ class MyGpuService:
     def __init__(self):
         self.vast = MyVastGpuService()
 
-    def get_my_gpus(self) -> GpuInstanceValueObject:
+    def get_my_gpu(self) -> GpuInstanceValueObject:
         if settings.GPU_PROVIDER == 'vast_ai':
-            return self.vast.get_my_gpus()
+            return self.vast.get_my_gpu()
         else:
             raise Exception("Not Implemented for provider")

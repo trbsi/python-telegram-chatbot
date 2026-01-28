@@ -63,17 +63,17 @@ class Command(BaseCommand):
         print(instance.__dict__)
 
     def _create_new_instance(self):
-        print('Creating new instance')
+        print('Destroying existing. Finding cheapest GPU. Creating new one')
         gpu_instance = GpuInstance.objects.order_by('-id').first()
         if gpu_instance:
-            print('Destroying existing')
             gpu_instance.delete()
             try:
                 self.destroy_gpu_service.destroy_instance(gpu_instance.instance_id)
-            except Exception as e:
+            except Exception:
                 pass
+        else:
+            self.destroy_gpu_service.destroy_other_instance()
 
-        print('Find cheapest GPU. Creating new one')
         offer = self.find_gpu_service.find_cheapest_gpu()
         instance = self.create_gpu_service.create_instance(offer_id=offer.offer_id)
         # database model will be created via /register-gpu endpoint

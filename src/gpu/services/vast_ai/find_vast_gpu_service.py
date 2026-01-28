@@ -5,6 +5,7 @@ from src.gpu.value_objects.gpu_offer_value_object import GpuOfferValueObject
 
 
 class FindVastGpuService:
+    # https://docs.vast.ai/api-reference/search/search-offers
     def find_cheapest_gpu(self, min_vram=15) -> GpuOfferValueObject:
         HEADERS = {
             "Authorization": f"Bearer {settings.VAST_API_KEY}",

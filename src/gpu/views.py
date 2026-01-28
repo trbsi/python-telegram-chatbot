@@ -12,7 +12,7 @@ from src.gpu.services.my_gpu_service import MyGpuService
 def register_gpu(request: HttpRequest) -> JsonResponse:
     try:
         service = MyGpuService()
-        gpu_instance_value_object = service.get_my_gpus()
+        gpu_instance_value_object = service.get_my_gpu()
         gpu_instance = GpuInstance.objects.filter(id=gpu_instance_value_object.instance_id).first()
         
         if gpu_instance is None:

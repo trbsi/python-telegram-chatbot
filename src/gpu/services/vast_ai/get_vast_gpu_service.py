@@ -5,6 +5,7 @@ from src.gpu.value_objects.gpu_instance_value_object import GpuInstanceValueObje
 
 
 class GetVastGpuService:
+    # https://docs.vast.ai/api-reference/instances/show-instance
     def get_instance(self, instance_id: int) -> GpuInstanceValueObject:
         HEADERS = {
             "Authorization": f"Bearer {settings.VAST_API_KEY}",
