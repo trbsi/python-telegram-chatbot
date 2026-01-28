@@ -1,5 +1,6 @@
 import bugsnag
 from django.core.management.base import BaseCommand
+from requests import HTTPError
 
 from src.gpu.models import GpuInstance
 from src.gpu.services.create_gpu_instance_service import CreateGpuInstanceService
@@ -37,7 +38,7 @@ class Command(BaseCommand):
                 bugsnag.notify(Exception('GPU is expensive'))
             else:
                 print('Everything is ok')
-        except Exception as e:
+        except (Exception, HTTPError) as e:
             self._create_new_instance()
             bugsnag.notify(e)
 
