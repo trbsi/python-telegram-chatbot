@@ -41,7 +41,7 @@ class MyVastGpuService:
                 continue
 
             host_port = mapping[0]['HostPort']
-            if host_port and host_port.startswith('80'):
+            if host_port and key.startswith('80'):
                 return int(host_port)
 
         return 0
