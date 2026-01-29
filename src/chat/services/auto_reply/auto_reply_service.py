@@ -42,11 +42,14 @@ class AutoReplyService:
                     sentence = self.llm_service.get_remote_reply(gpu_instance, conversation)
                 except Exception as e:
                     bugsnag.notify(e)
-                    sentence = 'Service is unavailable'
+                    sentence = None
             elif settings.IS_LOCAL_AI_ENABLED:
                 sentence = self.llm_service.get_local_reply(conversation)
             else:
                 sentence = "I want you so bad. mmm this is Hot. Like it, do you? I'm super good"
+
+            if sentence is None:
+                return
 
             sentences = self.split_sentences_service.split_sentences(sentence)
             number_of_sentences = random.randint(1, min(3, len(sentences)))

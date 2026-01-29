@@ -16,7 +16,7 @@ class DestroyVastGpuService():
         r = requests.delete(f"{settings.VAST_API_BASE_URL}/instances/{instance_id}", headers=HEADERS)
         r.raise_for_status()
 
-    def destroy_other_instance(self)->None:
+    def destroy_all_instance(self) -> None:
         gpus = self.my_gpu_service.get_my_gpus()
         for gpu in gpus:
             self.destroy_instance(gpu['id'])

@@ -2,6 +2,7 @@ import bugsnag
 from django.core.management.base import BaseCommand
 from requests import HTTPError
 
+from src.chat.services.idle_messaging.idle_messaging_service import IdleMessagingService
 from src.gpu.models import GpuInstance
 from src.gpu.services.create_gpu_instance_service import CreateGpuInstanceService
 from src.gpu.services.destroy_gpu_service import DestroyGpuService
@@ -17,11 +18,16 @@ class Command(BaseCommand):
         self.create_gpu_service = CreateGpuInstanceService()
         self.destroy_gpu_service = DestroyGpuService()
         self.get_gpu_service = GetGpuService()
+        self.idle_messaging_service = IdleMessagingService()
 
     def handle(self, *args, **options):
         creating_instance = GpuInstance.objects.filter(status=GpuInstance.STATUS_CREATING).count()
         if creating_instance > 0:
             print('There is instance being created.')
+            return
+
+        if self.idle_messaging_service.is_messaging_idle():
+            print('There is idle messaging. Not creating instance.')
             return
 
         try:
@@ -37,10 +43,10 @@ class Command(BaseCommand):
 
             if not current_instance.is_active():
                 self._create_new_instance()
-                bugsnag.notify(Exception('GPU not running'))
+                bugsnag.notify(Exception('GPU not running. Creating new one.'))
             elif current_instance.is_expensive():
                 self._gpu_is_expensive(current_instance)
-                bugsnag.notify(Exception('GPU is expensive'))
+                bugsnag.notify(Exception('GPU is expensive. Trying to find cheaper.'))
             else:
                 print('Everything is ok')
         except (Exception, HTTPError) as e:
@@ -76,7 +82,7 @@ class Command(BaseCommand):
             except Exception:
                 pass
         else:
-            self.destroy_gpu_service.destroy_other_instance()
+            self.destroy_gpu_service.destroy_all_instance()
 
         offer = self.find_gpu_service.find_cheapest_gpu()
         instance = self.create_gpu_service.create_instance(offer_id=offer.offer_id)
