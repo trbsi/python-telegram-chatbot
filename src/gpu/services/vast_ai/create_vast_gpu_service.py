@@ -11,7 +11,7 @@ class CreateVastGpuService:
             self,
             offer_id: int,
             disk_gb: int,
-            image: str|None
+            image: str | None
     ) -> GpuInstanceValueObject:
         HEADERS = {
             'Authorization': f'Bearer {settings.VAST_API_KEY}',
@@ -19,7 +19,7 @@ class CreateVastGpuService:
 
         payload = {
             'image': 'vastai/base-image:@vastai-automatic-tag' if image is None else image,
-            'template_hash_id': settings.VAST_TEMPLATE_HASH, # VastAI NVIDIA/CUDA with exposed 8000 port
+            'template_hash_id': settings.VAST_TEMPLATE_HASH,  # VastAI NVIDIA/CUDA with exposed 8000 port
             'disk': disk_gb,
             'onstart': open(f'{settings.BASE_DIR}/scripts/vast_ai_deployment.sh').read(),
             'ssh': True,
@@ -28,8 +28,8 @@ class CreateVastGpuService:
                 'GITHUB_REPO': settings.LLM_REPO_URL,
                 'VPS_ENDPOINT': full_url_for_route('gpu.register_gpu'),
                 'REGISTRATION_TOKEN': 'not_used_but_just_in_case',
-                'MODEL_URL': settings.MODEL_URL,
-                'BUGSNAG_API_KEY':settings.BUGSNAG_API_KEY,
+                'MODEL_ZIP_URL': settings.MODEL_ZIP_URL,
+                'BUGSNAG_API_KEY': settings.BUGSNAG_API_KEY,
                 'HUGGING_FACE_TOKEN': settings.HUGGING_FACE_TOKEN
             },
         }
