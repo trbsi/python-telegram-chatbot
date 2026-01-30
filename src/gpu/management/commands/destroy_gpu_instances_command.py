@@ -14,7 +14,9 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         if self.idle_messaging_service.is_messaging_idle():
             self.destroy_gpu_service.destroy_all_instance()
+            GpuInstance.objects.all().delete()
 
         gpu_instance: GpuInstance = GpuInstance.objects.filter(status=GpuInstance.STATUS_CREATING).first()
         if gpu_instance is not None and gpu_instance.time_diff() >= 300:  # 5 minutes
             self.destroy_gpu_service.destroy_all_instance()
+            gpu_instance.delete()
