@@ -20,13 +20,20 @@ class Command(BaseCommand):
         self.get_gpu_service = GetGpuService()
         self.idle_messaging_service = IdleMessagingService()
 
+    def add_arguments(self, parser):
+        parser.add_argument(
+            "--skip-idle-message",
+            action="store_true",
+            help="To skip idle message condition",
+        )
+
     def handle(self, *args, **options):
         creating_instance = GpuInstance.objects.filter(status=GpuInstance.STATUS_CREATING).count()
         if creating_instance > 0:
             print('There is instance being created.')
             return
 
-        if self.idle_messaging_service.is_messaging_idle():
+        if options['skip_idle_message'] == False and self.idle_messaging_service.is_messaging_idle():
             print('There is idle messaging. Not creating instance.')
             return
 

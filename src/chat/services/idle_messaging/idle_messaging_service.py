@@ -12,7 +12,7 @@ class IdleMessagingService:
             return True
 
         now = datetime.now(timezone.utc).timestamp()
-        message_time = message.created_at.timestamp
+        message_time = message.created_at.timestamp()
         referent_time_in_seconds = self.IDLE_MESSAGE_TIME_DELTA_MINUTES * 60
 
         if (now - message_time) < referent_time_in_seconds:
