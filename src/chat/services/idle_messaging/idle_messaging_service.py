@@ -7,7 +7,7 @@ class IdleMessagingService:
     IDLE_MESSAGE_TIME_DELTA_MINUTES = 20
 
     def is_messaging_idle(self):
-        message: None | Message = Message.objects.filter('-id').first()
+        message: None | Message = Message.objects.order_by('-id').first()
         if message is None:
             return True
 
