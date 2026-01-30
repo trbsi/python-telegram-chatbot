@@ -16,6 +16,7 @@ class FindVastGpuService:
             "type": "on-demand",  # cheapest type
             "rentable": {"eq": True},
             "rented": {"eq": False},
+            "verified": {"eq": True},
             "gpu_ram": {"gte": min_vram * 1024},  # minimum 15GB RAM
             "order": [["dph_total", "asc"]]  # sort by price ascending
         }
