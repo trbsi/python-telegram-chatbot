@@ -29,6 +29,7 @@ class CreateVastGpuService:
                 'VPS_ENDPOINT': full_url_for_route('gpu.register_gpu'),
                 'REGISTRATION_TOKEN': 'not_used_but_just_in_case',
                 'MODEL_ZIP_URL': settings.MODEL_ZIP_URL,
+                'MODEL_NAME': settings.MODEL_NAME,
                 'BUGSNAG_API_KEY': settings.BUGSNAG_API_KEY,
                 'HUGGING_FACE_TOKEN': settings.HUGGING_FACE_TOKEN
             },
