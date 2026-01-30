@@ -10,8 +10,8 @@ class CreateGpuInstanceService:
     def create_instance(
             self,
             offer_id: int,
-            disk_gb: int = 40,
-            image: str|None = None
+            disk_gb: int = 80,
+            image: str | None = None
     ) -> GpuInstanceValueObject:
         if settings.GPU_PROVIDER == 'vast_ai':
             return self.vast.create_instance(offer_id, disk_gb, image)
