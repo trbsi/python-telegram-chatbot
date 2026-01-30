@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
     dependencies = [
@@ -20,6 +19,7 @@ class Migration(migrations.Migration):
                 ('port', models.IntegerField()),
                 ('price_per_hour', models.FloatField(blank=True, null=True)),
                 ('status', models.CharField(max_length=15)),
+                ('created_at', models.DateTimeField(auto_now_add=True)),
             ],
         ),
     ]
