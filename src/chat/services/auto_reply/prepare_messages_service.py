@@ -4,7 +4,7 @@ from src.inbox.models import Conversation, Message
 class PrepareMessagesService:
     def get_chat_history(self, conversation: Conversation) -> list:
         messages = Message.objects.filter(conversation=conversation).order_by('-created_at', '-id')
-        messages = list(messages[:50])[::-1]
+        messages = list(messages[:10])[::-1]
         chat_history = []
 
         for message in messages:
