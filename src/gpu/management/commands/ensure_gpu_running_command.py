@@ -53,7 +53,7 @@ class Command(BaseCommand):
             gpu_instance: GpuInstance = GpuInstance.objects.filter(status=GpuInstance.STATUS_RUNNING).first()
             if not gpu_instance:
                 self._create_new_instance()
-                bugsnag.notify(Exception('Instance does not exist in database'))
+                bugsnag.notify(Exception('Instance does not exist in database. Creating new.'))
                 return
 
             current_instance = self.get_gpu_service.get_instance(int(gpu_instance.instance_id))
@@ -62,7 +62,7 @@ class Command(BaseCommand):
                 gpu_instance.status = current_instance.status
                 gpu_instance.save()
                 self._create_new_instance()
-                bugsnag.notify(Exception('GPU not running. Creating new one.'))
+                bugsnag.notify(Exception('GPU not running. Creating new.'))
             elif current_instance.is_expensive():
                 self._gpu_is_expensive(current_instance)
                 bugsnag.notify(Exception('GPU is expensive. Trying to find cheaper.'))
