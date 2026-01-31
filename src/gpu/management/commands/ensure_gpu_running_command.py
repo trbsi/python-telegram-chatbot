@@ -28,6 +28,12 @@ class Command(BaseCommand):
         )
 
     def handle(self, *args, **options):
+        gpu_instance: GpuInstance = GpuInstance.objects.filter(status=GpuInstance.STATUS_RUNNING).first()
+        if gpu_instance:
+            current_instance = self.get_gpu_service.get_instance(int(gpu_instance.instance_id))
+            gpu_instance.price_per_hour = current_instance.price_per_hour
+            gpu_instance.save()
+
         creating_instance = GpuInstance.objects.filter(status=GpuInstance.STATUS_CREATING).count()
         if creating_instance > 0:
             print('There is instance being created.')
@@ -35,6 +41,7 @@ class Command(BaseCommand):
 
         create_new = GpuInstance.objects.filter(status=GpuInstance.STATUS_CREATE_NEW).count()
         if create_new > 0:
+            print('There is signal to create new instance. Creating it.')
             self._create_new_instance()
             return
 
@@ -43,17 +50,17 @@ class Command(BaseCommand):
             return
 
         try:
-            gpu_instance: GpuInstance = GpuInstance.objects.order_by('-id').first()
+            gpu_instance: GpuInstance = GpuInstance.objects.filter(status=GpuInstance.STATUS_RUNNING).first()
             if not gpu_instance:
                 self._create_new_instance()
                 bugsnag.notify(Exception('Instance does not exist in database'))
                 return
 
             current_instance = self.get_gpu_service.get_instance(int(gpu_instance.instance_id))
-            gpu_instance.price_per_hour = current_instance.price_per_hour
-            gpu_instance.save()
 
             if not current_instance.is_active():
+                gpu_instance.status = current_instance.status
+                gpu_instance.save()
                 self._create_new_instance()
                 bugsnag.notify(Exception('GPU not running. Creating new one.'))
             elif current_instance.is_expensive():
@@ -68,11 +75,10 @@ class Command(BaseCommand):
     def _gpu_is_expensive(self, current_instance: GpuInstanceValueObject):
         print('GPU is expensive. Finding cheap one.')
         offer = self.find_gpu_service.find_cheapest_gpu()
-        instance = None
 
         if offer.price_per_hour < current_instance.price_per_hour:
             print('Found cheap one')
-            gpu_instance: GpuInstance = GpuInstance.objects.order_by('-id').first()
+            gpu_instance: GpuInstance = GpuInstance.objects.filter(status=GpuInstance.STATUS_RUNNING).first()
             if gpu_instance:
                 gpu_instance.delete()
 
@@ -81,20 +87,18 @@ class Command(BaseCommand):
             instance = self.create_gpu_service.create_instance(offer_id=offer.offer_id)
             self._create_temp_instance(instance)
 
-        print(offer.__dict__)
-        print(instance.__dict__)
+            print(offer.__dict__)
+            print(instance.__dict__)
 
     def _create_new_instance(self):
         print('Destroying existing. Finding cheapest GPU. Creating new one')
-        gpu_instance = GpuInstance.objects.order_by('-id').first()
-        if gpu_instance:
+        gpu_instances = GpuInstance.objects.exclude(status=GpuInstance.STATUS_RUNNING)
+        for gpu_instance in gpu_instances:
             gpu_instance.delete()
             try:
                 self.destroy_gpu_service.destroy_instance(gpu_instance.instance_id)
             except Exception:
                 pass
-        else:
-            self.destroy_gpu_service.destroy_all_instance()
 
         offer = self.find_gpu_service.find_cheapest_gpu()
         instance = self.create_gpu_service.create_instance(offer_id=offer.offer_id)
