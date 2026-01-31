@@ -5,6 +5,7 @@ from django.db import models
 
 class GpuInstance(models.Model):
     STATUS_CREATING = 'creating'
+    STATUS_CREATE_NEW = 'create_new'
 
     id = models.AutoField(primary_key=True)
     instance_id = models.IntegerField()

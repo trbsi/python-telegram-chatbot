@@ -33,6 +33,11 @@ class Command(BaseCommand):
             print('There is instance being created.')
             return
 
+        create_new = GpuInstance.objects.filter(status=GpuInstance.STATUS_CREATE_NEW).count()
+        if create_new > 0:
+            self._create_new_instance()
+            return
+
         if options['skip_idle_message'] == False and self.idle_messaging_service.is_messaging_idle():
             print('There is idle messaging. Not creating instance.')
             return

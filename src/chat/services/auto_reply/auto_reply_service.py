@@ -46,7 +46,13 @@ class AutoReplyService:
             elif settings.IS_LOCAL_AI_ENABLED:
                 sentence = self.llm_service.get_local_reply(conversation)
             else:
-                sentence = "I want you so bad. mmm this is Hot. Like it, do you? I'm super good"
+                GpuInstance.objects.create(
+                    instance_id=0,
+                    ip_address='0',
+                    port=0,
+                    status=GpuInstance.STATUS_CREATE_NEW
+                )
+                sentence = "hey sexy fucker. I'm getting ready, give me a few minutes. I'll get back to you soon 😘"
 
             sentences = self.split_sentences_service.split_sentences(sentence)
             number_of_sentences = random.randint(1, min(3, len(sentences)))
