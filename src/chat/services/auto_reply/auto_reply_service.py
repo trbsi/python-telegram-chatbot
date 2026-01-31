@@ -5,6 +5,7 @@ import bugsnag
 from telegram import Bot
 
 from chatapp import settings
+from src.chat.models import SystemMessage
 from src.chat.services.auto_reply.llm_reply import LlmReplyService
 from src.chat.services.auto_reply.split_sentences_service import SplitSentencesService
 from src.gpu.models import GpuInstance
@@ -42,7 +43,10 @@ class AutoReplyService:
                     sentence = self.llm_service.get_remote_reply(gpu_instance, conversation)
                 except Exception as e:
                     bugsnag.notify(e)
-                    sentence = "Hey fucker, wait a few minutes. I'm doing  nasty"
+                    sentence = self._get_random_message_and_update_conversation(
+                        SystemMessage.TYPE_GPU_NOT_AVAILABLE,
+                        conversation
+                    )
             elif settings.IS_LOCAL_AI_ENABLED:
                 sentence = self.llm_service.get_local_reply(conversation)
             else:
@@ -52,7 +56,10 @@ class AutoReplyService:
                     port=0,
                     status=GpuInstance.STATUS_CREATE_NEW
                 )
-                sentence = "hey sexy fucker. I'm getting ready, give me a few minutes. I'll get back to you soon 😘"
+                sentence = self._get_random_message_and_update_conversation(
+                    SystemMessage.TYPE_GPU_CREATING,
+                    conversation
+                )
 
             sentences = self.split_sentences_service.split_sentences(sentence)
             number_of_sentences = random.randint(1, min(3, len(sentences)))
@@ -78,3 +85,11 @@ class AutoReplyService:
             sender = CreateUserService.create_random_user(user_id)
 
         return sender
+
+    def _get_random_message_and_update_conversation(self, type: str, conversation: Conversation) -> str:
+        sentence: SystemMessage = SystemMessage.objects.filter(message_type=type).order_by('?').first()
+
+        conversation.system_message_type = type
+        conversation.save()
+
+        return sentence.message
