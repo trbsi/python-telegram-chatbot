@@ -29,11 +29,7 @@ async def webhook(request: HttpRequest) -> JsonResponse:
 
 async def set_webhook(request: HttpRequest) -> JsonResponse:
     get = request.GET
-    secret = get.get('secret')
     url = get.get('url')
-
-    if secret != 'temp_secret':
-        return JsonResponse({"ok": False})
 
     if url is None:
         url = f"{settings.APP_URL}/chat/webhook"
