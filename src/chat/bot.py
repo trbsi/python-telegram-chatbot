@@ -1,5 +1,5 @@
 import bugsnag
-from telegram import Update
+from telegram import Update, Bot
 from telegram.ext import (
     ApplicationBuilder,
     CommandHandler,
@@ -16,7 +16,8 @@ class TelegramBot:
     async def start(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
         try:
             chat_id = update.effective_chat.id
-            auto_reply_task.delay('Hello', chat_id)
+            bot = Bot(token=settings.TELEGRAM_BOT_TOKEN)
+            await bot.send_message(chat_id=chat_id, text='Hello fucker. What are you doing? Stroking your nice cock?');
         except Exception as e:
             bugsnag.notify(e)
 
