@@ -14,6 +14,11 @@ services:
       - ./nginx/my_custom_proxy_settings.conf:/etc/nginx/conf.d/my_custom_proxy_settings.conf
       - ../assets:/usr/share/nginx/assets # to be able to access assets via /static url (see ./vhost/mydomain.con)
     networks: [ chatapp-net ]
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   django:
     build:
@@ -38,6 +43,11 @@ services:
     command: poetry run gunicorn chatapp.wsgi:application -b 0.0.0.0:8000 --workers 5 --reload
     expose: [ "8000" ]
     networks: [ chatapp-net ]
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
@@ -87,6 +97,11 @@ services:
     depends_on: [ redis, django ]
     command: poetry run celery -A chatapp worker --loglevel=info --autoscale=8,2
     networks: [ chatapp-net ]
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
   celery-beat:
     build:
@@ -104,6 +119,11 @@ services:
     depends_on: [ redis, django, mysql ]
     command: poetry run celery -A chatapp beat --loglevel=debug
     networks: [ chatapp-net ]
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
 
 networks:
   chatapp-net:
