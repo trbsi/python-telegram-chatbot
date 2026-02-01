@@ -6,6 +6,7 @@ from telegram import Bot
 from chatapp import settings
 from src.chat.models import SystemMessage
 from src.core.management.commands.base_command import BaseCommand
+from src.gpu.models import GpuInstance
 from src.inbox.models import Conversation
 
 
@@ -15,6 +16,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         conversations: QuerySet[Conversation] = Conversation.objects.filter(system_message_type__isnull=False)
         print('Number of conversations: ', conversations.count())
+
+        gpu_instance = GpuInstance.objects.filter(status=GpuInstance.STATUS_RUNNING).count()
+
+        if gpu_instance == 0:
+            print('GPU instance is not running yet')
+            return
 
         for conversation in conversations:
             conversation.system_message_type = None
