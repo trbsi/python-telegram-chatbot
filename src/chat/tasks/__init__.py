@@ -1,1 +1,1 @@
-from .chat_reply_bot import auto_reply_task
+from .auto_reply_task import auto_reply_task

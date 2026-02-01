@@ -17,7 +17,7 @@ class TelegramBot:
         try:
             chat_id = update.effective_chat.id
             bot = Bot(token=settings.TELEGRAM_BOT_TOKEN)
-            await bot.send_message(chat_id=chat_id, text='Hello fucker. What are you doing? Stroking your nice cock?');
+            await bot.send_message(chat_id=chat_id, text='hello fucker. what are you doing? stroking your nice cock?')
         except Exception as e:
             bugsnag.notify(e)
 
