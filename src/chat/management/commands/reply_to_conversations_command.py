@@ -14,6 +14,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         conversations: QuerySet[Conversation] = Conversation.objects.filter(system_message_type__isnull=False)
+        print('Number of conversations: ', conversations.count())
 
         for conversation in conversations:
             conversation.system_message_type = None
@@ -25,7 +26,7 @@ class Command(BaseCommand):
                 .order_by('?')
                 .first()
             )
-            
+
             asyncio.run(self._send_message(conversation, system_message))
 
     async def _send_message(self, conversation: Conversation, system_message: SystemMessage):
