@@ -12,7 +12,9 @@ class Command(BaseCommand):
         self.destroy_gpu_service = DestroyGpuService()
 
     def handle(self, *args, **options):
-        if self.idle_messaging_service.is_messaging_idle():
+        running_gpu = GpuInstance.objects.filter(status=GpuInstance.STATUS_RUNNING).count()
+
+        if running_gpu > 0 and self.idle_messaging_service.is_messaging_idle():
             self.destroy_gpu_service.destroy_all_instance()
             GpuInstance.objects.all().delete()
 
