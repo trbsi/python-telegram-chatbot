@@ -13,6 +13,6 @@ class Migration(migrations.Migration):
         migrations.AddField(
             model_name='conversation',
             name='external_chat_id',
-            field=models.IntegerField(blank=True, null=True),
+            field=models.CharField(max_length=20, null=True, blank=True),
         ),
     ]

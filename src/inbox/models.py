@@ -21,7 +21,7 @@ class Conversation(models.Model):
     read_by_recipient = models.BooleanField(default=False)
     is_automated = models.BooleanField(default=False)
     system_message_type = models.CharField(max_length=30, null=True, blank=True)
-    external_chat_id = models.IntegerField(null=True, blank=True)
+    external_chat_id = models.CharField(max_length=20, null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
