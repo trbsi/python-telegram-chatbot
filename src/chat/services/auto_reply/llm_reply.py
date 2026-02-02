@@ -65,9 +65,11 @@ class LlmReplyService:
         response = requests.post(gpu_instance.get_endpoint(), json=chat_history)
         try:
             json = response.json()
+            return json['message']
         except requests.exceptions.JSONDecodeError as e:
-            error = str(response.status_code) + response.text
-            bugsnag.notify(Exception(error))
-            raise e
-
-        return json['message']
+            response_code = response.status_code
+            if response_code != 500:
+                error = str(response_code) + response.text
+                bugsnag.notify(Exception(error))
+            else:
+                return self.get_remote_reply(gpu_instance, conversation)
