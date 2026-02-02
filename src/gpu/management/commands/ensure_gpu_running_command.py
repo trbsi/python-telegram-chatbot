@@ -92,7 +92,11 @@ class Command(BaseCommand):
 
     def _create_new_instance(self):
         print('Destroying existing. Finding cheapest GPU. Creating new one')
-        gpu_instances = GpuInstance.objects.exclude(status=GpuInstance.STATUS_RUNNING)
+        gpu_instances = (
+            GpuInstance.objects
+            .exclude(status=GpuInstance.STATUS_RUNNING)
+            .exclude(status=GpuInstance.STATUS_BAD)
+        )
         for gpu_instance in gpu_instances:
             gpu_instance.delete()
             try:
