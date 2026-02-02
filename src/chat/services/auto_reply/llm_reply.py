@@ -1,3 +1,4 @@
+import bugsnag
 import requests
 
 from src.chat.services.auto_reply.prepare_messages_service import PrepareMessagesService
@@ -61,6 +62,12 @@ class LlmReplyService:
 
     def get_remote_reply(self, gpu_instance: GpuInstance, conversation: Conversation) -> str:
         chat_history = self.prepare_messages_service.get_chat_history(conversation)
-        result = requests.post(gpu_instance.get_endpoint(), json=chat_history)
-        json = result.json()
+        response = requests.post(gpu_instance.get_endpoint(), json=chat_history)
+        try:
+            json = response.json()
+        except requests.exceptions.JSONDecodeError as e:
+            error = str(response.status_code) + response.text
+            bugsnag.notify(Exception(error))
+            raise e
+
         return json['message']

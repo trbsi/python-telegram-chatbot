@@ -20,7 +20,7 @@ class Command(BaseCommand):
             GpuInstance.objects.all().delete()
 
         gpu_instance: GpuInstance = GpuInstance.objects.filter(status=GpuInstance.STATUS_CREATING).first()
-        if gpu_instance is not None and gpu_instance.time_diff() >= 600:  # 10 minutes
+        if gpu_instance is not None and gpu_instance.time_diff() >= 900:  # 15 minutes
             print('Removing GPU instance. Time diff is: ', gpu_instance.time_diff())
             self.destroy_gpu_service.destroy_instance(gpu_instance.instance_id)
             gpu_instance.delete()
