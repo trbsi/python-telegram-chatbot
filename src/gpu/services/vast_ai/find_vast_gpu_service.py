@@ -1,6 +1,7 @@
 import requests
 
 from chatapp import settings
+from src.gpu.models import GpuInstance
 from src.gpu.value_objects.gpu_offer_value_object import GpuOfferValueObject
 
 
@@ -33,7 +34,19 @@ class FindVastGpuService:
         if not offers:
             raise RuntimeError("No GPU offers found")
 
-        offer = offers[0]  # cheapest
+        offer = offers[0]
+        for single_offer in offers:
+            count = (
+                GpuInstance.objects
+                .filter(status=GpuInstance.STATUS_BAD)
+                .filter(instance_id=single_offer['id'])
+                .count()
+            )
+            if count:
+                continue
+            else:
+                offer = single_offer
+
         return GpuOfferValueObject(
             offer["id"],
             offer["gpu_name"],

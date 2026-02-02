@@ -17,7 +17,7 @@ class Command(BaseCommand):
         if running_gpu > 0 and self.idle_messaging_service.is_messaging_idle():
             print('Removing running GPU, there are idle messaging.')
             self.destroy_gpu_service.destroy_all_instance()
-            GpuInstance.objects.all().delete()
+            GpuInstance.objects.filter(status=GpuInstance.STATUS_RUNNING).delete()
 
         gpu_instance: GpuInstance = GpuInstance.objects.filter(status=GpuInstance.STATUS_CREATING).first()
         if gpu_instance is not None and gpu_instance.time_diff() >= 900:  # 15 minutes
