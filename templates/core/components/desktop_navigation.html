@@ -1,9 +1,5 @@
 <nav class="hidden md:flex items-center gap-4 relative">
     {% if user.is_authenticated %}
-    <a href="{% url 'media.upload' %}"
-       class="tw flex items-center gap-1 hover:text-blue-600">
-        <i class="ri-upload-line"></i> Upload
-    </a>
     <!-- Clickable dropdown menu -->
     <div class="relative">
         <button id="accountDropdownBtn"
